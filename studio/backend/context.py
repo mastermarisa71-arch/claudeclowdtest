@@ -92,7 +92,9 @@ def build(conn, episode_code: str | None = None) -> str:
     for r in open_reviews:
         where_s = f"{r['cut'] or ''}{r['panel'] or ''} " if r.get("cut") else ""
         out.append(f"- #{r['id']} {where_s}{r['target_type']}:{r['target_id']} 【{r['verdict']}】"
-                   f"[{r['tags']}] {r['comment']}{_region(r)}")
+                   f"[{r['tags']}] {r['comment']}{core.describe_region(r.get('region_json') or '')}"
+                   + (f"\n  監督が印をつけた画面：{config.MEDIA_DIR.name}/{r['attachment']}（MCP review_image で見られる）"
+                      if r.get("attachment") else ""))
     if not open_reviews:
         out.append("- （なし）")
     out.append("")

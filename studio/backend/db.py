@@ -208,7 +208,8 @@ CREATE TABLE IF NOT EXISTS events (
 MIGRATIONS = {
     "episodes": {"budget_credits": "REAL DEFAULT 0", "deadline": "TEXT DEFAULT ''",
                  "is_test": "INTEGER DEFAULT 0"},   # テストの回：予算を超えても止めずに警告だけ
-    "reviews": {"checks_json": "TEXT DEFAULT ''"},
+    "reviews": {"checks_json": "TEXT DEFAULT ''",
+                "attachment": "TEXT DEFAULT ''"},   # 監督が印をつけた画面の画像（MEDIA_DIR 相対）
     "premiere_queue": {"host": "TEXT DEFAULT 'premiere'"},   # premiere / aftereffects   # AI セルフレビューの観点ごとの合否
     # draft（480p）→ upscale（ドラフトをそのまま拡大）→ final（拡大版を入力に 1080p で生成）
     "takes": {"tier": "TEXT DEFAULT ''", "source_take_id": "INTEGER", "shot_id": "INTEGER", "board_id": "INTEGER",

@@ -184,7 +184,8 @@ def main(argv=None):
         elif a.cmd == "reviews":
             for r in core.list_reviews(conn, a.episode, a.status):
                 print(f"#{r['id']} [{r['status']}] {r['cut'] or ''}{r['panel'] or ''} {r['target_type']}:{r['target_id']}"
-                      f" 【{r['verdict']}】[{r['tags']}] {r['comment']} {r['region_json']}"
+                      f" 【{r['verdict']}】[{r['tags']}] {r['comment']} {core.describe_region(r['region_json'] or '')}"
+                      + (f"\n    画像：{r['attachment']}" if r.get("attachment") else "")
                       + (f"\n    ↳ agent: {r['agent_response']}" if r["agent_response"] else ""))
         elif a.cmd in ("take-add", "generate"):
             prompt = Path(a.prompt_file).read_text(encoding="utf-8") if a.prompt_file else a.prompt

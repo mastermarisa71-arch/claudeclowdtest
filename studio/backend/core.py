@@ -234,13 +234,20 @@ def _episode_id_for(conn, target_type: str, target_id: int) -> int | None:
 
 def add_review(conn, *, target_type: str, target_id: int, verdict: str = "修正", comment: str = "",
                tags: list[str] | None = None, score: int | None = None, region: dict | None = None,
-               created_by: str = "human") -> int:
+               created_by: str = "human", image_data: str | None = None) -> int:
     rid = db.insert(conn, "reviews", {
         "episode_id": _episode_id_for(conn, target_type, target_id), "target_type": target_type,
         "target_id": target_id, "verdict": verdict, "score": score, "tags": ",".join(tags or []),
         "comment": comment, "region_json": json.dumps(region) if region else "",
         "status": "resolved" if verdict in ("採用", "良い") else "open",
         "created_by": created_by, "created_at": db.now(), "updated_at": db.now()})
+    if image_data and image_data.startswith("data:image/"):
+        # 画面に矢印や囲みを描いたまま止めた絵。エージェントはこれを見て、どこをどう直すかを読む
+        import base64
+        rel = Path("reviews") / f"review{rid:05d}.png"
+        (config.MEDIA_DIR / rel).parent.mkdir(parents=True, exist_ok=True)
+        (config.MEDIA_DIR / rel).write_bytes(base64.b64decode(image_data.split(",", 1)[1]))
+        db.update(conn, "reviews", rid, {"attachment": rel.as_posix()})
     if verdict == "採用" and target_type == "take":
         select_take(conn, target_id)
     db.log(conn, created_by, "add_review", {"review": rid, "target": f"{target_type}:{target_id}", "verdict": verdict})
@@ -606,3 +613,82 @@ def claim_request(conn, agent: str, request_id: int | None = None) -> dict | Non
 def finish_request(conn, request_id: int, result: str, status: str = "done") -> None:
     db.update(conn, "requests", request_id, {"status": status, "result": result, "done_at": db.now()})
     db.log(conn, "agent", "finish_request", {"request": request_id, "status": status})
+
+
+# ---- 画面の印を言葉に（エージェントが読む） ----
+
+def _where(x: float, y: float) -> str:
+    col = "左" if x < 0.34 else "中央" if x < 0.67 else "右"
+    row = "上" if y < 0.34 else "" if y < 0.67 else "下"
+    return f"画面の{col}{row}" if row else ("画面の中央" if col == "中央" else f"画面の{col}")
+
+
+def describe_region(region_json: str) -> str:
+    if not region_json:
+        return ""
+    g = json.loads(region_json)
+    parts = []
+    if "t" in g:
+        parts.append(f"{g['t']:.1f}秒の時点")
+    if "t_in" in g:
+        parts.append(f"{g['t_in']:.1f}〜{g.get('t_out', g['t_in']):.1f}秒")
+    if "x" in g:
+        parts.append(f"{_where(g['x'] + g['w'] / 2, g['y'] + g['h'] / 2)}の囲み")
+    for sh in g.get("shapes", []):
+        if sh.get("type") == "arrow":
+            parts.append(f"矢印：{_where(sh['x1'], sh['y1'])}→{_where(sh['x2'], sh['y2'])}")
+        elif sh.get("type") == "box":
+            parts.append(f"囲み：{_where(sh['x'] + sh['w'] / 2, sh['y'] + sh['h'] / 2)}")
+    return "（" + "、".join(parts) + "）" if parts else ""
+
+
+# ---- 字コンテのコマ → 脚本の該当箇所 ----
+
+def script_snippet(conn, cut_id: int, around: int = 4) -> dict:
+    """コマの台詞（なければ同じカット・前のコマの台詞）を脚本（いまの版）から探し、前後の数行を返す。"""
+    import re
+    cut = db.one(conn.execute("SELECT c.*, e.code FROM cuts c JOIN episodes e ON e.id=c.episode_id WHERE c.id=?",
+                              (cut_id,)))
+    path = config.VAULT_DIR / "03_脚本" / "いまの版" / f"{cut['code']}_脚本_いまの版.md"
+    if not path.exists():
+        return {"found": False, "lines": [], "heading": "", "file": ""}
+    lines = [l.rstrip() for l in path.read_text(encoding="utf-8").splitlines()]
+    cands = db.rows(conn.execute("SELECT dialogue, picture FROM cuts WHERE episode_id=? AND seq<=? ORDER BY seq DESC LIMIT 12",
+                                 (cut["episode_id"], cut["seq"])))
+    total = conn.execute("SELECT COUNT(*) FROM cuts WHERE episode_id=?", (cut["episode_id"],)).fetchone()[0] or 1
+    norm = lambda t: re.sub(r"[\s　…―ー！？!?、。『』]", "", t)
+    hit = None
+    for c in cands:
+        # 「話者「台詞」」の組で探す。短い台詞（「行った」など）がト書きに当たらないよう、台詞の行（「を含む行）だけを見る
+        for who, q in re.findall(r"([^\s「」（）]+)(?:（[^）]*）)?「([^」]+)」", c["dialogue"] or ""):
+            key = norm(q)[:8]
+            if not key:
+                continue
+            found = [i for i, l in enumerate(lines)
+                     if "「" in l and key in norm(l.split("「", 1)[1]) and (who in l or len(key) >= 4)]
+            # 同じ台詞が何度も出るとき（「ニャー」など）は、話の中の位置がいちばん近いものを選ぶ
+            hit = min(found, key=lambda i: abs(i / len(lines) - cut["seq"] / total)) if found else None
+            if hit is not None:
+                break
+        if hit is not None:
+            break
+    if hit is None:
+        return {"found": False, "lines": [], "heading": "", "file": str(path.relative_to(config.VAULT_DIR))}
+    heading = next((lines[i].lstrip("# ") for i in range(hit, -1, -1) if lines[i].startswith("###")), "")
+    body = [(i, l) for i, l in enumerate(lines) if l.strip()]
+    pos = next(k for k, (i, _) in enumerate(body) if i == hit)
+    sel = body[max(0, pos - around): pos + around + 1]
+    return {"found": True, "heading": heading, "file": str(path.relative_to(config.VAULT_DIR)),
+            "lines": [{"text": l.replace("**", ""), "hit": i == hit} for i, l in sel if not l.startswith("###")]}
+
+
+def episode_marks(conn, code: str) -> list[dict]:
+    """Vコンの上に出す、監督とエージェントのレビュー（どのコマの、何秒で、どんな印か）。"""
+    return db.rows(conn.execute("""
+        SELECT r.id, r.verdict, r.status, r.comment, r.tags, r.region_json, r.attachment, r.created_by,
+               r.agent_response, r.created_at,
+               COALESCE(t.cut_id, CASE WHEN r.target_type='cut' THEN r.target_id END) AS cut_id,
+               r.target_type, r.target_id
+        FROM reviews r LEFT JOIN takes t ON r.target_type='take' AND t.id=r.target_id
+        WHERE r.episode_id=(SELECT id FROM episodes WHERE code=?) AND r.target_type IN ('take','cut')
+        ORDER BY r.id""", (code,)))

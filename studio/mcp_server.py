@@ -218,6 +218,17 @@ def contact_sheet(take_id: int, frames: int = 6) -> Image:
 
 
 @mcp.tool()
+def review_image(review_id: int) -> Image:
+    """監督が矢印や囲みを描いて止めた画面の画像。レビューのコメントと合わせて、どこをどう直すかを読む。"""
+    from studio.backend import config
+    with _s() as conn:
+        r = db.one(conn.execute("SELECT attachment FROM reviews WHERE id=?", (review_id,)))
+    if not r or not r["attachment"]:
+        raise ValueError("このレビューには画像がありません")
+    return Image(path=str(config.MEDIA_DIR / r["attachment"]))
+
+
+@mcp.tool()
 def self_review(take_id: int, checks: dict, comment: str = "") -> int:
     """監督に見せる前のセルフレビュー。checks は {"意図": true, "芝居": "だめな理由", ...}。true 以外があれば不合格。"""
     with _s() as conn:

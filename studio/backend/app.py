@@ -112,12 +112,14 @@ class ReviewIn(BaseModel):
     tags: list[str] = []
     score: int | None = None
     region: dict | None = None
+    image: str | None = None     # 印を描いたまま止めた画面（data URL）
 
 
 @app.post("/api/reviews")
 def add_review(r: ReviewIn):
     with db.session() as conn:
-        return {"id": core.add_review(conn, **r.model_dump())}
+        d = r.model_dump()
+        return {"id": core.add_review(conn, image_data=d.pop("image"), **d)}
 
 
 @app.get("/api/reviews")
@@ -419,3 +421,15 @@ def handoff(request_id: int = 0, mode: str = "local"):
     return (common + "\n場所：このリポジトリ（月灯スタジオが起動していること）。CLAUDE.md と "
             ".claude/skills/tsukiakari-studio/SKILL.md に従い、MCP の tsukiakari-studio の道具か "
             "python studio/cli.py を使ってください。")
+
+
+@app.get("/api/cuts/{cut_id}/script")
+def cut_script(cut_id: int):
+    with db.session() as conn:
+        return core.script_snippet(conn, cut_id)
+
+
+@app.get("/api/episodes/{code}/marks")
+def marks(code: str):
+    with db.session() as conn:
+        return core.episode_marks(conn, code)

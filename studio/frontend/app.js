@@ -33,7 +33,7 @@ async function viewHome() {
     <p class="muted">エージェントが作ったものに、ここでレビューをつけます。未対応のレビューはエージェントが次の作業で読みます。</p>
     <div class="grid">${eps.map((e) => {
       const i = STAGES.indexOf(e.stage);
-      return `<a class="card" href="#/ep/${e.code}/design"><h3>${h(e.code)} <span class="muted small">${h(e.title)}</span></h3>
+      return `<a class="card" href="#/ep/${e.code}"><h3>${h(e.code)} <span class="muted small">${h(e.title)}</span></h3>
         <div class="pipeline">${STAGES.map((s, j) => `<span class="${j < i ? "done" : j === i ? "now" : ""}">${s}</span>`).join("")}</div>
         <span class="stat">コマ <b>${e.n_cuts}</b></span><span class="stat">尺 <b>${e.seconds}</b>/${e.target_seconds}秒</span><br>
         <span class="stat">採用 <b>${e.n_selected}</b>/${e.n_cuts}</span><span class="stat">テイク <b>${e.n_takes}</b></span>
@@ -256,9 +256,16 @@ async function viewBrief(params) {
 }
 
 // ---------- 話数のタブ ----------
-const epTabs = (code, now) => `<div class="row tabs">${[["design", "設計"], ["cuts", "コマ"], ["shots", "ショット"], ["awaiting", "AIが通したもの"], ["edit", "編集（ライブ）"], ["stats", "実績"]]
-  .map(([k, l]) => `<a class="btn ${k === now ? "on" : ""}" href="#/ep/${code}${k === "cuts" ? "" : "/" + k}">${l}</a>`).join("")}
-  <a class="btn" href="#/brief?ep=${code}">ブリーフ</a></div>`;
+// 監督がふだん使うのは左の4つ。設計・コマ・ショットなどの細かい画面は「詳しく」に入れる
+const epTabs = (code, now) => `<div class="row tabs">${[["vcon", "Vコン（見て直す）"], ["awaiting", "AIが通したもの"], ["questions", "AIからの質問"], ["stats", "実績"]]
+  .map(([k, l]) => `<a class="btn ${k === now ? "on" : ""}" href="#/ep/${code}${k === "vcon" ? "" : "/" + k}">${l}</a>`).join("")}
+  <span style="flex:1"></span>
+  <select class="more" onchange="if(this.value) location.hash=this.value">
+    <option value="">詳しく（エージェント向け）</option>
+    ${[["design", "設計（シーン）"], ["cuts", "コマの一覧"], ["shots", "ショット分け"], ["edit", "編集（ライブ）"]].map(([k, l]) =>
+      `<option value="#/ep/${code}/${k}" ${k === now ? "selected" : ""}>${l}</option>`).join("")}
+    <option value="#/brief?ep=${code}">ブリーフ</option>
+  </select></div>`;
 
 // ---------- 設計：シーンごとの狙い・尺・動線 ----------
 async function viewDesign(code) {
@@ -512,7 +519,9 @@ async function route() {
     else if (parts[0] === "ep" && parts[2] === "shots") await viewShots(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "stats") await viewStats(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "edit") await viewEdit(parts[1], params);
-    else if (parts[0] === "ep") await viewEpisode(parts[1]);
+    else if (parts[0] === "ep" && parts[2] === "cuts") await viewEpisode(parts[1]);
+    else if (parts[0] === "ep" && parts[2] === "questions") await viewQuestions(parts[1]);
+    else if (parts[0] === "ep") await viewVcon(parts[1], params);
     else if (parts[0] === "cut") await viewCut(parts[1], params);
     else if (parts[0] === "compare") await viewCompare(params);
     else if (parts[0] === "reviews") await viewReviews(params);

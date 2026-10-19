@@ -100,3 +100,35 @@ label { color: var(--muted); font-size: 12px; } label input { margin-top: 2px; }
 .thumb .tier { position: absolute; right: 2px; bottom: 2px; font-size: 9px; padding: 0 4px; border-radius: 3px; background: #0009; color: #fff; }
 .thumb .tier.final { background: var(--green); color: #000; } .thumb .tier.upscale { background: var(--blue); color: #000; }
 button.mic { margin-top: 4px; padding: 2px 8px; } button.mic.on, [data-voice].on { background: var(--red); color: #000; }
+
+/* Vコン（監督の主画面） */
+.vcon { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; }
+.vstage { position: relative; }
+.vstage canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
+.card-ph { flex-direction: column; gap: 14px; background: #1c1820; }
+.card-ph .ph-pic { font-size: 20px; color: var(--text); max-width: 80%; line-height: 1.6; }
+.card-ph .ph-dia { font-size: 18px; color: var(--amber); }
+.transport { margin: 8px 0; }
+.vtl { display: flex; height: 34px; border-radius: 4px; overflow: hidden; border: 1px solid var(--line); cursor: pointer; }
+.vtl a { display: block; border-right: 1px solid #0006; background: #3b3340; position: relative; }
+.vtl a.has { background: var(--blue); }
+.vtl a.marked::after { content: ""; position: absolute; left: 50%; top: 3px; width: 7px; height: 7px; margin-left: -3px; border-radius: 50%; background: var(--red); }
+.vtl a.now { background: var(--amber) !important; }
+.scenes { position: relative; height: 22px; }
+.scenes a { position: absolute; top: 2px; font-size: 11px; color: var(--muted); border-left: 1px solid var(--line); padding-left: 3px; cursor: pointer; }
+.vside .info .dia { font-size: 17px; color: var(--amber); margin: 6px 0; }
+.vside .info .pic { font-size: 14px; margin-bottom: 6px; }
+.script { font-size: 13px; background: #0f0c12; border-radius: 6px; padding: 8px; max-height: 220px; overflow: auto; }
+.script div { padding: 1px 0; color: var(--muted); }
+.script .hit { color: var(--text); background: #f0b45a22; border-left: 3px solid var(--amber); padding-left: 6px; }
+.review-box { margin-top: 10px; }
+.tools button { padding: 3px 10px; }
+.bigmic { width: 100%; font-size: 16px; padding: 10px; margin: 8px 0; }
+.bigmic.on { background: var(--red); color: #000; }
+.mark-img { width: 100%; border-radius: 4px; margin: 4px 0; }
+select.more { width: auto; }
+.q .qitem { border-top: 1px solid var(--line); padding: 8px 0; }
+.q .qtext { margin-bottom: 6px; }
+.q .qitem input { flex: 1; min-width: 160px; }
+.q button.on { background: var(--amber-dim); border-color: var(--amber); }
+.qmic.on { background: var(--red); color: #000; }
