@@ -52,7 +52,13 @@ def cut_detail(conn, cut_id: int) -> dict:
     cut = db.one(conn.execute("SELECT * FROM cuts WHERE id=?", (cut_id,)))
     if not cut:
         raise KeyError(cut_id)
-    takes = db.rows(conn.execute("SELECT * FROM takes WHERE cut_id=? ORDER BY id DESC", (cut_id,)))
+    # このコマを含むショット（マルチショットの動画）のテイクも出す
+    shot_ids = [r["id"] for r in db.rows(conn.execute(
+        "SELECT id, cut_ids_json FROM shots WHERE episode_id=?", (cut["episode_id"],)))
+        if cut_id in json.loads(r["cut_ids_json"])]
+    takes = db.rows(conn.execute(
+        f"SELECT * FROM takes WHERE cut_id=? OR shot_id IN ({','.join('?' * len(shot_ids)) or 'NULL'}) ORDER BY id DESC",
+        (cut_id, *shot_ids)))
     ids = [t["id"] for t in takes]
     reviews = db.rows(conn.execute(
         f"SELECT * FROM reviews WHERE (target_type='take' AND target_id IN ({','.join('?' * len(ids)) or 'NULL'}))"
@@ -96,7 +102,11 @@ def attach_file(conn, take_id: int, src: Path, filename: str | None = None) -> s
 
 def select_take(conn, take_id: int) -> None:
     take = db.one(conn.execute("SELECT * FROM takes WHERE id=?", (take_id,)))
-    conn.execute("UPDATE takes SET selected=0 WHERE cut_id=?", (take["cut_id"],))
+    if take.get("shot_id"):     # ショットの動画は、同じショット・同じ段階（ドラフト／本番）の中で1つ
+        conn.execute("UPDATE takes SET selected=0 WHERE shot_id=? AND COALESCE(tier,'')=?",
+                     (take["shot_id"], take.get("tier") or ""))
+    else:
+        conn.execute("UPDATE takes SET selected=0 WHERE cut_id=? AND shot_id IS NULL", (take["cut_id"],))
     db.update(conn, "takes", take_id, {"selected": 1})
     db.log(conn, "human", "select_take", {"take": take_id, "cut": take["cut_id"]})
 
@@ -106,6 +116,7 @@ class Blocked(RuntimeError):
 
 
 def estimate(provider: str, kind: str, units: float = 1, tier: str = "") -> float:
+    """円の目安。動画は units＝秒。"""
     c = config.COST_TABLE
     mult = config.TIERS.get(tier, {}).get("cost", 1.0)
     return units * mult * c.get((provider, kind), c.get((provider, "*"), 0))
@@ -128,9 +139,12 @@ def agent_retries_since_human(conn, cut_id: int) -> int:
 def check_gates(conn, episode: str, cut_id: int | None, provider: str, kind: str, units: float = 1,
                 tier: str = "") -> None:
     ep = db.get_or_create_episode(conn, episode)
-    budget = ep.get("budget_credits") or 0
+    budget = ep.get("budget_credits") or config.DEFAULT_BUDGET_YEN
     cost = estimate(provider, kind, units, tier)
     if budget and spent(conn, ep["id"]) + cost > budget:
+        if ep.get("is_test"):
+            print(f"注意：{episode} はテストの回なので続けます（予算 {budget:.0f}円 を超えます）")
+            return
         raise Blocked(f"{episode} の予算 {budget} を超えます（使用 {spent(conn, ep['id']):.0f} + 今回 {cost:.0f}）。"
                       "優先するコマを監督に確認してください")
     if cut_id and agent_retries_since_human(conn, cut_id) > config.MAX_AGENT_RETRIES:
@@ -149,7 +163,8 @@ def record_usage(conn, take_id: int, provider: str, kind: str, units: float = 1,
 
 def generate(conn, *, episode: str, cut_id: int | None, kind: str, provider: str, prompt: str,
              model: str = "", refs: list | None = None, params: dict | None = None, tier: str = "",
-             source_take_id: int | None = None, **extra) -> int:
+             source_take_id: int | None = None, shot_id: int | None = None, board_id: int | None = None,
+             **extra) -> int:
     p = REGISTRY[provider]
     params = dict(params or {})
     if tier:
@@ -160,18 +175,20 @@ def generate(conn, *, episode: str, cut_id: int | None, kind: str, provider: str
         params["input_video"] = src["file_path"]          # 拡大版を入力に本番を作る
     if tier == "final" and not source_take_id:
         raise Blocked("本番（1080p）は、承認したドラフトの拡大版から作ります（promote を使う）")
-    check_gates(conn, episode, cut_id, provider, kind, tier=tier)
+    units = float(params.get("duration", 1)) if kind in config.PER_SECOND_KINDS else 1
+    check_gates(conn, episode, cut_id, provider, kind, units=units, tier=tier)
     take_id = add_take(conn, episode=episode, cut_id=cut_id, kind=kind, provider=provider, model=model,
                        prompt=prompt, refs=refs, params=params, status="queued", **extra)
     try:
         job = p.submit(GenerationRequest(kind, prompt, model, refs or [], params))
         db.update(conn, "takes", take_id, {"external_job_id": job,
                                            "status": "running" if job else "awaiting_upload"})
-        record_usage(conn, take_id, provider, kind, tier=tier)
+        record_usage(conn, take_id, provider, kind, units=units, tier=tier)
     except Exception as e:  # 未接続・API エラーもテイクとして残し、画面とエージェントの両方から見えるようにする
         db.update(conn, "takes", take_id, {"status": "failed", "error": f"{type(e).__name__}: {e}"})
-    if tier or source_take_id:
-        db.update(conn, "takes", take_id, {"tier": tier, "source_take_id": source_take_id})
+    if tier or source_take_id or shot_id or board_id:
+        db.update(conn, "takes", take_id, {"tier": tier, "source_take_id": source_take_id,
+                                           "shot_id": shot_id, "board_id": board_id})
     return take_id
 
 
@@ -388,10 +405,64 @@ def render_bg(conn, *, episode: str, blend: str, camera: str, cut_id: int | None
 
 # ---- 書き出し ----
 
-def export_timeline(conn, code: str) -> dict:
+def playlist(conn, code: str, selected_only: bool = False) -> list[dict]:
+    """上映順のコマごとに、いま映すもの（テイクと、その動画の中の開始位置）を決める。
+
+    ショット（マルチショットの動画）に入っているコマは、そのショットの動画を、ショット内の位置から映す。
+    優先：本番（採用）＞ ドラフト（採用）＞ 最新のドラフト ＞ コマ自身のテイク（9コマの仮Vコンなど）。
+    selected_only=True なら採用中のものだけ（書き出し用）。
+    """
     data = episode_cuts(conn, code)
-    selected = {c["id"]: next((t for t in c["takes"] if t["selected"]), None) for c in data["cuts"]}
-    items = fcpxml.timeline(data["cuts"], {k: v for k, v in selected.items() if v})
+    cuts = data["cuts"]
+    ep_id = data["episode"]["id"]
+    shots = db.rows(conn.execute("SELECT * FROM shots WHERE episode_id=? ORDER BY seq", (ep_id,)))
+    shot_of = {}
+    for sh in shots:
+        ids = json.loads(sh["cut_ids_json"])
+        sh["cut_ids"] = ids
+        for cid in ids:
+            shot_of[cid] = sh
+    shot_takes = {}
+    for sh in shots:
+        ts = db.rows(conn.execute("SELECT * FROM takes WHERE shot_id=? AND status='done' AND file_path!='' "
+                                  "ORDER BY id DESC", (sh["id"],)))
+        rank = lambda t: (t["selected"] and t["tier"] == "final", t["selected"] and t["tier"] == "draft",
+                          t["selected"], not selected_only and t["tier"] == "draft")
+        best = max(ts, key=rank, default=None)
+        if best and selected_only and not best["selected"]:
+            best = None
+        if best and not any(rank(best)):
+            best = None
+        shot_takes[sh["id"]] = best
+    out = []
+    for c in cuts:
+        sh = shot_of.get(c["id"])
+        item = {"cut": c, "take": None, "offset": 0.0, "shot": sh["code"] if sh else "", "shot_first": False,
+                "shot_seconds": 0.0}
+        if sh and shot_takes.get(sh["id"]):
+            idx = sh["cut_ids"].index(c["id"])
+            secs = {x["id"]: x["seconds"] or 0 for x in cuts if x["id"] in sh["cut_ids"]}
+            item.update(take=shot_takes[sh["id"]], offset=sum(secs[i] for i in sh["cut_ids"][:idx]),
+                        shot_first=idx == 0, shot_seconds=sum(secs.values()))
+        else:
+            own = [t for t in c["takes"] if t["file_path"] and not t.get("shot_id")]
+            pick = next((t for t in own if t["selected"]), None) or (None if selected_only else (own[-1] if own else None))
+            item["take"] = pick
+        out.append(item)
+    return out
+
+
+def export_timeline(conn, code: str) -> dict:
+    items, frame = [], 0
+    for p in playlist(conn, code, selected_only=True):
+        dur = max(1, round((p["cut"]["seconds"] or 1.0) * config.FPS))
+        if p["shot"] and p["take"]:
+            if p["shot_first"]:     # ショットの動画は先頭のコマの位置に1本で置く
+                items.append({"cut": p["cut"], "take": p["take"], "start": frame,
+                              "end": frame + max(1, round(p["shot_seconds"] * config.FPS))})
+        else:
+            items.append({"cut": p["cut"], "take": p["take"], "start": frame, "end": frame + dur})
+        frame += dur
     name = f"{code}_studio_{db.now()[:10]}"
     out_dir = config.DATA_DIR / "exports" / code
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -399,4 +470,4 @@ def export_timeline(conn, code: str) -> dict:
     (out_dir / f"{name}.ffconcat").write_text(fcpxml.to_ffconcat(items), encoding="utf-8")
     missing = [f"{i['cut']['cut']}{i['cut']['panel']}" for i in items if not i["take"]]
     return {"xml": str(out_dir / f"{name}.xml"), "ffconcat": str(out_dir / f"{name}.ffconcat"),
-            "frames": items[-1]["end"] if items else 0, "missing": missing}
+            "frames": frame, "missing": missing}

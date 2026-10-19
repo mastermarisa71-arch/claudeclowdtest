@@ -157,29 +157,57 @@ def _human_approved(conn, take_id: int) -> bool:
                              "AND verdict IN ('良い','採用')", (take_id,)).fetchone())
 
 
-def promote(conn, take_id: int, to: str, provider: str | None = None, note: str = "") -> int:
-    """承認したドラフトを拡大し、拡大版から本番を作る。監督の承認がない段は進めない。"""
+def promote(conn, take_id: int, to: str = "final", provider: str | None = None, note: str = "") -> int:
+    """採用したドラフトを入力に 1080p の本番を作る（Seedance は入力動画をそのまま大きく作り直す）。
+    監督の「良い／採用」がないドラフトは進めない。upscale は単純な拡大が別に要るときだけ使う。"""
     t = db.one(conn.execute("SELECT t.*, e.code FROM takes t JOIN episodes e ON e.id=t.episode_id WHERE t.id=?",
                             (take_id,)))
     if t["status"] != "done" or not t["file_path"]:
         raise core.Blocked(f"テイク #{take_id} はまだ出来上がっていません（{t['status']}）")
-    if to == "upscale":
-        if t["tier"] != "draft":
-            raise core.Blocked("拡大できるのはドラフト（480p）だけです")
-        if not _human_approved(conn, take_id):
-            raise core.Blocked(f"ドラフト #{take_id} は監督の「良い／採用」がまだです")
-    elif to == "final":
-        if t["tier"] != "upscale":
-            raise core.Blocked("本番は拡大版から作ります（先に promote --to upscale）")
-        if not _human_approved(conn, t["source_take_id"] or t["parent_take_id"]):
-            raise core.Blocked("元のドラフトに監督の承認がありません")
-    else:
+    if to not in ("upscale", "final"):
         raise ValueError(to)
+    if t["tier"] == "draft":
+        draft_id = take_id
+    elif t["tier"] == "upscale" and to == "final":
+        draft_id = t["source_take_id"] or t["parent_take_id"]
+    else:
+        raise core.Blocked(f"テイク #{take_id}（{t['tier'] or '段階なし'}）からは {to} に進めません")
+    if not _human_approved(conn, draft_id):
+        raise core.Blocked(f"ドラフト #{draft_id} は監督の「良い／採用」がまだです")
+    params = json.loads(t["params_json"] or "{}")
+    if to == "final" and t.get("shot_id"):
+        from . import seedance
+        prompt = seedance.build_brief(conn, t["shot_id"], "final")["prompt"]
+    elif to == "final":
+        prompt = build(conn, t["cut_id"], "final")["prompt"]
+    else:
+        prompt = t["prompt"]
     return core.generate(
         conn, episode=t["code"], cut_id=t["cut_id"], kind=t["kind"], provider=provider or t["provider"],
-        model=t["model"], prompt=t["prompt"] if to == "upscale" else build(conn, t["cut_id"], "final")["prompt"],
-        refs=json.loads(t["refs_json"] or "[]"), params={"upscale": to == "upscale"}, tier=to,
-        source_take_id=take_id, parent_take_id=take_id, agent_note=note or f"#{take_id} から {to}")
+        model=t["model"], prompt=prompt, refs=json.loads(t["refs_json"] or "[]"),
+        params={"duration": params.get("duration", 5), "upscale": to == "upscale"}, tier=to,
+        source_take_id=take_id, parent_take_id=take_id, shot_id=t.get("shot_id"),
+        agent_note=note or f"#{take_id} から {to}")
+
+
+def promote_all(conn, code: str, provider: str | None = None) -> list[str]:
+    """監督が採用したドラフトのうち、まだ本番がないものを順に 1080p にする。"""
+    out = []
+    rows = db.rows(conn.execute("""
+        SELECT t.id, t.shot_id, t.cut_id FROM takes t JOIN episodes e ON e.id=t.episode_id
+        WHERE e.code=? AND t.tier='draft' AND t.status='done'
+          AND EXISTS (SELECT 1 FROM reviews r WHERE r.target_type='take' AND r.target_id=t.id
+                      AND r.created_by='human' AND r.verdict IN ('良い','採用'))
+          AND NOT EXISTS (SELECT 1 FROM takes f WHERE f.source_take_id=t.id AND f.tier='final'
+                          AND f.status NOT IN ('failed'))
+        ORDER BY t.id""", (code,)))
+    for r in rows:
+        try:
+            out.append(f"#{r['id']} → #{promote(conn, r['id'], 'final', provider)}")
+        except core.Blocked as e:
+            out.append(f"#{r['id']} 止めました：{e}")
+            break
+    return out
 
 
 # ---- セルフレビュー用のコンタクトシート ----

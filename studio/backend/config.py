@@ -21,18 +21,25 @@ RUNWAY_API_KEY = os.environ.get("RUNWAYML_API_SECRET", "")
 ELEVENLABS_API_KEY = os.environ.get("ELEVENLABS_API_KEY", "")
 BLENDER_EXE = os.environ.get("BLENDER_EXE", "blender")   # 例：C:/Program Files/Blender Foundation/Blender 4.2/blender.exe
 
-# 1回あたりの目安クレジット（仮の値。実際の単価・プランに合わせて直す）。予算の見積もりと警告に使う。
+# 予算は円。1話の基準は 5万円（テストの回は超えてよい：episode-set --test）。
+DEFAULT_BUDGET_YEN = 50000
+# 1回あたりの目安（円）。動画は「1秒あたり」。【仮の値】実際の単価に合わせて直す。
 COST_TABLE = {
-    ("hamster", "sheet"): 8, ("hamster", "image"): 4, ("hamster", "video"): 30, ("hamster", "audio"): 1,
-    ("runway", "image"): 5, ("runway", "video"): 25, ("runway", "audio"): 2,
-    ("elevenlabs", "audio"): 1, ("blender", "bg"): 0, ("manual", "*"): 0,
+    ("hamster", "sheet"): 40, ("hamster", "image"): 20, ("hamster", "video"): 20, ("hamster", "audio"): 5,
+    ("runway", "image"): 20, ("runway", "video"): 20, ("runway", "audio"): 10,
+    ("elevenlabs", "audio"): 5, ("blender", "bg"): 0, ("manual", "*"): 0,
 }
-# 動画の段階ごとの解像度と、費用の倍率（draft を 1 とした目安。実際の単価に合わせて直す）。
+PER_SECOND_KINDS = {"video"}
+# 動画の段階。cost は draft を 1 とした倍率（【仮の値】）。
 TIERS = {
-    "draft": {"resolution": "854x480", "cost": 1.0},     # 方向を決めるドラフト。監督の G3 はここで見る
-    "upscale": {"resolution": "1920x1080", "cost": 0.3},  # 承認したドラフトをそのまま拡大
-    "final": {"resolution": "1920x1080", "cost": 3.0},    # 拡大版を入力に 1080p で本番生成
+    "draft": {"resolution": "854x480", "cost": 1.0},      # 480p ドラフト。全部出し切って映像にしてから判断する
+    "upscale": {"resolution": "1920x1080", "cost": 0.3},  # （任意）単純な拡大
+    "final": {"resolution": "1920x1080", "cost": 3.0},    # 採用したドラフトを入力に 1080p で作り直す
 }
+# Seedance 2.5（HAMSTER 経由）の制限。1本の長さと、1回に渡す参照画像の数。
+SHOT_MAX_SECONDS = 30
+SHOT_TARGET_SECONDS = 15        # 自動の分け方の目安。1ビート 6〜8秒を2〜3つ
+REF_LIMIT = 10
 
 # 人のレビューをはさまずにエージェントが同じコマを作り直してよい回数。超えたら人の判断を待つ。
 MAX_AGENT_RETRIES = int(os.environ.get("TSUKI_MAX_RETRIES", "2"))

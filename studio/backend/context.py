@@ -49,15 +49,17 @@ def build(conn, episode_code: str | None = None) -> str:
     for f in CANON_FILES:
         mark = "" if (config.VAULT_DIR / f).exists() else "（見つからない）"
         out.append(f"- {config.VAULT_DIR.name}/{f}{mark}")
+    out.append("- studio/docs/Seedance2.5_プロンプトの書き方.md（ショットのプロンプトを書く前に）")
     if ep:
         out.append(f"- {config.VAULT_DIR.name}/02_各話/{ep['code']}/ と 03_脚本/いまの版/{ep['code']}_脚本_いまの版.md")
     out.append("")
 
     if ep:
         sc = core.scenes(conn, ep["code"])
-        budget = ep.get("budget_credits") or 0
+        budget = ep.get("budget_credits") or config.DEFAULT_BUDGET_YEN
         out += [f"## 話数の状態：{ep['code']}", f"- 目標尺 {ep['target_seconds']}秒 / 締切 {ep.get('deadline') or '未設定'}"
-                f" / 使用 {sc['spent']:.0f}" + (f" / 予算 {budget:.0f}（残り {budget - sc['spent']:.0f}）" if budget else " / 予算 未設定")]
+                f" / 使用 {sc['spent']:,.0f}円 / 予算 {budget:,.0f}円（残り {budget - sc['spent']:,.0f}円）"
+                + ("（テストの回：超えても止めない）" if ep.get("is_test") else "")]
         out += ["", "### 設計（シーン）"]
         for s_ in sc["scenes"]:
             out.append(f"- {s_['code']} [{s_['status']}] {s_['place']} {s_['time']} ルック{s_['look']} "

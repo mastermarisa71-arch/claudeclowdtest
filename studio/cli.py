@@ -25,7 +25,16 @@
   assets [character]
   prompt-build 12 [--tier draft] [--bg 店内:A] [--out p.txt]   字コンテ・設計・設定・参照素材からプロンプトを組む
   shoot 12 --provider hamster [--kind video]     組んだプロンプトで 480p ドラフトを作る
-  promote 31 --to upscale|final                  承認したドラフト → 拡大 → 1080p 本番
+  promote 31 [--to final]                       監督が採用したドラフトを入力に 1080p 本番
+  promote-all EP09                              採用済みでまだ本番がないドラフトを順に 1080p に
+  board-plan EP09 / board-prompt EP09 SB01 / board-shoot EP09 SB01 [--prompt-file] / board-split 31
+                                                9コマの仮Vコン（ドラフトの前の確認段）
+  shot-plan EP09 [--target 15] [--replace]       マルチショットの分け方のたたき台（1本30秒まで）
+  shot-set EP09 SH03 S1-04 S1-05 --note "落として拾うまで1本で"
+  shots EP09
+  shot-brief EP09 SH03 [--out p.txt]             Seedance 2.5 の骨組み（ASSETS/SUMMARY/TIMELINE/…）
+  shot-shoot EP09 SH03 --prompt-file p.txt       仕上げたプロンプトを点検して 480p ドラフトを作る
+  budget-plan EP09                               ショットの秒数から1話の費用を見積もる
 """
 import argparse
 import json
@@ -34,7 +43,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from studio.backend import context, core, db, shots  # noqa: E402
+from studio.backend import config, context, core, db, seedance, shots, storyboard  # noqa: E402
 from studio.backend.importers import bible, jikonte  # noqa: E402
 
 
@@ -69,6 +78,8 @@ def main(argv=None):
     p = sub.add_parser("export"); p.add_argument("episode")
     sub.add_parser("bible")
     p = sub.add_parser("episode-set"); p.add_argument("episode"); p.add_argument("--title")
+    p.add_argument("--test", action="store_true", help="テストの回（予算を超えても止めない）")
+    p.add_argument("--no-test", action="store_true")
     p.add_argument("--target", type=float); p.add_argument("--budget", type=float)
     p.add_argument("--deadline"); p.add_argument("--stage")
     p = sub.add_parser("scene-set"); p.add_argument("episode"); p.add_argument("scene")
@@ -96,9 +107,27 @@ def main(argv=None):
     p.add_argument("--kind", default="video"); p.add_argument("--model", default=""); p.add_argument("--bg")
     p.add_argument("--parent", type=int); p.add_argument("--fixes", default=""); p.add_argument("--note", default="")
     p.add_argument("--extra-prompt", default="", help="レビューを受けて足す指示（組んだプロンプトの末尾に足す）")
-    p = sub.add_parser("promote"); p.add_argument("take", type=int); p.add_argument("--to", required=True,
+    p = sub.add_parser("promote"); p.add_argument("take", type=int); p.add_argument("--to", default="final",
                                                                                    choices=["upscale", "final"])
     p.add_argument("--provider"); p.add_argument("--note", default="")
+    p = sub.add_parser("promote-all"); p.add_argument("episode"); p.add_argument("--provider")
+    p = sub.add_parser("board-plan"); p.add_argument("episode"); p.add_argument("--replace", action="store_true")
+    p = sub.add_parser("board-prompt"); p.add_argument("episode"); p.add_argument("board"); p.add_argument("--out")
+    p = sub.add_parser("board-shoot"); p.add_argument("episode"); p.add_argument("board")
+    p.add_argument("--provider", default="hamster"); p.add_argument("--prompt-file"); p.add_argument("--note", default="")
+    p = sub.add_parser("board-split"); p.add_argument("take", type=int)
+    p = sub.add_parser("shot-plan"); p.add_argument("episode"); p.add_argument("--target", type=float)
+    p.add_argument("--replace", action="store_true")
+    p = sub.add_parser("shot-set"); p.add_argument("episode"); p.add_argument("shot"); p.add_argument("cuts", nargs="+")
+    p.add_argument("--note", default="")
+    p = sub.add_parser("shots"); p.add_argument("episode")
+    p = sub.add_parser("shot-brief"); p.add_argument("episode"); p.add_argument("shot"); p.add_argument("--out")
+    p.add_argument("--tier", default="draft")
+    p = sub.add_parser("shot-shoot"); p.add_argument("episode"); p.add_argument("shot")
+    p.add_argument("--provider", default="hamster"); p.add_argument("--model", default="seedance-2.5")
+    p.add_argument("--prompt-file"); p.add_argument("--parent", type=int); p.add_argument("--fixes", default="")
+    p.add_argument("--note", default=""); p.add_argument("--force", action="store_true", help="点検の指摘を無視して送る")
+    p = sub.add_parser("budget-plan"); p.add_argument("episode")
 
     a = ap.parse_args(argv)
     db.init()
@@ -150,7 +179,8 @@ def main(argv=None):
         elif a.cmd == "episode-set":
             ep = db.get_or_create_episode(conn, a.episode)
             data = {k: v for k, v in {"title": a.title, "target_seconds": a.target, "budget_credits": a.budget,
-                                      "deadline": a.deadline, "stage": a.stage}.items() if v is not None}
+                                      "deadline": a.deadline, "stage": a.stage,
+                                      "is_test": 1 if a.test else 0 if a.no_test else None}.items() if v is not None}
             db.update(conn, "episodes", ep["id"], data)
             db.log(conn, "agent", "update_episode", {"episode": a.episode, **data})
             print(json.dumps(db.episode_by_code(conn, a.episode), ensure_ascii=False))
@@ -172,10 +202,11 @@ def main(argv=None):
                 print(f"#{t['id']} {t['cut']}{t['panel']} {t['kind']} {t['file_path']} | AI：{t['ai_comment']}")
         elif a.cmd == "usage":
             ep = db.episode_by_code(conn, a.episode)
-            print(f"使用 {core.spent(conn, ep['id']):.0f} / 予算 {ep['budget_credits'] or '未設定'}")
+            print(f"使用 {core.spent(conn, ep['id']):,.0f}円 / 予算 {(ep['budget_credits'] or config.DEFAULT_BUDGET_YEN):,.0f}円"
+                  + ("（テストの回）" if ep["is_test"] else ""))
             for r in db.rows(conn.execute("SELECT provider, kind, COUNT(*) n, SUM(credits) c FROM usage "
                                           "WHERE episode_id=? GROUP BY provider, kind", (ep["id"],))):
-                print(f"  {r['provider']}/{r['kind']} {r['n']}回 {r['c']:.0f}")
+                print(f"  {r['provider']}/{r['kind']} {r['n']}回 {r['c']:,.0f}円")
         elif a.cmd == "cut-edit":
             core.update_cut(conn, a.cut, "agent", **{k: v for k, v in {"seconds": a.seconds, "dialogue": a.dialogue,
                                                                          "edit_memo": a.edit_memo}.items() if v is not None})
@@ -215,6 +246,85 @@ def main(argv=None):
                              ensure_ascii=False))
             if b["missing"]:
                 print("足りない参照：" + "、".join(b["missing"]))
+        elif a.cmd == "promote-all":
+            print("\n".join(shots.promote_all(conn, a.episode, a.provider)) or "対象なし")
+        elif a.cmd == "board-plan":
+            for b in storyboard.plan_boards(conn, a.episode, a.replace):
+                print(f"{b['code']} {b['panels']}コマ {b['range']}")
+        elif a.cmd == "board-prompt":
+            b = storyboard.board_prompt(conn, a.episode, a.board)
+            if a.out:
+                Path(a.out).write_text(b["prompt"], encoding="utf-8")
+            print(b["prompt"] if not a.out else a.out)
+            print("--- 参照：" + "／".join(b["ref_labels"]) + ("\n--- 足りない参照：" + "、".join(b["missing"]) if b["missing"] else ""))
+        elif a.cmd == "board-shoot":
+            b = storyboard.board_prompt(conn, a.episode, a.board)
+            prompt = Path(a.prompt_file).read_text(encoding="utf-8") if a.prompt_file else b["prompt"]
+            try:
+                tid = core.generate(conn, episode=a.episode, cut_id=b["cut_ids"][0], kind="sheet", provider=a.provider,
+                                    prompt=prompt, refs=b["refs"], board_id=b["board_id"], tier="",
+                                    agent_note=a.note or f"仮Vコン {a.board}")
+            except core.Blocked as e:
+                print(f"止めました：{e}")
+                return 2
+            print(json.dumps(db.one(conn.execute("SELECT id,status,error FROM takes WHERE id=?", (tid,))), ensure_ascii=False))
+        elif a.cmd == "board-split":
+            print(storyboard.split_sheet(conn, a.take))
+        elif a.cmd == "shot-plan":
+            for sh in seedance.plan_shots(conn, a.episode, a.target, a.replace):
+                print(f"{sh['code']} {sh['seconds']}秒 {sh['cuts']}" + ("  ※30秒超" if sh["over"] else ""))
+        elif a.cmd == "shot-set":
+            print(json.dumps(seedance.set_shot(conn, a.episode, a.shot, a.cuts, a.note), ensure_ascii=False))
+        elif a.cmd == "shots":
+            for sh in seedance.list_shots(conn, a.episode):
+                tk = " ".join(f"#{t['id']}{t['tier'][:1]}{'*' if t['selected'] else ''}" for t in sh["takes"])
+                print(f"{sh['code']} [{sh['status']}] {sh['seconds']}秒 {sh['range']} {len(sh['cuts'])}コマ | {sh['note']} | {tk}")
+        elif a.cmd in ("shot-brief", "shot-shoot"):
+            ep = db.episode_by_code(conn, a.episode)
+            sh = db.one(conn.execute("SELECT * FROM shots WHERE episode_id=? AND code=?", (ep["id"], a.shot)))
+            b = seedance.build_brief(conn, sh["id"], getattr(a, "tier", "draft"))
+            if a.cmd == "shot-brief":
+                if a.out:
+                    Path(a.out).write_text(b["prompt"], encoding="utf-8")
+                print(b["prompt"] if not a.out else a.out)
+                print(f"\n--- {b['duration']}秒 / 参照 {len(b['refs'])}枚：" + "、".join(b["ref_labels"]))
+                for k, v in (("足りない参照", b["missing"]), ("上限で外した参照", b["dropped"])):
+                    if v:
+                        print(f"--- {k}：" + "、".join(v))
+                return 0
+            prompt = Path(a.prompt_file).read_text(encoding="utf-8") if a.prompt_file else b["prompt"]
+            issues = seedance.lint(prompt, len(b["refs"]))
+            if issues and not a.force:
+                print("点検で止めました：\n- " + "\n- ".join(issues))
+                return 2
+            try:
+                tid = core.generate(conn, episode=a.episode, cut_id=json.loads(sh["cut_ids_json"])[0], kind="video",
+                                    provider=a.provider, model=a.model, prompt=prompt, refs=b["refs"],
+                                    params={"duration": b["duration"]}, tier="draft", shot_id=sh["id"],
+                                    parent_take_id=a.parent, fixes_review_ids=_ids(a.fixes), agent_note=a.note)
+            except core.Blocked as e:
+                print(f"止めました：{e}")
+                return 2
+            print(json.dumps(db.one(conn.execute("SELECT id,status,tier,error FROM takes WHERE id=?", (tid,))),
+                             ensure_ascii=False))
+        elif a.cmd == "budget-plan":
+            ep = db.episode_by_code(conn, a.episode)
+            shs = seedance.list_shots(conn, a.episode)
+            secs = sum(min(config.SHOT_MAX_SECONDS, max(4, round(s["seconds"]))) for s in shs)
+            nb = conn.execute("SELECT COUNT(*) FROM boards WHERE episode_id=?", (ep["id"],)).fetchone()[0]
+            rows = [("仮Vコン（9コマシート）", nb * 1.3, core.estimate("hamster", "sheet")),
+                    ("480p ドラフト（秒）", secs * 1.5, core.estimate("hamster", "video", tier="draft")),
+                    ("1080p 本番（秒）", secs * 1.1, core.estimate("hamster", "video", tier="final")),
+                    ("仮の声・効果音・劇伴（回）", 100, core.estimate("runway", "audio"))]
+            total = 0
+            print(f"{a.episode}：ショット {len(shs)}本 / 合計 {secs}秒（作り直し率：シート1.3・ドラフト1.5・本番1.1）")
+            for name, n, unit in rows:
+                total += n * unit
+                print(f"  {name:<22} {n:7.0f} × {unit:6.1f}円 = {n * unit:9,.0f}円")
+            budget = ep["budget_credits"] or config.DEFAULT_BUDGET_YEN
+            print(f"  合計の見込み {total:,.0f}円 / 予算 {budget:,.0f}円" + ("（テストの回）" if ep["is_test"] else "")
+                  + ("  ※超えます" if total > budget else ""))
+            print("  単価は config.COST_TABLE / TIERS の仮の値。実際の単価に直すと正確になる")
         elif a.cmd == "promote":
             try:
                 tid = shots.promote(conn, a.take, a.to, a.provider, a.note)

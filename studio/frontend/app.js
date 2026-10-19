@@ -23,7 +23,7 @@ const media = (t, cls = "") => {
 };
 const thumb = (t) => `<a class="thumb ${t.selected ? "sel" : ""}" href="#/cut/${t.cut_id}?take=${t.id}" title="#${t.id} ${h(t.provider)} ${h(t.status)}">
   ${t.file_path ? media(t) : h(t.status)}<span class="n">#${t.id}${t.open_reviews ? " ●" : ""}</span>${tierBadge(t)}</a>`;
-const TIER = { draft: "480p", upscale: "拡大", final: "1080p" };
+const TIER = { draft: "480p", upscale: "拡大", final: "1080p", board: "仮Vコン" };
 const tierBadge = (t) => (t.tier ? `<span class="tier ${t.tier}">${TIER[t.tier] || h(t.tier)}</span>` : "");
 
 // ---------- 話数一覧 ----------
@@ -237,7 +237,7 @@ async function viewBrief(params) {
 }
 
 // ---------- 話数のタブ ----------
-const epTabs = (code, now) => `<div class="row tabs">${[["design", "設計"], ["cuts", "コマ"], ["awaiting", "AIが通したもの"], ["edit", "編集（ライブ）"]]
+const epTabs = (code, now) => `<div class="row tabs">${[["design", "設計"], ["cuts", "コマ"], ["shots", "ショット"], ["awaiting", "AIが通したもの"], ["edit", "編集（ライブ）"]]
   .map(([k, l]) => `<a class="btn ${k === now ? "on" : ""}" href="#/ep/${code}${k === "cuts" ? "" : "/" + k}">${l}</a>`).join("")}
   <a class="btn" href="#/brief?ep=${code}">ブリーフ</a></div>`;
 
@@ -247,14 +247,14 @@ async function viewDesign(code) {
   const planned = scenes.reduce((s, x) => s + (x.target_seconds || 0), 0);
   const actual = scenes.reduce((s, x) => s + (x.actual_seconds || 0), 0);
   const max = Math.max(ep.target_seconds, planned, actual, 1);
-  const pct = ep.budget_credits ? Math.min(100, (100 * spent) / ep.budget_credits) : 0;
+  const pct = Math.min(100, (100 * spent) / (ep.budget_credits || 50000));
   $view.innerHTML = `${epTabs(code, "design")}<h1>${h(code)} 設計</h1>
     <div class="card row" style="gap:20px">
       <label>目標尺（秒）<input type="text" id="tgt" value="${ep.target_seconds}" style="width:80px"></label>
       <label>締切<input type="text" id="dl" value="${h(ep.deadline || "")}" placeholder="2026-10-22" style="width:120px"></label>
-      <label>予算（クレジット）<input type="text" id="bud" value="${ep.budget_credits || ""}" style="width:90px"></label>
+      <label>予算（円）<input type="text" id="bud" value="${ep.budget_credits || ""}" style="width:90px"></label>
       <button id="saveEp">保存</button>
-      <div style="flex:1;min-width:220px"><div class="small muted">使用 ${spent.toFixed(0)} / ${ep.budget_credits || "未設定"}　${use.by_kind.map((k) => `${h(k.provider)}/${h(k.kind)} ${k.n}回`).join("・")}</div>
+      <div style="flex:1;min-width:220px"><div class="small muted">使用 ${Math.round(spent).toLocaleString()}円 / ${(ep.budget_credits || 50000).toLocaleString()}円${ep.is_test ? "（テスト）" : ""}　${use.by_kind.map((k) => `${h(k.provider)}/${h(k.kind)} ${k.n}回`).join("・")}</div>
         <div class="meter"><i style="width:${pct}%;background:${pct > 85 ? "var(--red)" : "var(--amber)"}"></i></div></div>
     </div>
     <h2>尺の配分　<span class="small">上＝設計の目標 ${planned.toFixed(1)}秒 / 下＝今の字コンテ ${actual.toFixed(1)}秒 / 線＝話数の目標 ${ep.target_seconds}秒</span></h2>
@@ -284,6 +284,23 @@ async function viewDesign(code) {
   document.querySelectorAll("[data-fix]").forEach((b) => (b.onclick = () => sceneReview(b.dataset.fix, false)));
 }
 
+// ---------- ショット：1本の動画（最大30秒）に何を入れるか ----------
+async function viewShots(code) {
+  const list = await api(`/api/episodes/${code}/shots`);
+  const total = list.reduce((s, x) => s + x.seconds, 0);
+  $view.innerHTML = `${epTabs(code, "shots")}<h1>ショット <span class="muted small">${list.length}本 / ${total.toFixed(1)}秒。字コンテと仮Vコンを並べて、1本で出すかたまりを決める（1本30秒まで）</span></h1>
+    ${list.map((x) => `<div class="card" style="margin-bottom:10px">
+      <div class="row"><b>${h(x.code)}</b><span class="badge ${x.status === "approved" ? "sel" : ""}">${h(x.status)}</span>
+        <span class="muted small">${h(x.range)}　${x.seconds}秒　${x.cuts.length}コマ</span>
+        ${x.seconds > 30 ? `<span class="badge open">30秒超</span>` : ""}<span style="flex:1"></span>
+        ${x.takes.map((t) => `<a class="badge ${t.selected ? "sel" : ""}" href="#/cut/${x.cuts[0]?.id}?take=${t.id}&ep=${code}">#${t.id} ${TIER[t.tier] || t.tier || ""}</a>`).join("")}
+        <button data-ok="${h(x.code)}">${x.status === "approved" ? "承認済み" : "この分け方でいく"}</button></div>
+      <div class="small">${h(x.note)}</div>
+      <div class="thumbs" style="margin-top:6px">${x.cuts.map((c) => `<a class="thumb" href="#/cut/${c.id}?ep=${code}" title="${h(c.picture)}">${c.thumb ? `<img src="/media/${encodeURI(c.thumb)}">` : ""}<span class="n">${h(c.cut)}${h(c.panel)} ${c.seconds}s</span></a>`).join("")}</div>
+    </div>`).join("") || `<p class="muted">まだショットがありません。エージェントが <code>shot-plan</code> で分けます。</p>`}`;
+  document.querySelectorAll("[data-ok]").forEach((b) => (b.onclick = () => api(`/api/episodes/${code}/shots/${b.dataset.ok}`, { method: "PATCH", body: { status: "approved" } }).then(route)));
+}
+
 // ---------- AI が通したもの：監督が上から流し見する ----------
 async function viewAwaiting(code) {
   const list = await api(`/api/episodes/${code}/awaiting`);
@@ -301,8 +318,9 @@ async function viewAwaiting(code) {
 
 // ---------- 編集（ライブ）：採用テイクを通しで再生し、エージェントの操作を見ながら手直しする ----------
 async function viewEdit(code, params) {
-  const { cuts } = await api(`/api/episodes/${code}/cuts`);
-  const pick = (c) => c.takes.find((t) => t.selected) || [...c.takes].reverse().find((t) => t.file_path);
+  const plist = await api(`/api/episodes/${code}/playlist`);
+  const cuts = plist.map((p) => ({ ...p.cut, _play: p }));
+  const pick = (c) => c._play.take;
   const total = cuts.reduce((s, c) => s + (c.seconds || 0), 0) || 1;
   let i = Math.max(0, cuts.findIndex((c) => c.id == params.get("cut"))), playing = false, timer = null;
   const fmt = (sec) => `${Math.floor(sec / 60)}:${(sec % 60).toFixed(1).padStart(4, "0")}`;
@@ -313,7 +331,7 @@ async function viewEdit(code, params) {
         <div class="row" style="margin:8px 0"><button id="prev">◀</button><button class="primary" id="play">再生</button><button id="next">▶</button>
           <span id="tc" class="muted"></span><span style="flex:1"></span>
           <button id="export">Premiere 用 XML</button></div>
-        <div class="strip tl" id="tl">${cuts.map((c, k) => `<a data-k="${k}" class="${pick(c) ? (c.takes.some((t) => t.selected) ? "sel" : "has") : ""}" style="width:${(100 * (c.seconds || 0.5)) / total}%"></a>`).join("")}</div>
+        <div class="strip tl" id="tl">${cuts.map((c, k) => `<a data-k="${k}" class="${pick(c) ? (pick(c).selected ? "sel" : "has") : ""}" style="width:${(100 * (c.seconds || 0.5)) / total}%"></a>`).join("")}</div>
         <div class="card" id="cutpanel"></div></div>
       <div class="card live"><h2 style="margin-top:0">エージェントの操作</h2><div id="feed" class="small"></div></div>
     </div>`;
@@ -323,6 +341,13 @@ async function viewEdit(code, params) {
     document.getElementById("sub").textContent = c.dialogue || "";
     document.getElementById("tc").textContent = `${c.cut}${c.panel}　${fmt(startOf(i))} / ${fmt(total)}`;
     document.querySelectorAll("#tl a").forEach((a) => a.classList.toggle("now", +a.dataset.k === i));
+    const vid = document.querySelector("#mon video");
+    if (vid) {   // ショットの動画は、このコマの位置から映す
+      vid.muted = false;
+      const seek = () => { vid.currentTime = c._play.offset || 0; if (playing) vid.play().catch(() => {}); };
+      vid.readyState >= 1 ? seek() : vid.addEventListener("loadedmetadata", seek, { once: true });
+    }
+    document.getElementById("tc").textContent += c._play.shot ? `　${c._play.shot}${t ? `（${TIER[t.tier] || t.tier || ""}）` : ""}` : "";
     document.getElementById("cutpanel").innerHTML = `<div class="row"><b>${h(c.cut)}${h(c.panel)}</b><span class="small muted">${h(c.camerawork)}</span>
         <span style="flex:1"></span><a href="#/cut/${c.id}?ep=${code}">このコマを開く</a></div>
       <div class="row small"><label>尺（秒）<input type="text" id="sec" value="${c.seconds ?? ""}" style="width:70px"></label>
@@ -376,6 +401,7 @@ async function route() {
   try {
     if (parts[0] === "ep" && parts[2] === "design") await viewDesign(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "awaiting") await viewAwaiting(parts[1]);
+    else if (parts[0] === "ep" && parts[2] === "shots") await viewShots(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "edit") await viewEdit(parts[1], params);
     else if (parts[0] === "ep") await viewEpisode(parts[1]);
     else if (parts[0] === "cut") await viewCut(parts[1], params);

@@ -146,6 +146,30 @@ CREATE TABLE IF NOT EXISTS assets (
   created_at TEXT
 );
 
+-- 生成の単位（マルチショット）。字コンテのコマを並べて、1本の動画（Seedance は最大30秒）に何を入れるかを決める。
+-- 物を落として拾うなど、カットが変わっても1本で出した方がつながるものは同じショットに入れる。
+CREATE TABLE IF NOT EXISTS shots (
+  id INTEGER PRIMARY KEY,
+  episode_id INTEGER REFERENCES episodes(id),
+  code TEXT,                           -- SH01
+  seq INTEGER,
+  cut_ids_json TEXT NOT NULL,          -- cuts.id の並び（上映順）
+  seconds REAL DEFAULT 0,
+  note TEXT DEFAULT '',                -- なぜこの分け方か
+  status TEXT DEFAULT 'draft',         -- draft/approved
+  UNIQUE(episode_id, code)
+);
+
+-- 9コマの仮Vコン。ドラフトの前に、エージェントが想像しているカットを監督と確かめる。
+CREATE TABLE IF NOT EXISTS boards (
+  id INTEGER PRIMARY KEY,
+  episode_id INTEGER REFERENCES episodes(id),
+  code TEXT,                           -- SB01
+  seq INTEGER,
+  cut_ids_json TEXT NOT NULL,          -- 9コマ分（足りない分は空き）
+  UNIQUE(episode_id, code)
+);
+
 -- 使用量。生成1回ごとに、サービス・単位・クレジットを記録して、話数ごとの予算と比べる。
 CREATE TABLE IF NOT EXISTS usage (
   id INTEGER PRIMARY KEY,
@@ -163,10 +187,11 @@ CREATE TABLE IF NOT EXISTS events (
 
 # 既存の DB に後から足した列。init() で無ければ足す。
 MIGRATIONS = {
-    "episodes": {"budget_credits": "REAL DEFAULT 0", "deadline": "TEXT DEFAULT ''"},
+    "episodes": {"budget_credits": "REAL DEFAULT 0", "deadline": "TEXT DEFAULT ''",
+                 "is_test": "INTEGER DEFAULT 0"},   # テストの回：予算を超えても止めずに警告だけ
     "reviews": {"checks_json": "TEXT DEFAULT ''"},   # AI セルフレビューの観点ごとの合否
     # draft（480p）→ upscale（ドラフトをそのまま拡大）→ final（拡大版を入力に 1080p で生成）
-    "takes": {"tier": "TEXT DEFAULT ''", "source_take_id": "INTEGER"},
+    "takes": {"tier": "TEXT DEFAULT ''", "source_take_id": "INTEGER", "shot_id": "INTEGER", "board_id": "INTEGER"},
 }
 
 

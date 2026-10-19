@@ -284,3 +284,30 @@ async def stream():
             await asyncio.sleep(1)
 
     return StreamingResponse(gen(), media_type="text/event-stream")
+
+
+# ---- 仮Vコン・ショット ----
+
+@app.get("/api/episodes/{code}/playlist")
+def playlist(code: str):
+    with db.session() as conn:
+        items = core.playlist(conn, code)
+    for it in items:
+        it["cut"].pop("takes", None)
+    return items
+
+
+@app.get("/api/episodes/{code}/shots")
+def shots_list(code: str):
+    from . import seedance
+    with db.session() as conn:
+        return seedance.list_shots(conn, code)
+
+
+@app.patch("/api/episodes/{code}/shots/{scode}")
+def shot_status(code: str, scode: str, s_: StatusIn):
+    with db.session() as conn:
+        ep = db.episode_by_code(conn, code)
+        conn.execute("UPDATE shots SET status=? WHERE episode_id=? AND code=?", (s_.status, ep["id"], scode))
+        db.log(conn, "human", "shot_status", {"episode": code, "shot": scode, "status": s_.status})
+    return {"ok": True}

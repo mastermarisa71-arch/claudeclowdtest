@@ -10,9 +10,10 @@ description: 月灯りスピークイージーの制作を進める手順。脚�
 
 ## 0. 安い順に確かめる
 
-文章（設計・字コンテ）→ Blender の背景 → 480p ドラフト → ドラフトの直し → 拡大 → 1080p 本番 → 声・音。
-開始フレームは使わない。参照画像（キャラの設定資料＋Blender の背景）とプロンプトで立ち位置と芝居を出す。
-拡大と本番は、監督が「良い／採用」をつけたドラフトにだけ回す（`promote` が承認のないものを止める）。予算（`usage`）を超えそう、または作り直しの上限で止まったら、迷っている点を書いて監督に回す。
+文章（設計・字コンテ）→ Blender の背景 → 9コマ仮Vコン → ショット分け → 480p ドラフトを全部 → 通しで採用／不採用 → 1080p 本番 → 声・音。
+開始フレームは使わない。参照画像（キャラの設定資料1人1枚＋Blender の背景＋配置図＋小物、最大10枚）とプロンプトで立ち位置と芝居を出す。
+1080p 本番は、監督が「良い／採用」をつけたドラフトにだけ回す（`promote` / `promote-all` が止める）。
+予算は1話5万円（テストの回は `episode-set --test` で超えてよい）。ショット分けの直後に `budget-plan` で見積もる。予算（`usage`）を超えそう、または作り直しの上限で止まったら、迷っている点を書いて監督に回す。
 
 ## 1. 読む
 
@@ -50,37 +51,56 @@ python studio/cli.py bg-render EP09 --blend <舞台.blend> --camera CAM_A --cut 
 
 ## 3. 自分で見る（セルフレビュー）
 
-生成したら、監督に見せる前に必ず見る。そのコマに出るキャラの `月灯_vault/06_設定/キャラ/<名前>.md`（性格・テンション・芝居の辞書）と照らす。
+生成したら、監督に見せる前に必ず見る。仮Vコンは「字コンテの意図・配置・芝居が絵になっているか」、ドラフトは加えて「プロンプトに書いた動きと秒数どおりか」を見る。そのコマに出るキャラの `月灯_vault/06_設定/キャラ/<名前>.md`（性格・テンション・芝居の辞書）と照らす。
 ドラフトは `python studio/cli.py contact <テイク>` で抜き出したフレームの画像を見る（動画を丸ごと読まない）。ドラフトはカットごとに見る。数カットまとめて見てもよいが、結果はカット（テイク）ごとに残す。
 
 ```
 python studio/cli.py self-review 31 --checks '{"意図":true,"配置・左右":true,"芝居":"まひるがシェイカーを振っている（振るのは朔奈だけ）","キャラ崩れ":true,"光・色":true,"つなぎ":true}' --comment "芝居だけ不合格。朔奈に持たせて作り直す"
 ```
 
-不合格は自分で直す。人のレビューなしの作り直しは1コマ2回まで（超えると generate が止まる）。
+不合格は自分で直す。人のレビューなしの作り直しは1コマ（1ショット）2回まで（超えると止まる）。
+「書いたのに出なかった」「書かずに出た」は、Seedance の書き方の学びとしてコメントに残す。
 監督の指摘と自分の見立てがずれた観点は、キャラのノートの「## 追記」に書き足す（監督の承認後）。
 
 ## 4. 生成して登録する
 
-カットの生成は `prompt-build` で組み、`shoot` でドラフトを作る。レビューを受けた直しは `--extra-prompt` で足し、`--parent` と `--fixes` で元と直す指摘を示す。
+### 9コマ仮Vコン（ドラフトの前の確認段、G2）
+エージェントが想像しているカットを監督と確かめる。プロンプトは既存の 9コマの形（日本語）で仕上げる。
 
 ```
-python studio/cli.py prompt-build 12            # プロンプトと参照画像の並び、足りない参照を確認
-python studio/cli.py shoot 12 --provider hamster --note "初回"
-python studio/cli.py shoot 12 --provider hamster --parent 31 --fixes 5 --extra-prompt "あかねは画面中央、まひるは奥でピントの外" --note "配置の直し"
-python studio/cli.py promote 31 --to upscale     # 監督が通したドラフトだけ
-python studio/cli.py promote 40 --to final       # 拡大版を入力に 1080p
+python studio/cli.py board-plan EP09                       # 9コマずつのシート分け（同じカットは同じシート）
+python studio/cli.py board-prompt EP09 SB01 --out sb01.txt # 骨組み → 仕上げる
+python studio/cli.py board-shoot EP09 SB01 --provider hamster --prompt-file sb01.txt
+python studio/cli.py board-split 45                        # シートを9コマに切ってコマのテイクにする → 編集画面で通しで見られる
+```
+
+### ショット分け
+`shot-plan` はたたき台（同じシーンで目安15秒まで詰めるだけ）。字コンテと仮Vコンを並べて見て、カットが変わっても1本で出した方がつながるもの（物を落として拾う、視線のやりとり）をまとめ直す。1本30秒まで。
+
+```
+python studio/cli.py shot-plan EP09
+python studio/cli.py shot-set EP09 SH03 S1-06 S1-07 --note "グラスを落として拾うまでを1本で"
+python studio/cli.py budget-plan EP09
+```
+
+### 480p ドラフト（Seedance 2.5）
+`shot-brief` の骨組みを、`studio/docs/Seedance2.5_プロンプトの書き方.md` に沿って仕上げる。Seedance は書いたとおりに動くので、各区切りの動作を秒で、キャラごとに参照番号つきで細かく書く。`shot-shoot` は送る前に点検し、指摘があれば止まる。
+
+```
+python studio/cli.py shot-brief EP09 SH03 --out sh03.txt   # 骨組み → 仕上げる
+python studio/cli.py shot-shoot EP09 SH03 --prompt-file sh03.txt --note "初回"
+python studio/cli.py shot-shoot EP09 SH03 --prompt-file sh03_v2.txt --parent 31 --fixes 5 --note "配置の直し"
+```
+
+ドラフトは全部出し切って、編集画面の通しで監督が採用／不採用を決める。採用されたものから 1080p へ：
+
+```
+python studio/cli.py promote-all EP09        # 採用済みでまだ本番がないドラフトを順に
+python studio/cli.py promote 31              # 1本だけ
 ```
 
 参照素材（`asset-add` / `bg-render --asset-name 店内:A`）が足りないときは、勝手に代用せず監督に伝える。
-カット以外（音声、手作業の結果）は `generate` / `take-add` / `attach`：
-
-```
-python studio/cli.py generate EP09 --cut 12 --kind sheet --provider hamster --prompt-file sheet01.txt --refs bg.png,layout.png,akane.png --fixes 5 --note "配置を字コンテどおり中央に"
-python studio/cli.py take-add EP09 --cut 12 --kind image --file cut12_v2.png --parent 31 --fixes 5 --note "…"
-```
-
-プロバイダーが未接続・API エラーのときも、テイクは failed として残る。エラーは隠さず人に伝える。
+音声や手作業の結果は `generate` / `take-add` / `attach`。プロバイダーが未接続・API エラーのときも、テイクは failed として残る。エラーは隠さず人に伝える。
 
 ## 5. 返答する
 
