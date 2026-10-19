@@ -97,3 +97,5 @@ pre.brief { white-space: pre-wrap; background: var(--panel); padding: 16px; bord
 label { color: var(--muted); font-size: 12px; } label input { margin-top: 2px; }
 .btn.on { background: var(--amber-dim); border-color: var(--amber); }
 .ev span { word-break: break-all; }
+.thumb .tier { position: absolute; right: 2px; bottom: 2px; font-size: 9px; padding: 0 4px; border-radius: 3px; background: #0009; color: #fff; }
+.thumb .tier.final { background: var(--green); color: #000; } .thumb .tier.upscale { background: var(--blue); color: #000; }

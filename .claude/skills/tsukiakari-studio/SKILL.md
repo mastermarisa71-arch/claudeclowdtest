@@ -1,6 +1,6 @@
 ---
 name: tsukiakari-studio
-description: 月灯りスピークイージーの制作を進める手順。脚本→設計→字コンテ→9コマプロンプト→生成→編集のどの工程でも、ブリーフを読み、作り、月灯スタジオにテイクとして登録し、人のレビューに返答する。「EP09を進めて」「レビューに対応して」「このカットを作り直して」などで使う。
+description: 月灯りスピークイージーの制作を進める手順。脚本→設計→字コンテ→プロンプト→生成（480p ドラフト→1080p 本番）→編集のどの工程でも、ブリーフを読み、作り、月灯スタジオにテイクとして登録し、人のレビューに返答する。「EP09を進めて」「レビューに対応して」「このカットを作り直して」などで使う。
 ---
 
 # 月灯スタジオでの制作ループ
@@ -10,8 +10,9 @@ description: 月灯りスピークイージーの制作を進める手順。脚�
 
 ## 0. 安い順に確かめる
 
-文章（設計・字コンテ）→ Blender の背景 → 9コマシート → 単コマの直し → 動画 → 声・音。
-動画は G3（画の確認）で採用されたカットにだけ回す。予算（`usage`）を超えそう、または作り直しの上限で止まったら、迷っている点を書いて監督に回す。
+文章（設計・字コンテ）→ Blender の背景 → 480p ドラフト → ドラフトの直し → 拡大 → 1080p 本番 → 声・音。
+開始フレームは使わない。参照画像（キャラの設定資料＋Blender の背景）とプロンプトで立ち位置と芝居を出す。
+拡大と本番は、監督が「良い／採用」をつけたドラフトにだけ回す（`promote` が承認のないものを止める）。予算（`usage`）を超えそう、または作り直しの上限で止まったら、迷っている点を書いて監督に回す。
 
 ## 1. 読む
 
@@ -40,17 +41,17 @@ python studio/cli.py bg-render EP09 --blend <舞台.blend> --camera CAM_A --cut 
 | 脚本の直し | 脚本いまの版・正本・レビュー | 直した脚本と変更点 | Claude Docs で作業 → vault 03_脚本/いまの版 |
 | 設計案 | 脚本 | 芯・構成と尺・シーンのトーン・提案（複数案） | vault 02_各話/EPxx |
 | 字コンテ | 設計案 | xlsx（既存の列構成）→ `import-jikonte` | vault 02_各話/EPxx/字コンテ_vN |
-| 9コマプロンプト | 字コンテ | シートごとのプロンプトと添付順 | vault と take（kind=text/sheet） |
+| プロンプト | 字コンテ・設計・設定・参照素材 | カットごとのプロンプトと参照画像の並び（`prompt-build`） | take の prompt・refs |
 | 生成 | プロンプト・参照画像 | シート→コマ画像、動画、音声 | `generate` / `take-add` |
 | 編集 | 採用テイク | Premiere 用 XML・ffconcat | `export` |
 
-- 9コマのルール、参照画像の添付順、画面の方向（店＝右、外＝左）、キャラの芝居の辞書は vault の制作ルールに従う。
+- 参照画像の添付順、画面の方向（店＝右、外＝左）、キャラの芝居の辞書は vault の制作ルールに従う。
 - 前の版を直すときは `--parent` で元テイクを指し、`--note` に「何を変えたか」を一行で書く。人が並べて比べるときの手がかりになる。
 
 ## 3. 自分で見る（セルフレビュー）
 
 生成したら、監督に見せる前に必ず見る。そのコマに出るキャラの `月灯_vault/06_設定/キャラ/<名前>.md`（性格・テンション・芝居の辞書）と照らす。
-シートは9コマまとめて1回見て、コマごとに結果を残す。
+ドラフトは `python studio/cli.py contact <テイク>` で抜き出したフレームの画像を見る（動画を丸ごと読まない）。ドラフトはカットごとに見る。数カットまとめて見てもよいが、結果はカット（テイク）ごとに残す。
 
 ```
 python studio/cli.py self-review 31 --checks '{"意図":true,"配置・左右":true,"芝居":"まひるがシェイカーを振っている（振るのは朔奈だけ）","キャラ崩れ":true,"光・色":true,"つなぎ":true}' --comment "芝居だけ不合格。朔奈に持たせて作り直す"
@@ -59,7 +60,20 @@ python studio/cli.py self-review 31 --checks '{"意図":true,"配置・左右":t
 不合格は自分で直す。人のレビューなしの作り直しは1コマ2回まで（超えると generate が止まる）。
 監督の指摘と自分の見立てがずれた観点は、キャラのノートの「## 追記」に書き足す（監督の承認後）。
 
-## 4. 登録する
+## 4. 生成して登録する
+
+カットの生成は `prompt-build` で組み、`shoot` でドラフトを作る。レビューを受けた直しは `--extra-prompt` で足し、`--parent` と `--fixes` で元と直す指摘を示す。
+
+```
+python studio/cli.py prompt-build 12            # プロンプトと参照画像の並び、足りない参照を確認
+python studio/cli.py shoot 12 --provider hamster --note "初回"
+python studio/cli.py shoot 12 --provider hamster --parent 31 --fixes 5 --extra-prompt "あかねは画面中央、まひるは奥でピントの外" --note "配置の直し"
+python studio/cli.py promote 31 --to upscale     # 監督が通したドラフトだけ
+python studio/cli.py promote 40 --to final       # 拡大版を入力に 1080p
+```
+
+参照素材（`asset-add` / `bg-render --asset-name 店内:A`）が足りないときは、勝手に代用せず監督に伝える。
+カット以外（音声、手作業の結果）は `generate` / `take-add` / `attach`：
 
 ```
 python studio/cli.py generate EP09 --cut 12 --kind sheet --provider hamster --prompt-file sheet01.txt --refs bg.png,layout.png,akane.png --fixes 5 --note "配置を字コンテどおり中央に"

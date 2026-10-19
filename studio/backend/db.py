@@ -133,6 +133,19 @@ CREATE TABLE IF NOT EXISTS scenes (
   UNIQUE(episode_id, code)
 );
 
+-- 参照素材の棚：キャラの設定資料（三面図など）、Blender の背景、配置図、小物。
+-- 生成は開始フレームを使わず、ここから選んだ参照画像とプロンプトで行う。
+CREATE TABLE IF NOT EXISTS assets (
+  id INTEGER PRIMARY KEY,
+  kind TEXT NOT NULL,                  -- character/bg/layout/prop
+  name TEXT NOT NULL,                  -- あかね / 店内:A / 店内配置図
+  file_path TEXT NOT NULL,             -- MEDIA_DIR からの相対パス
+  meta_json TEXT DEFAULT '{}',         -- bg はカメラの位置・向き・映っている物（render_shot.py の JSON）
+  note TEXT DEFAULT '',
+  active INTEGER DEFAULT 1,            -- 差し替えたら古いものは 0
+  created_at TEXT
+);
+
 -- 使用量。生成1回ごとに、サービス・単位・クレジットを記録して、話数ごとの予算と比べる。
 CREATE TABLE IF NOT EXISTS usage (
   id INTEGER PRIMARY KEY,
@@ -152,6 +165,8 @@ CREATE TABLE IF NOT EXISTS events (
 MIGRATIONS = {
     "episodes": {"budget_credits": "REAL DEFAULT 0", "deadline": "TEXT DEFAULT ''"},
     "reviews": {"checks_json": "TEXT DEFAULT ''"},   # AI セルフレビューの観点ごとの合否
+    # draft（480p）→ upscale（ドラフトをそのまま拡大）→ final（拡大版を入力に 1080p で生成）
+    "takes": {"tier": "TEXT DEFAULT ''", "source_take_id": "INTEGER"},
 }
 
 

@@ -27,6 +27,13 @@ COST_TABLE = {
     ("runway", "image"): 5, ("runway", "video"): 25, ("runway", "audio"): 2,
     ("elevenlabs", "audio"): 1, ("blender", "bg"): 0, ("manual", "*"): 0,
 }
+# 動画の段階ごとの解像度と、費用の倍率（draft を 1 とした目安。実際の単価に合わせて直す）。
+TIERS = {
+    "draft": {"resolution": "854x480", "cost": 1.0},     # 方向を決めるドラフト。監督の G3 はここで見る
+    "upscale": {"resolution": "1920x1080", "cost": 0.3},  # 承認したドラフトをそのまま拡大
+    "final": {"resolution": "1920x1080", "cost": 3.0},    # 拡大版を入力に 1080p で本番生成
+}
+
 # 人のレビューをはさまずにエージェントが同じコマを作り直してよい回数。超えたら人の判断を待つ。
 MAX_AGENT_RETRIES = int(os.environ.get("TSUKI_MAX_RETRIES", "2"))
 

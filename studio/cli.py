@@ -18,7 +18,14 @@
   awaiting EP09                      AI が通して、監督がまだ見ていないテイク
   usage EP09
   cut-edit 12 --seconds 1.5          尺・台詞の手直し
-  bg-render EP09 --blend 月灯り店内.blend --camera CAM_A [--cut 12] [-- --lens 28]
+  bg-render EP09 --blend 月灯り店内.blend --camera CAM_A [--cut 12] [--asset-name 店内:A] [-- --lens 28]
+  contact 31                                    動画テイクから6フレームを並べた画像を作る（セルフレビュー用）
+  attach 31 out.mp4                             外で作った結果（手作業の生成など）をテイクに付ける
+  asset-add character あかね <設定資料.png>      参照素材の棚に足す（character/bg/layout/prop）
+  assets [character]
+  prompt-build 12 [--tier draft] [--bg 店内:A] [--out p.txt]   字コンテ・設計・設定・参照素材からプロンプトを組む
+  shoot 12 --provider hamster [--kind video]     組んだプロンプトで 480p ドラフトを作る
+  promote 31 --to upscale|final                  承認したドラフト → 拡大 → 1080p 本番
 """
 import argparse
 import json
@@ -27,7 +34,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from studio.backend import context, core, db  # noqa: E402
+from studio.backend import context, core, db, shots  # noqa: E402
 from studio.backend.importers import bible, jikonte  # noqa: E402
 
 
@@ -77,7 +84,21 @@ def main(argv=None):
     p.add_argument("--dialogue"); p.add_argument("--edit-memo")
     p = sub.add_parser("bg-render"); p.add_argument("episode"); p.add_argument("--blend", required=True)
     p.add_argument("--camera", required=True); p.add_argument("--cut", type=int); p.add_argument("--note", default="")
-    p.add_argument("extra", nargs="*")
+    p.add_argument("--asset-name", default=""); p.add_argument("extra", nargs="*")
+    p = sub.add_parser("contact"); p.add_argument("take", type=int); p.add_argument("--frames", type=int, default=6)
+    p = sub.add_parser("attach"); p.add_argument("take", type=int); p.add_argument("file")
+    p = sub.add_parser("asset-add"); p.add_argument("kind"); p.add_argument("name"); p.add_argument("file")
+    p.add_argument("--note", default="")
+    p = sub.add_parser("assets"); p.add_argument("kind", nargs="?")
+    p = sub.add_parser("prompt-build"); p.add_argument("cut", type=int); p.add_argument("--tier", default="draft")
+    p.add_argument("--bg"); p.add_argument("--out")
+    p = sub.add_parser("shoot"); p.add_argument("cut", type=int); p.add_argument("--provider", default="hamster")
+    p.add_argument("--kind", default="video"); p.add_argument("--model", default=""); p.add_argument("--bg")
+    p.add_argument("--parent", type=int); p.add_argument("--fixes", default=""); p.add_argument("--note", default="")
+    p.add_argument("--extra-prompt", default="", help="レビューを受けて足す指示（組んだプロンプトの末尾に足す）")
+    p = sub.add_parser("promote"); p.add_argument("take", type=int); p.add_argument("--to", required=True,
+                                                                                   choices=["upscale", "final"])
+    p.add_argument("--provider"); p.add_argument("--note", default="")
 
     a = ap.parse_args(argv)
     db.init()
@@ -159,9 +180,52 @@ def main(argv=None):
             core.update_cut(conn, a.cut, "agent", **{k: v for k, v in {"seconds": a.seconds, "dialogue": a.dialogue,
                                                                          "edit_memo": a.edit_memo}.items() if v is not None})
             print("ok")
+        elif a.cmd == "contact":
+            print(shots.contact_sheet(conn, a.take, a.frames))
+        elif a.cmd == "attach":
+            print(core.attach_file(conn, a.take, Path(a.file)))
+        elif a.cmd == "asset-add":
+            print(shots.add_asset(conn, a.kind, a.name, a.file, note=a.note))
+        elif a.cmd == "assets":
+            for x in shots.assets(conn, a.kind):
+                print(f"[{x['id']}] {x['kind']} {x['name']} {x['file_path']} {x['note']}")
+        elif a.cmd == "prompt-build":
+            b = shots.build(conn, a.cut, a.tier, a.bg)
+            if a.out:
+                Path(a.out).write_text(b["prompt"], encoding="utf-8")
+            print(b["prompt"] if not a.out else a.out)
+            print("\n--- 参照画像（この順で渡す）")
+            for i, (r, l) in enumerate(zip(b["refs"], b["ref_labels"]), 1):
+                print(f"@image{i} {l}  {r}")
+            if b["missing"]:
+                print("--- 足りない参照：" + "、".join(b["missing"]))
+        elif a.cmd == "shoot":
+            b = shots.build(conn, a.cut, "draft", a.bg)
+            cut = db.one(conn.execute("SELECT e.code FROM cuts c JOIN episodes e ON e.id=c.episode_id WHERE c.id=?",
+                                      (a.cut,)))
+            try:
+                tid = core.generate(conn, episode=cut["code"], cut_id=a.cut, kind=a.kind, provider=a.provider,
+                                    model=a.model, prompt=b["prompt"] + (f"\n【直し】{a.extra_prompt}" if a.extra_prompt else ""),
+                                    refs=b["refs"], params={"duration": b["seconds"]}, tier="draft",
+                                    parent_take_id=a.parent, fixes_review_ids=_ids(a.fixes), agent_note=a.note)
+            except core.Blocked as e:
+                print(f"止めました：{e}")
+                return 2
+            print(json.dumps(db.one(conn.execute("SELECT id,status,tier,error FROM takes WHERE id=?", (tid,))),
+                             ensure_ascii=False))
+            if b["missing"]:
+                print("足りない参照：" + "、".join(b["missing"]))
+        elif a.cmd == "promote":
+            try:
+                tid = shots.promote(conn, a.take, a.to, a.provider, a.note)
+            except core.Blocked as e:
+                print(f"止めました：{e}")
+                return 2
+            print(json.dumps(db.one(conn.execute("SELECT id,status,tier,error FROM takes WHERE id=?", (tid,))),
+                             ensure_ascii=False))
         elif a.cmd == "bg-render":
             tid = core.render_bg(conn, episode=a.episode, blend=a.blend, camera=a.camera, cut_id=a.cut,
-                                 note=a.note, extra_args=a.extra)
+                                 note=a.note, extra_args=a.extra, asset_name=a.asset_name)
             print(json.dumps(db.one(conn.execute("SELECT id,status,error,file_path FROM takes WHERE id=?", (tid,))),
                              ensure_ascii=False))
 

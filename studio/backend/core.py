@@ -105,9 +105,10 @@ class Blocked(RuntimeError):
     """予算や作り直しの上限で、人の判断が要る。"""
 
 
-def estimate(provider: str, kind: str, units: float = 1) -> float:
+def estimate(provider: str, kind: str, units: float = 1, tier: str = "") -> float:
     c = config.COST_TABLE
-    return units * c.get((provider, kind), c.get((provider, "*"), 0))
+    mult = config.TIERS.get(tier, {}).get("cost", 1.0)
+    return units * mult * c.get((provider, kind), c.get((provider, "*"), 0))
 
 
 def spent(conn, episode_id: int) -> float:
@@ -124,10 +125,11 @@ def agent_retries_since_human(conn, cut_id: int) -> int:
                         (cut_id, last)).fetchone()[0]
 
 
-def check_gates(conn, episode: str, cut_id: int | None, provider: str, kind: str, units: float = 1) -> None:
+def check_gates(conn, episode: str, cut_id: int | None, provider: str, kind: str, units: float = 1,
+                tier: str = "") -> None:
     ep = db.get_or_create_episode(conn, episode)
     budget = ep.get("budget_credits") or 0
-    cost = estimate(provider, kind, units)
+    cost = estimate(provider, kind, units, tier)
     if budget and spent(conn, ep["id"]) + cost > budget:
         raise Blocked(f"{episode} の予算 {budget} を超えます（使用 {spent(conn, ep['id']):.0f} + 今回 {cost:.0f}）。"
                       "優先するコマを監督に確認してください")
@@ -137,27 +139,39 @@ def check_gates(conn, episode: str, cut_id: int | None, provider: str, kind: str
 
 
 def record_usage(conn, take_id: int, provider: str, kind: str, units: float = 1,
-                 credits: float | None = None, note: str = "") -> None:
+                 credits: float | None = None, note: str = "", tier: str = "") -> None:
     t = db.one(conn.execute("SELECT episode_id FROM takes WHERE id=?", (take_id,)))
     db.insert(conn, "usage", {"ts": db.now(), "episode_id": t["episode_id"], "take_id": take_id,
                               "provider": provider, "kind": kind, "units": units,
-                              "credits": estimate(provider, kind, units) if credits is None else credits,
+                              "credits": estimate(provider, kind, units, tier) if credits is None else credits,
                               "note": note})
 
 
 def generate(conn, *, episode: str, cut_id: int | None, kind: str, provider: str, prompt: str,
-             model: str = "", refs: list | None = None, params: dict | None = None, **extra) -> int:
+             model: str = "", refs: list | None = None, params: dict | None = None, tier: str = "",
+             source_take_id: int | None = None, **extra) -> int:
     p = REGISTRY[provider]
-    check_gates(conn, episode, cut_id, provider, kind)
+    params = dict(params or {})
+    if tier:
+        params.setdefault("resolution", config.TIERS[tier]["resolution"])
+        params["tier"] = tier
+    if source_take_id:
+        src = db.one(conn.execute("SELECT file_path FROM takes WHERE id=?", (source_take_id,)))
+        params["input_video"] = src["file_path"]          # 拡大版を入力に本番を作る
+    if tier == "final" and not source_take_id:
+        raise Blocked("本番（1080p）は、承認したドラフトの拡大版から作ります（promote を使う）")
+    check_gates(conn, episode, cut_id, provider, kind, tier=tier)
     take_id = add_take(conn, episode=episode, cut_id=cut_id, kind=kind, provider=provider, model=model,
                        prompt=prompt, refs=refs, params=params, status="queued", **extra)
     try:
-        job = p.submit(GenerationRequest(kind, prompt, model, refs or [], params or {}))
+        job = p.submit(GenerationRequest(kind, prompt, model, refs or [], params))
         db.update(conn, "takes", take_id, {"external_job_id": job,
                                            "status": "running" if job else "awaiting_upload"})
-        record_usage(conn, take_id, provider, kind)
+        record_usage(conn, take_id, provider, kind, tier=tier)
     except Exception as e:  # 未接続・API エラーもテイクとして残し、画面とエージェントの両方から見えるようにする
         db.update(conn, "takes", take_id, {"status": "failed", "error": f"{type(e).__name__}: {e}"})
+    if tier or source_take_id:
+        db.update(conn, "takes", take_id, {"tier": tier, "source_take_id": source_take_id})
     return take_id
 
 
@@ -348,7 +362,7 @@ def decide_learning(conn, lid: int, approve: bool, rule_text: str | None = None)
 # ---- 背景（Blender） ----
 
 def render_bg(conn, *, episode: str, blend: str, camera: str, cut_id: int | None = None, note: str = "",
-              extra_args: list[str] | None = None) -> int:
+              extra_args: list[str] | None = None, asset_name: str = "") -> int:
     """Blender をバックグラウンドで動かし、カメラ1つ分の背景を参照用テイク（kind=bg）として登録する。"""
     import subprocess
     import tempfile
@@ -362,8 +376,11 @@ def render_bg(conn, *, episode: str, blend: str, camera: str, cut_id: int | None
     try:
         subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=1800)
         meta = json.loads(out.with_suffix(".json").read_text(encoding="utf-8"))
-        attach_file(conn, take_id, out)
+        rel = attach_file(conn, take_id, out)
         db.update(conn, "takes", take_id, {"params_json": json.dumps(meta, ensure_ascii=False)})
+        from . import shots
+        shots.add_asset(conn, "bg", asset_name or f"{Path(blend).stem}:{camera}", rel, meta=meta, note=note,
+                        replace=True)
     except (OSError, subprocess.SubprocessError, FileNotFoundError) as e:
         db.update(conn, "takes", take_id, {"status": "failed", "error": f"{type(e).__name__}: {e}"})
     return take_id

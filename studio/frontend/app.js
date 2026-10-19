@@ -22,7 +22,9 @@ const media = (t, cls = "") => {
   return `<img src="${src}" alt="">`;
 };
 const thumb = (t) => `<a class="thumb ${t.selected ? "sel" : ""}" href="#/cut/${t.cut_id}?take=${t.id}" title="#${t.id} ${h(t.provider)} ${h(t.status)}">
-  ${t.file_path ? media(t) : h(t.status)}<span class="n">#${t.id}${t.open_reviews ? " ●" : ""}</span></a>`;
+  ${t.file_path ? media(t) : h(t.status)}<span class="n">#${t.id}${t.open_reviews ? " ●" : ""}</span>${tierBadge(t)}</a>`;
+const TIER = { draft: "480p", upscale: "拡大", final: "1080p" };
+const tierBadge = (t) => (t.tier ? `<span class="tier ${t.tier}">${TIER[t.tier] || h(t.tier)}</span>` : "");
 
 // ---------- 話数一覧 ----------
 async function viewHome() {
@@ -105,14 +107,16 @@ async function viewCut(id, params) {
           <p class="small muted">画像の上をドラッグすると、直してほしい範囲に印をつけられます。動画は再生位置がレビューに入ります。</p>
           <h2>テイク（新しい順）　<span class="small">チェックして並べて比較</span></h2>
           <div class="thumbs">${takes.map((t) => `<div><a class="thumb ${t.selected ? "sel" : ""}" href="#/cut/${cut.id}?take=${t.id}&ep=${h(params.get("ep") || "")}"
-              style="${t.id === cur?.id ? "outline:2px solid var(--amber)" : ""}">${t.file_path ? media(t) : h(t.status)}<span class="n">#${t.id}</span></a>
+              style="${t.id === cur?.id ? "outline:2px solid var(--amber)" : ""}">${t.file_path ? media(t) : h(t.status)}<span class="n">#${t.id}</span>${tierBadge(t)}</a>
               <label class="small"><input type="checkbox" data-cmp="${t.id}"> 比較</label></div>`).join("") || `<p class="muted">まだテイクがありません。</p>`}</div>
           <div class="row" style="margin-top:8px"><button id="cmp">選んだテイクを並べる</button>
             <label class="btn">自分で作ったものを足す<input type="file" id="up" hidden></label></div>
           ${cur ? `<h2>テイク #${cur.id} の作り方</h2>
-            <div class="small muted">${h(cur.provider)} ${h(cur.model)} / ${h(cur.status)} ${cur.parent_take_id ? `/ 元 <a href="#/cut/${cut.id}?take=${cur.parent_take_id}">#${cur.parent_take_id}</a>` : ""} / ${h(cur.created_by)} ${h(cur.created_at)}</div>
+            <div class="small muted">${cur.tier ? `<b>${TIER[cur.tier] || h(cur.tier)}</b> / ` : ""}${h(cur.provider)} ${h(cur.model)} / ${h(cur.status)} ${cur.parent_take_id ? `/ 元 <a href="#/cut/${cut.id}?take=${cur.parent_take_id}">#${cur.parent_take_id}</a>` : ""} / ${h(cur.created_by)} ${h(cur.created_at)}</div>
             ${cur.error ? `<p style="color:var(--red)">${h(cur.error)}</p>` : ""}
             ${cur.agent_note ? `<p>エージェントの意図：${h(cur.agent_note)}</p>` : ""}
+            ${JSON.parse(cur.refs_json || "[]").length ? `<div class="thumbs" style="margin:6px 0">${JSON.parse(cur.refs_json).map((r, i) => `<div class="thumb" title="@image${i + 1} ${h(r)}"><img src="/media/${encodeURI(r)}"><span class="n">@${i + 1}</span></div>`).join("")}</div>` : ""}
+            ${cur.tier === "draft" ? `<p class="small muted">ドラフトに「良い」か「採用」をつけると、エージェントが拡大 → 1080p 本番へ進めます。</p>` : ""}
             <pre class="prompt">${h(cur.prompt) || "（プロンプトなし）"}</pre>` : ""}
         </div>
         <div class="card">
