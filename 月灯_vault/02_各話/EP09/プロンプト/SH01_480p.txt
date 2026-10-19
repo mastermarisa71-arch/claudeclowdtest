@@ -1,0 +1,32 @@
+ASSETS
+@Image 1: the bar set seen from camera position A (behind the customer seats, facing the counter): camera position, framing, furniture and props layout only. Keep this layout exactly; do not add or remove furniture. Do not copy any people from it.
+@Image 2: the floor plan of the bar: character positions only (piano front-left, seats 1-6 left to right, counter interior behind). Never draw its text, arrows or circles.
+@Image 3: Akane's appearance only (face, hairstyle, outfit with apron, colors, head-to-body ratio, height). Do not copy the pose, the turnaround layout, or the plain background of the sheet.
+@Image 4: Sakuna's appearance only (face, glasses, hairstyle, bartender outfit, colors, height). Do not copy the pose, the turnaround layout, or the plain background of the sheet.
+@Image 5: Mahiru's appearance only (face, hairstyle, kitchen outfit, colors, height). Do not copy the pose, the turnaround layout, or the plain background of the sheet.
+@Image 6: Kairi's appearance only (face, hairstyle with ribbon, outfit, colors, height). Do not copy the pose, the turnaround layout, or the plain background of the sheet.
+
+FORMAT
+16:9 Japanese TV anime, cel-shaded with soft shadows, 10 seconds, 480p draft. No pure black (#000000) outlines.
+
+SUMMARY
+Early evening before opening at the hidden bar "Tsukiakari": everyone prepares as usual, but Akane keeps carrying the same glass back and forth, lost in thought, until her friends notice. Warm honey-colored bar light with blue-violet shadows. Locked-off camera from position A, then two quiet close-ups.
+
+TIMELINE
+SHOT 1 [0-2s] Wide, locked-off, camera position A (set @Image 1). Screen-left foreground: Kairi (@Image 6) at the piano, lightly pressing a few keys with both hands. Back, behind the counter: Sakuna (@Image 4) in front of seat 2 lining up liquor bottles one by one, holding each by the neck with her fingertips; Mahiru (@Image 5) in front of seat 4 prepping food. Center floor: Akane (@Image 3) walks left to right holding one glass level with both hands, eyes unfocused. All characters stay small (under one third of the frame height). SFX: soft piano key checks.
+SHOT 2 [2-6s] Hard cut to a medium shot, same side (camera position A). 2-4s: Akane (@Image 3) carries the same glass level with both hands toward the counter, her steps slow and absent-minded; Mahiru is out of frame. 4-5s: hard cut to a close-up of Akane; she blinks and looks down at the glass in her hands. 5-6s: her eyes widen slightly, she realizes she already put this glass away.
+  Dialogue (Mahiru, Japanese, off-screen voice; show Akane's reaction): "あかねちゃん、それさっきも運んでなかった？"
+  Dialogue (Akane, Japanese): "え？"
+  Dialogue (Akane, Japanese): "あ……"
+SHOT 3 [6-10s] Hard cuts between three people, same side (camera position A). 6-7.5s: Kairi (@Image 6) at the piano stops her fingers and lifts her eyes from the keys toward Akane, expression flat but attentive. 7.5-8.5s: Akane (@Image 3) lowers her head, gripping the glass a little tighter. 8.5-10s: behind the counter, Sakuna (@Image 4) stops wiping a bottle mid-motion, sets the cloth down, and looks at Akane with quiet concern.
+  Dialogue (Kairi, Japanese): "今日、ずっと変ですよ"
+  Dialogue (Sakuna, Japanese): "あかねちゃん？"
+
+CONTINUITY
+Each character's face, hair, outfit and colors follow their @Image sheet in every shot, including after cuts. Akane holds the same single glass in both hands from start to end. Height order (tallest first): Sakuna > Akane > Mahiru > Kairi. The entrance is on the left wall of the seating area; nobody goes near it in this shot. The camera never crosses to behind the counter.
+
+AUDIO
+Dialogue lip-sync only. No background music. No subtitles.
+
+CONSTRAINTS
+No on-screen text, no subtitles, no logos. Hands with five fingers; the glass stays in Akane's hands and does not change shape.

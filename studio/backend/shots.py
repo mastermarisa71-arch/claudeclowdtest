@@ -55,12 +55,20 @@ def _find_bg(conn, cut: dict, bg_name: str | None) -> dict | None:
     bgs = assets(conn, "bg")
     if bg_name:
         return next((a for a in bgs if a["name"] == bg_name), None)
-    pos = (cut.get("camera_pos") or "").strip()[:1]
-    if not pos:
+    full = (cut.get("camera_pos") or "").strip()
+    if not full:
         return None
-    for a in bgs:   # 名前が「…:A」か、カメラ名が「CAM_A」「…_A」のもの
-        cam = json.loads(a["meta_json"] or "{}").get("camera", "")
-        if a["name"].endswith(f":{pos}") or cam.endswith(f"_{pos}") or a["name"].endswith(f"_{pos}"):
+    for a in bgs:   # 1) 名前が「店内:入口の内側」「パン屋:P2」のように、カメラ位置の書き方そのもの
+        if a["name"].split(":", 1)[-1] == full:
+            return a
+    pos = full[:1]
+    if pos in "ABCDEF":
+        for a in bgs:   # 2) 名前が「…:A」か、カメラ名が「CAM_A」「…_A」のもの
+            cam = json.loads(a["meta_json"] or "{}").get("camera", "")
+            if a["name"].endswith(f":{pos}") or cam.endswith(f"_{pos}") or a["name"].endswith(f"_{pos}"):
+                return a
+    for a in bgs:       # 3) 場所の名前（「屋根裏」「控室」）がカメラ位置の書き方に入っているもの
+        if a["name"].split(":", 1)[0] and a["name"].split(":", 1)[0] in full:
             return a
     return None
 

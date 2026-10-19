@@ -1,0 +1,34 @@
+ASSETS
+@Image 1: the bar set seen from camera position A (behind the customer seats, facing the counter), also used for the reverse angle by the entrance: camera position, framing, furniture and props layout only. Keep this layout exactly; do not add or remove furniture. Do not copy any people from it.
+@Image 2: the floor plan of the bar: character positions only (entrance on the left wall of the seating area, piano front-left). Never draw its text, arrows or circles.
+@Image 3: Akane's appearance only (face, hairstyle, outfit with apron, colors, head-to-body ratio, height). Do not copy the pose, the turnaround layout, or the plain background of the sheet.
+@Image 4: Sakuna's appearance only (face, glasses, hairstyle, bartender outfit, colors, height). Do not copy the pose, the turnaround layout, or the plain background of the sheet.
+@Image 5: Mahiru's appearance only (face, hairstyle, kitchen outfit, colors, height). Do not copy the pose, the turnaround layout, or the plain background of the sheet.
+@Image 6: Kairi's appearance only (face, hairstyle with ribbon, outfit, colors, height). Do not copy the pose, the turnaround layout, or the plain background of the sheet.
+
+FORMAT
+16:9 Japanese TV anime, cel-shaded with soft shadows, 15 seconds, 480p draft. No pure black (#000000) outlines.
+
+SUMMARY
+A sudden noise behind the bar's entrance freezes everyone; each of them instantly hides the evidence of the bar, Akane switches into her gatekeeper face and creeps to the door, and violent knocking follows. The same room one stop darker than usual, shadows shifted to blue, very quiet. Fast insert cuts, then a locked-off wide, then the door.
+
+TIMELINE
+SHOT 1 [0-5s] Rapid insert cuts, one per second, same side (camera position A, set @Image 1). 0-1s: close-up of the inside of the entrance door on the left wall; a dull thud from behind it, the door does not open. 1-2s: wide, all four freeze mid-motion. 2-3s: close-up of Akane (@Image 3): her soft, worried face hardens into a sharp, alert gatekeeper look. 3-4s: insert of Kairi's (@Image 6) hands lifting off the piano keys without a sound. 4-5s: insert of Sakuna's (@Image 4) hand sliding a liquor bottle down under the counter.
+  SFX: one dull thud behind the door, then silence.
+SHOT 2 [5-10s] Locked-off medium wide from camera position A. 5-6.5s: behind the counter, Mahiru (@Image 5) leans forward and whispers, eyes darting, twisting a strand of hair around her finger. 6.5-7.5s: Akane (@Image 3) turns to her and presses an index finger to her lips. 7.5-10s: Akane walks slowly toward the entrance on screen-left, back straight, each step placed carefully; the others watch her without moving.
+  Dialogue (Mahiru, Japanese): "……捜査官？"
+  Dialogue (Akane, Japanese): "静かに"
+  SFX: only Akane's own soft footsteps.
+SHOT 3 [10-15s] Hard cut to the reverse angle from just inside the entrance (set @Image 1): the door fills screen-right, Akane stands at the center facing it, the counter and the three others small in the back. 10-11.5s: violent pounding shakes the door; Akane braces, one foot back. 11.5-12.5s: wide, the three in the back flinch. 12.5-14s: close on the door as a woman's voice shouts from outside. 14-15s: close-up of Akane; her guard drops into surprise.
+  SFX: three hard bangs on the door.
+  Dialogue (Akira, Japanese, off-screen voice behind the door; show Akane's reaction): "開けろ！ 私だ！"
+  Dialogue (Akane, Japanese): "……暁さん？"
+
+CONTINUITY
+Each character's face, hair, outfit and colors follow their @Image sheet in every shot, including after cuts and angle changes. The door stays closed for the whole shot. Lighting stays one stop darker with blue shadows from the first thud to the end. Height order (tallest first): Sakuna > Akane > Mahiru > Kairi.
+
+AUDIO
+Dialogue lip-sync only. No background music. No subtitles.
+
+CONSTRAINTS
+No on-screen text, no subtitles, no logos. Hands with five fingers; the bottle stays in Sakuna's hand until it is under the counter.

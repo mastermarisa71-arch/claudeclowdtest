@@ -223,7 +223,18 @@ async function viewReviews(params) {
       <div style="flex:1"><div class="row">${r.created_by === "agent" ? `<span class="badge proposed">AI</span>` : ""}<b>${h(r.verdict)}</b><span class="badge">${h(r.status)}</span>
         <a href="#/cut/${r.cut_ref}${r.target_type === "take" ? `?take=${r.target_id}` : ""}">${h(r.cut || "")}${h(r.panel || "")}</a>
         <span class="small muted">${h(r.target_type)}:${r.target_id} [${h(r.tags)}] #${r.id} ${h(r.created_at)}</span></div>
-        <div>${h(r.comment)}</div>${r.agent_response ? `<div class="agent small">エージェント：${h(r.agent_response)}</div>` : ""}</div></div></div>`).join("") || `<p class="muted">なし</p>`}`;
+        <div>${h(r.comment)}</div>${r.agent_response ? `<div class="agent small">エージェント：${h(r.agent_response)}</div>` : ""}
+        ${r.status === "proposed" ? `<textarea data-reply="${r.id}" placeholder="返事（例：①は正本どおりで。②はあかねで。③は鈴も残したい）"></textarea>
+          <div class="row" style="margin-top:4px"><button data-rv="${r.id}" data-st="resolved">これでいい</button><button data-rv="${r.id}" data-st="open">返事を送る（まだ）</button></div>` : ""}
+        </div></div></div>`).join("") || `<p class="muted">なし</p>`}`;
+  // エージェントの返答に、その場で答える。返事は新しいレビューとして残り、エージェントの次のブリーフに入る
+  document.querySelectorAll("[data-rv]").forEach((b) => (b.onclick = async () => {
+    const r = list.find((x) => x.id == b.dataset.rv);
+    const text = document.querySelector(`[data-reply="${r.id}"]`).value.trim();
+    if (text) await api("/api/reviews", { method: "POST", body: { target_type: r.target_type, target_id: r.target_id, verdict: b.dataset.st === "resolved" ? "良い" : "修正", tags: (r.tags || "").split(",").filter(Boolean), comment: `（#${r.id} への返事）${text}` } });
+    await api(`/api/reviews/${r.id}`, { method: "PATCH", body: { status: "resolved" } });   // 元の問いは閉じ、中身は返事のレビューで続ける
+    route();
+  }));
 }
 
 // ---------- ルール（エージェントの提案を承認する） ----------

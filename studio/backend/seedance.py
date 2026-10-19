@@ -164,14 +164,15 @@ def build_brief(conn, shot_id: int, tier: str = "draft") -> dict:
     cast, cams, refs, missing = [], [], [], []
     for c in cs:
         cast += [x for x in shotlib.cast_of(c) if x not in cast]
-        pos = (c.get("camera_pos") or "").strip()[:1]
-        if pos and pos not in cams:
+        pos = (c.get("camera_pos") or "").strip()
+        if pos and pos not in cams and "寄り" not in pos and "俯瞰" not in pos:   # 寄り・俯瞰は同じ場所の背景を使う
             cams.append(pos)
+    cast.sort(key=lambda x: shotlib.CAST_ORDER.index(x) if x in shotlib.CAST_ORDER else 99)
     for pos in cams:
         bg = shotlib._find_bg(conn, {"camera_pos": pos}, None)
-        if bg:
+        if bg and all(r[2] != bg["file_path"] for r in refs):   # 同じ画像は1回だけ渡す
             refs.append(("bg", bg["name"], bg["file_path"]))
-        else:
+        elif not bg:
             missing.append(f"背景（カメラ位置 {pos}）")
     layout = next(iter(shotlib.assets(conn, "layout")), None)
     if layout and "店" in f"{scene and scene['place']}":
@@ -224,7 +225,8 @@ def build_brief(conn, shot_id: int, tier: str = "draft") -> dict:
         c0 = g[0]
         who = [x for x in cast if any(x in f"{c.get('picture')}{c.get('acting')}{c.get('layout')}" for c in g)]
         ref_note = ", ".join(f"{en(x)} = {tag[('character', x)]}" for x in who if ('character', x) in tag)
-        bgtag = next((tag[k] for k in tag if k[0] == "bg" and k[1].endswith(f":{(c0.get('camera_pos') or '')[:1]}")), "")
+        bg0 = shotlib._find_bg(conn, c0, None)
+        bgtag = next((tag[(r[0], r[1])] for r in refs if r[0] == "bg" and bg0 and r[2] == bg0["file_path"]), "")
         lines.append(f"SHOT {n} [{a}-{b}s] {c0['cut']}  camera position {c0.get('camera_pos') or '-'}"
                      + (f" (set {bgtag})" if bgtag else "") + f", {c0.get('camerawork') or 'locked-off'}")
         if ref_note:
