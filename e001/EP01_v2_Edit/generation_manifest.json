@@ -1,0 +1,143 @@
+{
+  "records": [
+    {
+      "sheet": 16,
+      "workId": "work_job_5987e482e9714c6a",
+      "status": "completed",
+      "images": [
+        "img_348fd812c4f03cf6f213"
+      ]
+    },
+    {
+      "sheet": 16,
+      "workId": "work_job_8873103a3e3546ea",
+      "status": "completed",
+      "images": [
+        "img_fdc5e9c5fb2a93c0304e"
+      ]
+    },
+    {
+      "sheet": 15,
+      "workId": "work_job_81ab841d3ff54d91",
+      "status": "completed",
+      "images": [
+        "img_e382a337dc76f2a8e482"
+      ]
+    },
+    {
+      "sheet": 14,
+      "workId": "work_job_2ba0c93a608b4f5d",
+      "status": "completed",
+      "images": [
+        "img_6baa5afbe2084ba0ab79"
+      ]
+    },
+    {
+      "sheet": 13,
+      "workId": "work_job_e0a9dc38b5b84110",
+      "status": "completed",
+      "images": [
+        "img_a9aa2107d73eafe34bf2"
+      ]
+    },
+    {
+      "sheet": 12,
+      "workId": "work_job_a7e02d0b0db4445f",
+      "status": "completed",
+      "images": [
+        "img_6365d3be30fcdf9adc8b"
+      ]
+    },
+    {
+      "sheet": 11,
+      "workId": "work_job_662b2121109641c0",
+      "status": "completed",
+      "images": [
+        "img_269ec80a3532c3d6dadd"
+      ]
+    },
+    {
+      "sheet": 10,
+      "workId": "work_job_d20a56a861d64855",
+      "status": "completed",
+      "images": [
+        "img_06e7a88b53b46aa79663"
+      ]
+    },
+    {
+      "sheet": 9,
+      "workId": "work_job_550bfb03f3494d80",
+      "status": "completed",
+      "images": [
+        "img_55728f340945b211a76c"
+      ]
+    },
+    {
+      "sheet": 8,
+      "workId": "work_job_e75f9aa7f73a4863",
+      "status": "completed",
+      "images": [
+        "img_93bee0c60b80f457c97c"
+      ]
+    },
+    {
+      "sheet": 7,
+      "workId": "work_job_4d7c1a5e000747e5",
+      "status": "completed",
+      "images": [
+        "img_696324085efd9b438f96"
+      ]
+    },
+    {
+      "sheet": 6,
+      "workId": "work_job_5f6a25f4e380421e",
+      "status": "completed",
+      "images": [
+        "img_a4d33bc77bc16f5d9cf4"
+      ]
+    },
+    {
+      "sheet": 5,
+      "workId": "work_job_77939c5f58024a79",
+      "status": "completed",
+      "images": [
+        "img_693497cbca18af8c063d"
+      ]
+    },
+    {
+      "sheet": 4,
+      "workId": "work_job_1bdc9217b4e54291",
+      "status": "completed",
+      "images": [
+        "img_4f33e82ff4da1974dc79"
+      ]
+    },
+    {
+      "sheet": 3,
+      "workId": "work_job_63fd37d4e7644d8d",
+      "status": "completed",
+      "images": [
+        "img_c808532b3dfbacb87e68"
+      ]
+    },
+    {
+      "sheet": 2,
+      "workId": "work_job_39bb42d001c94eda",
+      "status": "completed",
+      "images": [
+        "img_24669907a1bfa7eca7df"
+      ]
+    },
+    {
+      "sheet": 1,
+      "workId": "work_job_f9731c0952064813",
+      "status": "completed",
+      "images": [
+        "img_edc12fb4572185843a74"
+      ]
+    }
+  ],
+  "duplicate_sheet": 16,
+  "total_jobs": 17,
+  "note": "The final sheet was accepted twice during recovery from a reference-upload failure. No individual panels were generated."
+}

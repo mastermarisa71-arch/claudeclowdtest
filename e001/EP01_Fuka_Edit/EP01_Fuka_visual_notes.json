@@ -1,0 +1,12 @@
+{
+  "paid_sheets": 20,
+  "individual_panel_generations": 0,
+  "paid_regenerations": 0,
+  "generated_panels": 180,
+  "composited_passphrase": [
+    "S1-03",
+    "S2-04",
+    "S8-10"
+  ],
+  "notebook_note": "S9-02は閉じたノートで生成されたため、指定文を画面内テロップで補足。開いたページへの記入にはなっていません。"
+}

@@ -1,0 +1,798 @@
+[
+  {
+    "index": 1,
+    "row_index": 1,
+    "speaker": "あかね",
+    "text": "この町では、夜の六時になると、楽しいことが禁止になる",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\001_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\001_Gracie.wav"
+  },
+  {
+    "index": 2,
+    "row_index": 9,
+    "speaker": "あかね",
+    "text": "見つかったら、終わり",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\002_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\002_Gracie.wav"
+  },
+  {
+    "index": 3,
+    "row_index": 17,
+    "speaker": "あかね",
+    "text": "それでも、この扉を叩きに来る人がいる",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\003_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\003_Gracie.wav"
+  },
+  {
+    "index": 4,
+    "row_index": 23,
+    "speaker": "あかね",
+    "text": "……正解",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\005_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\004_Gracie.wav"
+  },
+  {
+    "index": 5,
+    "row_index": 23,
+    "speaker": "あかね",
+    "text": "明日なくなるかもしれない。だから――",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\004_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\005_Gracie.wav"
+  },
+  {
+    "index": 6,
+    "row_index": 26,
+    "speaker": "あかね",
+    "text": "――今夜も、扉を開ける",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\006_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\006_Gracie.wav"
+  },
+  {
+    "index": 7,
+    "row_index": 27,
+    "speaker": "あかね",
+    "text": "鼻歌。また外で歌ってきたでしょ",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\007_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\007_Gracie.wav"
+  },
+  {
+    "index": 8,
+    "row_index": 28,
+    "speaker": "暁",
+    "text": "あれくらい平気だろ",
+    "voice_name": "Ainsley",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\008_Ainsley.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\008_Ainsley.wav"
+  },
+  {
+    "index": 9,
+    "row_index": 29,
+    "speaker": "あかね",
+    "text": "捕まっても知りませんからね",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\009_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\009_Gracie.wav"
+  },
+  {
+    "index": 10,
+    "row_index": 30,
+    "speaker": "暁",
+    "text": "そんときゃ差し入れ頼むわ",
+    "voice_name": "Ainsley",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\010_Ainsley.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\010_Ainsley.wav"
+  },
+  {
+    "index": 11,
+    "row_index": 31,
+    "speaker": "あかね",
+    "text": "嫌です",
+    "voice_name": "Gracie",
+    "group": false
+  },
+  {
+    "index": 12,
+    "row_index": 32,
+    "speaker": "あかね",
+    "text": "……どうぞ、お入りください",
+    "voice_name": "Gracie",
+    "group": false
+  },
+  {
+    "index": 13,
+    "row_index": 42,
+    "speaker": "まひる",
+    "text": "できた！ まひる特製アフォガード！",
+    "voice_name": "Chloe",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\012_Chloe.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\013_Chloe.wav"
+  },
+  {
+    "index": 14,
+    "row_index": 44,
+    "speaker": "海凪",
+    "text": "あぶない！",
+    "voice_name": "Luna",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\013_Luna.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\014_Luna.wav"
+  },
+  {
+    "index": 15,
+    "row_index": 45,
+    "speaker": "まひる",
+    "text": "あっ……えへへー。さすが海凪ちゃん",
+    "voice_name": "Chloe",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\014_Chloe.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\015_Chloe.wav"
+  },
+  {
+    "index": 16,
+    "row_index": 46,
+    "speaker": "海凪",
+    "text": "貴重な材料なんだから、無駄にしないの",
+    "voice_name": "Luna",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\015_Luna.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\016_Luna.wav"
+  },
+  {
+    "index": 17,
+    "row_index": 47,
+    "speaker": "まひる",
+    "text": "んもう！ 海凪ちゃん、最近手厳しいんだけどー",
+    "voice_name": "Chloe",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\016_Chloe.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\017_Chloe.wav"
+  },
+  {
+    "index": 18,
+    "row_index": 48,
+    "speaker": "海凪",
+    "text": "あかねさんだったら、もっと叱ってるわよ",
+    "voice_name": "Luna",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\017_Luna.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\018_Luna.wav"
+  },
+  {
+    "index": 19,
+    "row_index": 50,
+    "speaker": "朔奈",
+    "text": "ふふ。あかねちゃんがいないときは、海凪ちゃんがお母さん役ね",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\018_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\019_Liza.wav"
+  },
+  {
+    "index": 20,
+    "row_index": 52,
+    "speaker": "海凪",
+    "text": "……それ、あとで私の分もあるのよね？",
+    "voice_name": "Luna",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\019_Luna.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\020_Luna.wav"
+  },
+  {
+    "index": 21,
+    "row_index": 55,
+    "speaker": "まひる",
+    "text": "でもさー、外じゃ鼻歌もダメ、お酒もダメ、動物もダメって……",
+    "voice_name": "Chloe",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\020_Chloe.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\021_Chloe.wav"
+  },
+  {
+    "index": 22,
+    "row_index": 56,
+    "speaker": "朔奈",
+    "text": "この町では、お酒を飲むことも――",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\021_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\022_Liza.wav"
+  },
+  {
+    "index": 23,
+    "row_index": 58,
+    "speaker": "朔奈",
+    "text": "音楽を楽しむことも――",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\022_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\023_Liza.wav"
+  },
+  {
+    "index": 24,
+    "row_index": 59,
+    "speaker": "朔奈",
+    "text": "動物と暮らすことも、禁じられている",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\023_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\024_Liza.wav"
+  },
+  {
+    "index": 25,
+    "row_index": 61,
+    "speaker": "朔奈",
+    "text": "どれも、なくても生きてはいけるもの。でも――",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\024_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\025_Liza.wav"
+  },
+  {
+    "index": 26,
+    "row_index": 63,
+    "speaker": "まひる",
+    "text": "でも、なかったらつまんないじゃん！",
+    "voice_name": "Chloe",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\025_Chloe.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\026_Chloe.wav"
+  },
+  {
+    "index": 27,
+    "row_index": 65,
+    "speaker": "朔奈",
+    "text": "私は、こういう時間まで、なくしたくない",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\026_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\027_Liza.wav"
+  },
+  {
+    "index": 28,
+    "row_index": 66,
+    "speaker": "朔奈",
+    "text": "だから今夜も、私たちはここにいる",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\027_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\028_Liza.wav"
+  },
+  {
+    "index": 29,
+    "row_index": 67,
+    "speaker": "朔奈",
+    "text": "あら、来たわね",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\028_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\029_Liza.wav"
+  },
+  {
+    "index": 30,
+    "row_index": 69,
+    "speaker": "暁",
+    "text": "おう",
+    "voice_name": "Ainsley",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\029_Ainsley.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\030_Ainsley.wav"
+  },
+  {
+    "index": 31,
+    "row_index": 70,
+    "speaker": "朔奈",
+    "text": "今日はちゃんと合言葉、覚えてた？",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\030_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\031_Liza.wav"
+  },
+  {
+    "index": 32,
+    "row_index": 71,
+    "speaker": "暁",
+    "text": "当然だろ",
+    "voice_name": "Ainsley",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\031_Ainsley.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\032_Ainsley.wav"
+  },
+  {
+    "index": 33,
+    "row_index": 72,
+    "speaker": "あかね",
+    "text": "嘘です！ 海凪ちゃんの曲、歌ってましたもん！",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\032_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\033_Gracie.wav"
+  },
+  {
+    "index": 34,
+    "row_index": 73,
+    "speaker": "暁",
+    "text": "余計なこと言うな",
+    "voice_name": "Ainsley",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\033_Ainsley.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\034_Ainsley.wav"
+  },
+  {
+    "index": 35,
+    "row_index": 76,
+    "speaker": "あかね",
+    "text": "しわになりますよ",
+    "voice_name": "Gracie",
+    "group": false
+  },
+  {
+    "index": 36,
+    "row_index": 78,
+    "speaker": "暁",
+    "text": "やっぱ、ここだな",
+    "voice_name": "Ainsley",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\034_Ainsley.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\036_Ainsley.wav"
+  },
+  {
+    "index": 37,
+    "row_index": 80,
+    "speaker": "朔奈",
+    "text": "おかえり、暁",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\035_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\037_Liza.wav"
+  },
+  {
+    "index": 38,
+    "row_index": 81,
+    "speaker": "暁",
+    "text": "おう。ただいま",
+    "voice_name": "Ainsley",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\036_Ainsley.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\038_Ainsley.wav"
+  },
+  {
+    "index": 39,
+    "row_index": 83,
+    "speaker": "あかね",
+    "text": "一杯目から一気はだめです",
+    "voice_name": "Gracie",
+    "group": false
+  },
+  {
+    "index": 40,
+    "row_index": 83,
+    "speaker": "暁",
+    "text": "へいへい",
+    "voice_name": "Ainsley",
+    "group": false
+  },
+  {
+    "index": 41,
+    "row_index": 85,
+    "speaker": "暁",
+    "text": "す〜てらちゃ〜ん",
+    "voice_name": "Ainsley",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\037_Ainsley.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\041_Ainsley.wav"
+  },
+  {
+    "index": 42,
+    "row_index": 90,
+    "speaker": "まひる",
+    "text": "あかねちゃん、今日も暁さんに怒ってたでしょー",
+    "voice_name": "Chloe",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\038_Chloe.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\042_Chloe.wav"
+  },
+  {
+    "index": 43,
+    "row_index": 91,
+    "speaker": "あかね",
+    "text": "だって、外で鼻歌なんて歌ってくるから！ それで目をつけられたらどうするの？",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\039_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\043_Gracie.wav"
+  },
+  {
+    "index": 44,
+    "row_index": 92,
+    "speaker": "朔奈",
+    "text": "ふふ。あかねちゃんがいてくれるから、みんな安心してここに来られるのよ",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\040_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\044_Liza.wav"
+  },
+  {
+    "index": 45,
+    "row_index": 94,
+    "speaker": "まひる",
+    "text": "……三禁って、いつまで続くんだろうね。ほんっと、つまんない町になったよねー",
+    "voice_name": "Chloe",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\041_Chloe.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\045_Chloe.wav"
+  },
+  {
+    "index": 46,
+    "row_index": 99,
+    "speaker": "あかね",
+    "text": "……私は、嫌です",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\042_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\046_Gracie.wav"
+  },
+  {
+    "index": 47,
+    "row_index": 100,
+    "speaker": "あかね",
+    "text": "お酒を飲んだり、音楽を聴いたり、",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\043_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\047_Gracie.wav"
+  },
+  {
+    "index": 48,
+    "row_index": 101,
+    "speaker": "あかね",
+    "text": "動物と一緒にいるだけで、悪い人みたいにされるの",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\044_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\048_Gracie.wav"
+  },
+  {
+    "index": 49,
+    "row_index": 102,
+    "speaker": "あかね",
+    "text": "だって、ここにいる人たちが、",
+    "voice_name": "Gracie",
+    "group": false
+  },
+  {
+    "index": 50,
+    "row_index": 103,
+    "speaker": "あかね",
+    "text": "悪い人たちだと、",
+    "voice_name": "Gracie",
+    "group": false
+  },
+  {
+    "index": 51,
+    "row_index": 104,
+    "speaker": "あかね",
+    "text": "思いますか？",
+    "voice_name": "Gracie",
+    "group": false
+  },
+  {
+    "index": 52,
+    "row_index": 106,
+    "speaker": "海凪",
+    "text": "……思わない",
+    "voice_name": "Luna",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\046_Luna.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\052_Luna.wav"
+  },
+  {
+    "index": 53,
+    "row_index": 107,
+    "speaker": "まひる",
+    "text": "全然！ むしろ楽しそうじゃん",
+    "voice_name": "Chloe",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\047_Chloe.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\053_Chloe.wav"
+  },
+  {
+    "index": 54,
+    "row_index": 108,
+    "speaker": "朔奈",
+    "text": "お酒や音楽で人がつながることまで、悪いことだとは、私は思わないわ",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\048_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\054_Liza.wav"
+  },
+  {
+    "index": 55,
+    "row_index": 119,
+    "speaker": "まひる",
+    "text": "え、なにそれ！ 私も入るー！",
+    "voice_name": "Chloe",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\049_Chloe.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\055_Chloe.wav"
+  },
+  {
+    "index": 56,
+    "row_index": 120,
+    "speaker": "あかね",
+    "text": "まひるちゃんは仕事！",
+    "voice_name": "Gracie",
+    "group": false
+  },
+  {
+    "index": 57,
+    "row_index": 121,
+    "speaker": "あかね",
+    "text": "……あっ",
+    "voice_name": "Gracie",
+    "group": false
+  },
+  {
+    "index": 58,
+    "row_index": 122,
+    "speaker": "朔奈",
+    "text": "それくらいは、いいんじゃない？ ……ここでくらい、ね",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\051_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\058_Liza.wav"
+  },
+  {
+    "index": 59,
+    "row_index": 123,
+    "speaker": "あかね",
+    "text": "……はい！",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\052_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\059_Gracie.wav"
+  },
+  {
+    "index": 60,
+    "row_index": 143,
+    "speaker": "まひる",
+    "text": "……やば。捜査官じゃん",
+    "voice_name": "Chloe",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\053_Chloe.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\060_Chloe.wav"
+  },
+  {
+    "index": 61,
+    "row_index": 145,
+    "speaker": "朔奈",
+    "text": "落ち着いて、ただの見回りよ",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\054_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\061_Liza.wav"
+  },
+  {
+    "index": 62,
+    "row_index": 146,
+    "speaker": "海凪",
+    "text": "……行って",
+    "voice_name": "Luna",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\055_Luna.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\062_Luna.wav"
+  },
+  {
+    "index": 63,
+    "row_index": 147,
+    "speaker": "ステラ",
+    "text": "ニャー！",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\056_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\063_Gracie.wav"
+  },
+  {
+    "index": 64,
+    "row_index": 150,
+    "speaker": "あかね",
+    "text": "ステラちゃん……！",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\057_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\064_Gracie.wav"
+  },
+  {
+    "index": 65,
+    "row_index": 157,
+    "speaker": "朔奈",
+    "text": "……大丈夫そうね",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\058_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\065_Liza.wav"
+  },
+  {
+    "index": 66,
+    "row_index": 160,
+    "speaker": "まひる",
+    "text": "はぁー……やばかったんだけどー……！",
+    "voice_name": "Chloe",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\059_Chloe.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\066_Chloe.wav"
+  },
+  {
+    "index": 67,
+    "row_index": 161,
+    "speaker": "あかね",
+    "text": "ほんと、心臓止まるかと思いました……",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\060_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\067_Gracie.wav"
+  },
+  {
+    "index": 68,
+    "row_index": 162,
+    "speaker": "海凪",
+    "text": "……心臓がまだ速いのよ",
+    "voice_name": "Luna",
+    "group": false
+  },
+  {
+    "index": 69,
+    "row_index": 164,
+    "speaker": "暁",
+    "text": "……ぷはぁ",
+    "voice_name": "Ainsley",
+    "group": false
+  },
+  {
+    "index": 70,
+    "row_index": 166,
+    "speaker": "朔奈",
+    "text": "……もう一曲、お願いしてもいい？",
+    "voice_name": "Liza",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\061_Liza.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\070_Liza.wav"
+  },
+  {
+    "index": 71,
+    "row_index": 167,
+    "speaker": "海凪",
+    "text": "はい",
+    "voice_name": "Luna",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\062_Luna.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\071_Luna.wav"
+  },
+  {
+    "index": 72,
+    "row_index": 175,
+    "speaker": "あかね",
+    "text": "今日も、誰も捕まらなかった。",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\063_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\072_Gracie.wav"
+  },
+  {
+    "index": 73,
+    "row_index": 181,
+    "speaker": "先輩",
+    "text": "ん？",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\064_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\073_Gracie.wav"
+  },
+  {
+    "index": 74,
+    "row_index": 182,
+    "speaker": "後輩",
+    "text": "なんかウザい上官でも見つけちゃいましたー？",
+    "voice_name": "Ainsley",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\065_Ainsley.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\074_Ainsley.wav"
+  },
+  {
+    "index": 75,
+    "row_index": 183,
+    "speaker": "先輩",
+    "text": "んや。猫の鳴き声がした気がしてな",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\066_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\075_Gracie.wav"
+  },
+  {
+    "index": 76,
+    "row_index": 184,
+    "speaker": "後輩",
+    "text": "ここ、先輩がよく行ってるパン屋っすよね？",
+    "voice_name": "Ainsley",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\067_Ainsley.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\076_Ainsley.wav"
+  },
+  {
+    "index": 77,
+    "row_index": 185,
+    "speaker": "先輩",
+    "text": "そうじゃ。特に日替わりのクロワッサンが絶品で――",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\068_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\077_Gracie.wav"
+  },
+  {
+    "index": 78,
+    "row_index": 186,
+    "speaker": "後輩",
+    "text": "あー、酔っ払い発見",
+    "voice_name": "Ainsley",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\069_Ainsley.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\078_Ainsley.wav"
+  },
+  {
+    "index": 79,
+    "row_index": 187,
+    "speaker": "先輩",
+    "text": "チッ、行くぞ！",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\070_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\079_Gracie.wav"
+  },
+  {
+    "index": 80,
+    "row_index": 190,
+    "speaker": "先輩",
+    "text": "……ここはマークしておけばよい",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\071_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\080_Gracie.wav"
+  },
+  {
+    "index": 81,
+    "row_index": 191,
+    "speaker": "後輩",
+    "text": "やっぱなんかあるんすか？",
+    "voice_name": "Ainsley",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\072_Ainsley.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\081_Ainsley.wav"
+  },
+  {
+    "index": 82,
+    "row_index": 192,
+    "speaker": "先輩",
+    "text": "さぁな。ただ……まっ、そのときには……な？",
+    "voice_name": "Gracie",
+    "group": false,
+    "reused_from": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_fix_v5\\audio_wav\\073_Gracie.wav",
+    "path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\audio_wav\\082_Gracie.wav"
+  }
+]

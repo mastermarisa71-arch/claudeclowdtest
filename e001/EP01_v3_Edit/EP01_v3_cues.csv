@@ -1,0 +1,66 @@
+﻿番号,カット,開始TC,秒数,トラック,音,原素材,音量RMS目標dB,ハンドル秒,ファイル
+1,S1-01,00:00:00:00,43.25,環境_外,路地の夜,wind,-43,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\001_wind.wav
+2,S2-13,00:00:43:06,166.79166666666666,環境_店内,店内の会話,bar_room,-40,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\002_bar_room.wav
+3,S7-04,00:03:33:01,21.083333333333332,環境_外,巡回の遠い外気,wind,-49,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\003_wind.wav
+4,S9-01,00:04:26:23,8.0,SE_時計,閉店後の時計,clock,-44,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\004_clock.wav
+5,S8-01①,00:04:36:23,27.875,環境_外,路地の余韻,wind,-42,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\005_wind.wav
+6,S1-01,00:00:00:00,7.291666666666667,劇伴_序章,序章・物語が始まる,v3_opening,-29,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\006_v3_opening.wav
+7,S1-04①,00:00:07:07,5.0,劇伴_捜査官,巡回の赤い光,v3_thriller,-34,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\007_v3_thriller.wav
+8,S1-08①,00:00:12:07,18.5,劇伴_序章,扉へ進む希望,v3_opening,-30,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\008_v3_opening.wav
+9,S2-07②,00:00:30:19,20.958333333333332,劇伴_序章,ナレーション終わりとタイトルへの到達,v3_opening,-28,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\009_v3_opening.wav
+10,S3-01,00:00:51:18,34.208333333333336,劇伴_日常,アフォガードの掛け合い,v3_banter,-33,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\010_v3_banter.wav
+11,S3-16,00:01:25:23,25.708333333333332,劇伴_感情,禁止された日常・写真の大切さ,v3_heart,-31,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\011_v3_heart.wav
+12,S4-01,00:01:51:16,14.958333333333334,劇伴_日常,帰ってきた暁,v3_banter,-33,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\012_v3_banter.wav
+13,S4-09,00:02:06:15,6.041666666666667,劇伴_感情,おかえり・ただいま,v3_heart,-32,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\013_v3_heart.wav
+14,S4-13,00:02:12:16,20.791666666666668,劇伴_日常,店員たちの日常,v3_banter,-34,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\014_v3_banter.wav
+15,S5-06,00:02:33:11,28.458333333333332,劇伴_感情,本音と仲間の肯定,v3_heart,-31,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\015_v3_heart.wav
+16,S6-01,00:03:01:22,28.125,劇伴_営業,営業を音楽に・手元の拍,v3_ensemble,-31,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\016_v3_ensemble.wav
+17,S7-20②,00:04:00:13,34.416666666666664,劇伴_回復,大丈夫そうねの直後・平穏,v3_heart,-31,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\017_v3_heart.wav
+18,S7-21,00:04:01:03,25.833333333333332,環境_店内,安堵した店内,bar_room,-42,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\018_bar_room.wav
+19,S8-01①,00:04:36:23,19.25,劇伴_捜査官,捜査官・細かい弦の脈動,v3_thriller,-29,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\019_v3_thriller.wav
+20,S8-10,00:04:56:05,7.625,劇伴_捜査官,黒板・疑いが強まる,v3_thriller,-27,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\020_v3_thriller.wav
+21,S8-14,00:05:03:20,1.0,劇伴_捜査官,バッジ・緊張の頂点,v3_thriller,-25,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\021_v3_thriller.wav
+22,S1-01,00:00:00:00,43.25,環境_外の人声,遠い人のざわめき,v3_street,-45,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\022_v3_street.wav
+23,S7-04,00:03:33:01,21.083333333333332,環境_外の人声,外の捜査官の気配,v3_street,-50,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\023_v3_street.wav
+24,S8-01①,00:04:36:23,27.875,環境_外の人声,捜査官の背後の街,v3_street,-44,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\024_v3_street.wav
+25,S1-04①,00:00:07:07,6.0,SE_遠いサイレン,奥の通りのサイレン,v3_siren,-45,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\025_v3_siren.wav
+26,S7-04,00:03:33:01,6.0,SE_遠いサイレン,奥の通りのサイレン,v3_siren,-50,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\026_v3_siren.wav
+27,S8-03,00:04:41:11,6.0,SE_遠いサイレン,奥の通りのサイレン,v3_siren,-45,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\027_v3_siren.wav
+28,S1-02①,00:00:03:12,5.791666666666667,仮鼻歌,暁の鼻歌・赤い光で止まる,hum_adult,-32,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\028_hum_adult.wav
+29,S6-05,00:03:08:10,2.0,仮鼻歌,あかねの鼻歌,hum_young,-32,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\029_hum_young.wav
+30,S6-12,00:03:22:01,1.0,仮鼻歌,あかねの鼻歌・巡回で停止,hum_young,-33,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\030_hum_young.wav
+31,S1-02①,00:00:03:12,1.5,SE_足音,S1-02① 動作音,steps,-34,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\031_steps.wav
+32,S1-08①,00:00:12:07,2.0,SE_足音,S1-08① 動作音,steps,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\032_steps.wav
+33,S1-10,00:00:16:19,1.5833333333333333,SE_物音,S1-10 動作音,pen,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\033_pen.wav
+34,S1-11,00:00:18:19,1.0,SE_物音,S1-11 動作音,paper,-34,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\034_paper.wav
+35,S2-02,00:00:22:19,0.7916666666666666,SE_物音,S2-02 動作音,paper,-35,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\035_paper.wav
+36,S2-03,00:00:24:07,0.7916666666666666,SE_足音,S2-03 動作音,steps,-34,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\036_steps.wav
+37,S2-04,00:00:25:07,0.7083333333333334,SE_物音,S2-04 動作音,fabric,-37,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\037_fabric.wav
+38,S2-05,00:00:26:07,1.0,SE_物音,S2-05 動作音,paper,-35,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\038_paper.wav
+39,S2-07①,00:00:29:19,1.4166666666666667,SE_物音,S2-07① 動作音,door,-35,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\039_door.wav
+40,S2-12①,00:00:41:06,1.4166666666666667,SE_物音,S2-12① 動作音,door,-35,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\040_door.wav
+41,S2-14,00:00:44:18,0.7916666666666666,SE_物音,S2-14 動作音,door,-31,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\041_door.wav
+42,S2-15,00:00:46:18,0.7916666666666666,SE_物音,S2-15 動作音,fabric,-37,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\042_fabric.wav
+43,S3-01,00:00:51:18,2.4166666666666665,SE_物音,S3-01 動作音,shaker,-33,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\043_shaker.wav
+44,S3-02,00:00:54:18,1.2916666666666667,SE_物音,S3-02 動作音,pour,-32,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\044_pour.wav
+45,S3-09,00:01:08:08,0.5833333333333334,SE_物音,S3-09 動作音,fabric,-39,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\045_fabric.wav
+46,S3-10,00:01:11:22,0.7916666666666666,SE_物音,S3-10 動作音,glass,-33,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\046_glass.wav
+47,S4-07①,00:02:02:23,0.7916666666666666,SE_物音,S4-07① 動作音,glass,-35,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\047_glass.wav
+48,S4-08①,00:02:04:11,0.7916666666666666,SE_物音,S4-08① 動作音,fabric,-37,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\048_fabric.wav
+49,S4-16,00:02:16:17,1.0,SE_物音,S4-16 動作音,cat,-35,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\049_cat.wav
+50,S5-08,00:02:36:18,0.7916666666666666,SE_物音,S5-08 動作音,glass,-35,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\050_glass.wav
+51,S6-13①,00:03:23:01,0.5833333333333334,SE_物音,S6-13① 動作音,whisk,-35,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\051_whisk.wav
+52,S6-13③,00:03:24:06,0.5833333333333334,SE_物音,S6-13③ 動作音,shaker,-34,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\052_shaker.wav
+53,S6-13⑤,00:03:24:20,0.5833333333333334,SE_物音,S6-13⑤ 動作音,glass,-34,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\053_glass.wav
+54,S7-04,00:03:33:01,0.20833333333333334,SE_物音,S7-04 動作音,switch,-34,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\054_switch.wav
+55,S7-15,00:03:47:02,0.4166666666666667,SE_物音,S7-15 動作音,fabric,-39,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\055_fabric.wav
+56,S7-16②,00:03:49:02,0.5833333333333334,SE_物音,S7-16② 動作音,fabric,-38,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\056_fabric.wav
+57,S7-29,00:04:20:23,0.20833333333333334,SE_物音,S7-29 動作音,switch,-34,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\057_switch.wav
+58,S9-02,00:04:29:11,1.2916666666666667,SE_物音,S9-02 動作音,pen,-37,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\058_pen.wav
+59,S9-03①,00:04:32:11,0.5833333333333334,SE_物音,S9-03① 動作音,paper,-38,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\059_paper.wav
+60,S8-01①,00:04:36:23,1.4166666666666667,SE_足音,S8-01① 動作音,steps,-39,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\060_steps.wav
+61,S8-08,00:04:53:16,1.4166666666666667,SE_足音,S8-08 動作音,steps,-37,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\061_steps.wav
+62,S2-02,00:00:22:19,1.2916666666666667,SE_物音,入口の鈴,bell,-33,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\062_bell.wav
+63,S7-09①,00:03:36:13,9.541666666666666,SE_時計,巡回の時計・回想の目印,clock,-43,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\063_clock.wav
+64,S8-00,00:04:34:23,2.0,SE_時計,同じ巡回へ戻る時計,clock,-43,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\064_clock.wav
+65,S6-13④,00:03:25:11,6.083333333333333,仮鼻歌,手元の最後・あかねの鼻歌,hum_young,-34,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v3_Edit\audio_clips\065_hum_young.wav

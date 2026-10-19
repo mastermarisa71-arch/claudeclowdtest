@@ -1,0 +1,37 @@
+{
+  "frames": 7340,
+  "fps": 24,
+  "placements": 195,
+  "voices": 78,
+  "sound_clips": 65,
+  "missing_media": [],
+  "audio_channels_rate_bytes": [
+    [
+      1,
+      48000,
+      2
+    ]
+  ],
+  "mix_peak_dBFS": -3.6183153270112407,
+  "native_sequence_found": true,
+  "native_timecode_effect": 1,
+  "review": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 960,
+        "height": 540,
+        "r_frame_rate": "24/1"
+      },
+      {
+        "codec_name": "aac",
+        "r_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "305.833333"
+    }
+  }
+}

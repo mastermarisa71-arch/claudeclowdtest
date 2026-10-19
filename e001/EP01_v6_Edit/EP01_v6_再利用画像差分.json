@@ -1,0 +1,242 @@
+[
+  {
+    "cut": "S2-01",
+    "requested": "EP01_v4_sh01_k1.png",
+    "used": "EP01_v3_sh01_k1.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh01_k1.png",
+    "exact": true,
+    "instruction": "投函口の細い隙間から、折りたたんだ紙が差し込まれ、下の受け箱へ落ちる途中。投函口の上の小さな鈴が揺れている。入口の内側は暗く、隙間から外の街"
+  },
+  {
+    "cut": "S3-05①",
+    "requested": "EP01_v4_sh01_k5.png",
+    "used": "EP01_sh04_k5.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_sh04_k5.png",
+    "exact": false,
+    "instruction": "まひるが頭をかいて、えへへと笑う。海凪は押さえた手を離し、ピッチャーを天板に置き直す"
+  },
+  {
+    "cut": "S3-05②",
+    "requested": "EP01_v4_sh01_k6.png",
+    "used": "EP01_v2_sh05_k1.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v2_sh05_k1.png",
+    "exact": false,
+    "instruction": "同じ画角。海凪がすました顔で人差し指を立て、あかねの口ぶりをまねて説教する（ジト目）。まひるは首をすくめる"
+  },
+  {
+    "cut": "S3-12",
+    "requested": "EP01_v4_sh01_k2.png",
+    "used": "EP01_v2_sh04_k6.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v2_sh04_k6.png",
+    "exact": false,
+    "instruction": "カウンター越しに、客へカクテルグラスを差し出す朔奈。客の手がグラスの脚に伸びる。朔奈は客の顔を見て穏やかに微笑む"
+  },
+  {
+    "cut": "S4-03①",
+    "requested": "EP01_v4_sh01_k8.png",
+    "used": "EP01_v3_sh01_k5.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh01_k5.png",
+    "exact": true,
+    "instruction": "SDのあかねが、隣のSDの暁をビシッと指さして告げ口。暁は横でぎくっと固まり、汗がとぶ"
+  },
+  {
+    "cut": "S4-03②",
+    "requested": "EP01_v4_sh01_k9.png",
+    "used": "EP01_v3_sh01_k6.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh01_k6.png",
+    "exact": true,
+    "instruction": "同じ並び。SDの暁があかねの頭を片手でわしゃわしゃして口止め、SDのあかねはむーっと頬をふくらませて抵抗する"
+  },
+  {
+    "cut": "S4-08",
+    "requested": "EP01_v4_sh02_k9.png",
+    "used": "EP01_sh07_k8.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\cutouts\\EP01_sh07_k8.png",
+    "exact": false,
+    "instruction": "SDの暁が、カウンターに突っ伏してしくしく。頭の上にどんよりした縦線"
+  },
+  {
+    "cut": "S4-09",
+    "requested": "EP01_v4_sh03_k1.png",
+    "used": "EP01_sh07_k9.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v2_Edit\\cutouts\\EP01_sh07_k9.png",
+    "exact": false,
+    "instruction": "調理台から身を乗り出して、にやにや笑うまひる。手前に突っ伏した暁の後ろ頭"
+  },
+  {
+    "cut": "S4-10",
+    "requested": "EP01_v4_sh03_k2.png",
+    "used": "EP01_sh08_k1.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_sh08_k1.png",
+    "exact": false,
+    "instruction": "ピアノを弾き続けながら、目だけ席6の方へ向ける海凪。奥で、しゃがんでステラを撫でるあかねと、突っ伏した暁（小さく）"
+  },
+  {
+    "cut": "S5-14",
+    "requested": "EP01_v4_sh03_k6.png",
+    "used": "EP01_v3_sh02_k4.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh02_k4.png",
+    "exact": true,
+    "instruction": "手前の左に、あかねの肩と髪（ピントの外）。奥の席3で、スプーンを持ったまま、目を上げずに即答する海凪"
+  },
+  {
+    "cut": "S5-15",
+    "requested": "EP01_v4_sh03_k7.png",
+    "used": "EP01_v3_sh02_k5.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh02_k5.png",
+    "exact": true,
+    "instruction": "エプロンの裾を握っていたあかねの指が、少しだけ緩む"
+  },
+  {
+    "cut": "S5-16",
+    "requested": "EP01_v4_sh03_k8.png",
+    "used": "EP01_v3_sh02_k6.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh02_k6.png",
+    "exact": true,
+    "instruction": "調理台のまひるが、客席の笑顔を見てから、あかねの方へ向き直り、にっと笑って大きくうなずく（口は閉じた笑み）"
+  },
+  {
+    "cut": "S5-17",
+    "requested": "EP01_v4_sh03_k9.png",
+    "used": "EP01_v3_sh02_k7.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh02_k7.png",
+    "exact": true,
+    "instruction": "手前の左に、あかねの肩と頭の後ろ（ピントの外）。奥で、拭いていたグラスを天板に置き、あかねをまっすぐ見る朔奈"
+  },
+  {
+    "cut": "S6-08",
+    "requested": "EP01_v4_sh04_k1.png",
+    "used": "EP01_v2_sh10_k7.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v2_sh10_k7.png",
+    "exact": false,
+    "instruction": "調理台から身を乗り出して目を輝かせるまひる（周りに小さなキラキラ）。手前で、口を押さえたまま振り向くあかね。奥でピアノを弾く海凪"
+  },
+  {
+    "cut": "S7-05",
+    "requested": "EP01_v4_sh04_k3.png",
+    "used": "EP01_v3_sh02_k9.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh02_k9.png",
+    "exact": true,
+    "instruction": "S6R-13①と同じ構図・同じボウルと泡立て器、照明を落とした暗さ。まひるの手が泡立て器を止め、ボウルの縁にそっと置く"
+  },
+  {
+    "cut": "S7-06",
+    "requested": "EP01_v4_sh04_k4.png",
+    "used": "EP01_v3_sh03_k1.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh03_k1.png",
+    "exact": true,
+    "instruction": "S6R-13②と同じ構図・同じ鍵盤、照明を落とした暗さ。海凪の指が鍵盤から浮き、そのまま止まる"
+  },
+  {
+    "cut": "S7-07",
+    "requested": "EP01_v4_sh04_k5.png",
+    "used": "EP01_v3_sh03_k2.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh03_k2.png",
+    "exact": true,
+    "instruction": "S6R-13③と同じ構図、照明を落とした暗さ。シェイカーを振っていた朔奈の手が止まり、シェイカーをカウンターの天板の下へ静かに下ろす"
+  },
+  {
+    "cut": "S7-10①",
+    "requested": "EP01_v4_sh04_k6.png",
+    "used": "EP01_sh11_k2.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_sh11_k2.png",
+    "exact": false,
+    "instruction": "暗い店。上部の横長の窓を見上げる朔奈。目が窓に止まったまま動かない。頬に窓の赤い光"
+  },
+  {
+    "cut": "S7-15①",
+    "requested": "EP01_v4_sh04_k7.png",
+    "used": "EP01_v3_sh03_k3.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh03_k3.png",
+    "exact": true,
+    "instruction": "駆け出した全身真っ黒のステラ（足先も尻尾の先も黒）に、しゃがんだまま両腕を伸ばすあかね。指先がステラの背に触れる直前"
+  },
+  {
+    "cut": "S7-15②",
+    "requested": "EP01_v4_sh04_k8.png",
+    "used": "EP01_v3_sh03_k4.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh03_k4.png",
+    "exact": true,
+    "instruction": "同じ画角。あかねの手がステラの背に触れ、そのまま胸に抱え込む（立ち上がらない）。画面の上を赤い光"
+  },
+  {
+    "cut": "S7-21①",
+    "requested": "EP01_v4_sh05_k1.png",
+    "used": "EP01_v3_sh03_k5.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh03_k5.png",
+    "exact": true,
+    "instruction": "床にしゃがんだまま、全身真っ黒のステラを両腕で強く抱えるあかね。目はまだ上の窓（外）を見ている。肩に力が入っている"
+  },
+  {
+    "cut": "S7-21②",
+    "requested": "EP01_v4_sh05_k2.png",
+    "used": "EP01_v3_sh03_k6.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh03_k6.png",
+    "exact": true,
+    "instruction": "同じ画角。抱く腕の力が少し緩み、肩がすとんと落ちる。長く息を吐く"
+  },
+  {
+    "cut": "S7-21③",
+    "requested": "EP01_v4_sh05_k3.png",
+    "used": "EP01_v3_sh03_k7.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh03_k7.png",
+    "exact": true,
+    "instruction": "同じ画角。視線が外からステラへ戻る。まだ少し震える指でステラの背をなでる。口元にかすかな笑み（目は潤んでいる）"
+  },
+  {
+    "cut": "S7-22",
+    "requested": "EP01_v4_sh04_k9.png",
+    "used": "EP01_v3_sh03_k8.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh03_k8.png",
+    "exact": true,
+    "instruction": "通常の頭身。調理台に両手をついたまま、へなへなと顔を伏せるまひる。肩が小さく震え、上げた顔は泣き笑い（目が潤み、眉が下がる）。SDの記号は描"
+  },
+  {
+    "cut": "S7-31①",
+    "requested": "EP01_v4_sh05_k4.png",
+    "used": "EP01_v2_sh14_k9.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v2_sh14_k9.png",
+    "exact": false,
+    "instruction": "灯りが戻った店の全景（S7R-30③と同じ画角）。カメラが少し上へ動き始め、画面の上の端に横長の窓"
+  },
+  {
+    "cut": "S7-31②",
+    "requested": "EP01_v4_sh05_k5.png",
+    "used": "EP01_v3_sh03_k9.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh03_k9.png",
+    "exact": false,
+    "instruction": "カメラが上がりきった画。画面の上半分に上部の横長の窓（外は暗い青）。下の端に店の暖かい灯りと人の頭"
+  },
+  {
+    "cut": "S8-01①",
+    "requested": "EP01_v4_sh05_k6.png",
+    "used": "EP01_v3_sh03_k9.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v3_sh03_k9.png",
+    "exact": false,
+    "instruction": "夜の路地。外から見上げた月灯りの上部の横長の窓。窓から暖かな光がうっすら漏れている。窓の下の外壁は暗い"
+  },
+  {
+    "cut": "S8-01②",
+    "requested": "EP01_v4_sh05_k7.png",
+    "used": "EP01_v2_sh15_k9.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_v2_sh15_k9.png",
+    "exact": false,
+    "instruction": "カメラが下がった画。路地の石畳の先、表通りへの出口を、赤い懐中電灯を持った小さな先輩と背の高い後輩が背中を見せて歩いていく"
+  },
+  {
+    "cut": "S8-05",
+    "requested": "EP01_v4_sh05_k8.png",
+    "used": "EP01_sh14_k3.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_sh14_k3.png",
+    "exact": false,
+    "instruction": "だるそうだった後輩が、コートのポケットから両手を出す。片目の隠れた顔が真顔になり、路地の方を見る"
+  },
+  {
+    "cut": "S8-08",
+    "requested": "EP01_v4_sh05_k9.png",
+    "used": "EP01_sh15_k1.png",
+    "source": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v3_Edit\\cutouts\\EP01_sh15_k1.png",
+    "exact": false,
+    "instruction": "SDから通常の絵に戻った先輩が、言いかけて口をつぐみ、また路地の方へ顔を向けかける。手は後ろで組んだまま"
+  }
+]

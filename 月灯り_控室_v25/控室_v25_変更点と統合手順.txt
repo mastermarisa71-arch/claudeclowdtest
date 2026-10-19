@@ -1,0 +1,22 @@
+月灯り 控室 v25：ステラの居場所と小型冷蔵庫
+南側（階段と反対）の壁にステラの寝床、隠れ箱、壁の休憩棚、爪とぎ、食器、フード缶、おもちゃ箱と猫じゃらしを配置。
+椅子を現在位置に置いた静止状態で、寝床前に約0.80m。椅子を引いた演技の動線は別途確認してください。
+お茶台下の既存冷蔵庫を白い外装・縦取っ手・庫内棚のあるモデルに更新。
+V25_Fridge_door_hinge のカスタムプロパティ open_degrees：0=閉、90=開。0と90で描画確認済み。
+保存時：冷蔵庫閉、階段下ろす、休憩用の机小物表示。
+天井は26_STAFF_Ceiling_toggle_v22。ビューポート非表示、レンダー表示。
+大きな追加の候補（未設置）：折り畳み物干し、着替え用全身鏡。
+ステラ本体は今回追加していません。
+
+ファイル：
+全体コピーは確認用の独立保存です。元のv20ファイルは上書きしていません。
+控室差分_v25.blend は控室関連24～30のコレクションを収録。バー担当の最新版に統合する場合、既存の同名控室コレクションと重複させず置き換えてください。
+元シーン側で非表示にする旧オブジェクト（子孫を含む）：
+STAFF_Locker_1 / 2 / 3、STAFF_Clothes_rack、STAFF_Washbasin、STAFF_Kettle_storage、STAFF_Whiteboard。
+旧机小物 STAFF_Notebook_on_table、STAFF_Mug*、V21_STAFF_Staff_mug*、V21_STAFF_Locker_1～4_number。
+今回追加で旧モデルを非表示：
+V24_STAFF_Stella_bowl*、
+V21_STAFF_Compact_fridge_door、V21_STAFF_Fridge_base_vent、V21_STAFF_Fridge_label、
+V21_STAFF_Tea_storage_pull（.001は残す）、V21_STAFF_Tea_storage_body。
+既存の共有テーブル、椅子、鏡、時計は統合先で維持します。
+BUILD_STAFF_v25.py はv24からの制作記録です。同じシーンへ繰り返し実行すると重複するため再実行しないでください。

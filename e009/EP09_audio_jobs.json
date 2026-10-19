@@ -1,0 +1,1019 @@
+[
+  {
+    "index": 1,
+    "row_index": 2,
+    "speaker": "まひる",
+    "text": "あかねちゃん、それさっきも運んでなかった？",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 2,
+    "row_index": 3,
+    "speaker": "あかね",
+    "text": "え？",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 3,
+    "row_index": 4,
+    "speaker": "あかね",
+    "text": "あ……",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 4,
+    "row_index": 5,
+    "speaker": "海凪",
+    "text": "今日、ずっと変ですよ",
+    "voice_name": "Luna",
+    "voice_id": "375a3398-e3b4-4f91-845d-42181e352899",
+    "group": false
+  },
+  {
+    "index": 5,
+    "row_index": 7,
+    "speaker": "朔奈",
+    "text": "あかねちゃん？",
+    "voice_name": "Liza",
+    "voice_id": "1e7feef5-2436-55bd-8778-cb075ecd081e",
+    "group": false
+  },
+  {
+    "index": 6,
+    "row_index": 8,
+    "speaker": "あかね",
+    "text": "……みんなに、言っておきたいことがあって",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 7,
+    "row_index": 9,
+    "speaker": "まひる",
+    "text": "なに？",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 8,
+    "row_index": 10,
+    "speaker": "あかね",
+    "text": "その時、黒板を書き換えるのを忘れていたことに、気づかれて……",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 9,
+    "row_index": 11,
+    "speaker": "あかね",
+    "text": "うん。でも……私が書き換えようとした時、言われたの",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 10,
+    "row_index": 12,
+    "speaker": "あかね",
+    "text": "『もうすぐ閉店するのに、今から書き換えるのか』って",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 11,
+    "row_index": 13,
+    "speaker": "あかね",
+    "text": "その時の顔が、ずっと引っかかってて",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 12,
+    "row_index": 14,
+    "speaker": "朔奈",
+    "text": "気づかれたかもしれない、ってこと？",
+    "voice_name": "Liza",
+    "voice_id": "1e7feef5-2436-55bd-8778-cb075ecd081e",
+    "group": false
+  },
+  {
+    "index": 13,
+    "row_index": 15,
+    "speaker": "あかね",
+    "text": "……はい",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 14,
+    "row_index": 16,
+    "speaker": "まひる",
+    "text": "でも、まだ決まったわけじゃ――",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 15,
+    "row_index": 22,
+    "speaker": "まひる",
+    "text": "……捜査官？",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 16,
+    "row_index": 23,
+    "speaker": "あかね",
+    "text": "静かに",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 17,
+    "row_index": 27,
+    "speaker": "暁",
+    "text": "開けろ！ 私だ！",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 18,
+    "row_index": 28,
+    "speaker": "あかね",
+    "text": "……暁さん？",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 19,
+    "row_index": 30,
+    "speaker": "あかね",
+    "text": "暁さん！？ 仕事は？",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 20,
+    "row_index": 31,
+    "speaker": "暁",
+    "text": "そんなこと言っている場合じゃない",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 21,
+    "row_index": 32,
+    "speaker": "暁",
+    "text": "捜査官が感づいている",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 22,
+    "row_index": 34,
+    "speaker": "朔奈",
+    "text": "どこまで？",
+    "voice_name": "Liza",
+    "voice_id": "1e7feef5-2436-55bd-8778-cb075ecd081e",
+    "group": false
+  },
+  {
+    "index": 23,
+    "row_index": 35,
+    "speaker": "暁",
+    "text": "月灯りまでは掴まれてない。けど、このパン屋が怪しいって目をつけられている",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 24,
+    "row_index": 37,
+    "speaker": "暁",
+    "text": "今日、ここに来るらしい",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 25,
+    "row_index": 38,
+    "speaker": "あかね",
+    "text": "え！？",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": true
+  },
+  {
+    "index": 26,
+    "row_index": 38,
+    "speaker": "朔奈",
+    "text": "え！？",
+    "voice_name": "Liza",
+    "voice_id": "1e7feef5-2436-55bd-8778-cb075ecd081e",
+    "group": true
+  },
+  {
+    "index": 27,
+    "row_index": 38,
+    "speaker": "まひる",
+    "text": "え！？",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": true
+  },
+  {
+    "index": 28,
+    "row_index": 38,
+    "speaker": "海凪",
+    "text": "え！？",
+    "voice_name": "Luna",
+    "voice_id": "375a3398-e3b4-4f91-845d-42181e352899",
+    "group": true
+  },
+  {
+    "index": 29,
+    "row_index": 39,
+    "speaker": "暁",
+    "text": "摘発するつもりで動いてる",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 30,
+    "row_index": 40,
+    "speaker": "朔奈",
+    "text": "……今日の営業は中止",
+    "voice_name": "Liza",
+    "voice_id": "1e7feef5-2436-55bd-8778-cb075ecd081e",
+    "group": false
+  },
+  {
+    "index": 31,
+    "row_index": 41,
+    "speaker": "まひる",
+    "text": "え？",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 32,
+    "row_index": 42,
+    "speaker": "朔奈",
+    "text": "ここに月灯りがあると分かるもの、全部片付けるわよ",
+    "voice_name": "Liza",
+    "voice_id": "1e7feef5-2436-55bd-8778-cb075ecd081e",
+    "group": false
+  },
+  {
+    "index": 33,
+    "row_index": 43,
+    "speaker": "あかね",
+    "text": "はい！",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 34,
+    "row_index": 43,
+    "speaker": "海凪",
+    "text": "分かりました",
+    "voice_name": "Luna",
+    "voice_id": "375a3398-e3b4-4f91-845d-42181e352899",
+    "group": false
+  },
+  {
+    "index": 35,
+    "row_index": 43,
+    "speaker": "まひる",
+    "text": "りょ、了解！",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 36,
+    "row_index": 46,
+    "speaker": "海凪",
+    "text": "……これは？",
+    "voice_name": "Luna",
+    "voice_id": "375a3398-e3b4-4f91-845d-42181e352899",
+    "group": false
+  },
+  {
+    "index": 37,
+    "row_index": 47,
+    "speaker": "暁",
+    "text": "ピアノがあるだけじゃ捕まらない。弾いてなきゃいい",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 38,
+    "row_index": 49,
+    "speaker": "あかね",
+    "text": "これも証拠になる！ 片付けなきゃ！",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 39,
+    "row_index": 53,
+    "speaker": "海凪",
+    "text": "……ステラは？",
+    "voice_name": "Luna",
+    "voice_id": "375a3398-e3b4-4f91-845d-42181e352899",
+    "group": false
+  },
+  {
+    "index": 40,
+    "row_index": 55,
+    "speaker": "ステラ",
+    "text": "ニャー",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 41,
+    "row_index": 56,
+    "speaker": "まひる",
+    "text": "ステラー！ こっちおいでー！",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 42,
+    "row_index": 58,
+    "speaker": "まひる",
+    "text": "待ってー！ ……捕まえたー！",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 43,
+    "row_index": 59,
+    "speaker": "おばあ",
+    "text": "あら、いらっしゃい",
+    "voice_name": "Isla",
+    "voice_id": "7367e919-3069-5a0b-939e-dfb1c0fd91b4",
+    "group": false
+  },
+  {
+    "index": 44,
+    "row_index": 61,
+    "speaker": "あかね",
+    "text": "……来た",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 45,
+    "row_index": 62,
+    "speaker": "おばあ",
+    "text": "今日はもう閉店だよ",
+    "voice_name": "Isla",
+    "voice_id": "7367e919-3069-5a0b-939e-dfb1c0fd91b4",
+    "group": false
+  },
+  {
+    "index": 46,
+    "row_index": 63,
+    "speaker": "先輩",
+    "text": "分かっとる",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 47,
+    "row_index": 64,
+    "speaker": "後輩",
+    "text": "すみませんね、閉店後に",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 48,
+    "row_index": 65,
+    "speaker": "先輩",
+    "text": "今日はパンを買いに来たんじゃない",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 49,
+    "row_index": 67,
+    "speaker": "先輩",
+    "text": "少し、中を見せてもらうぞ",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 50,
+    "row_index": 68,
+    "speaker": "おばあ",
+    "text": "……何かあったのかい？",
+    "voice_name": "Isla",
+    "voice_id": "7367e919-3069-5a0b-939e-dfb1c0fd91b4",
+    "group": false
+  },
+  {
+    "index": 51,
+    "row_index": 69,
+    "speaker": "先輩",
+    "text": "確認したいことがあるだけじゃ",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 52,
+    "row_index": 70,
+    "speaker": "まひる",
+    "text": "中見るって……",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 53,
+    "row_index": 71,
+    "speaker": "暁",
+    "text": "まずいな",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 54,
+    "row_index": 72,
+    "speaker": "あかね",
+    "text": "どうしよう……",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 55,
+    "row_index": 73,
+    "speaker": "朔奈",
+    "text": "上へ",
+    "voice_name": "Liza",
+    "voice_id": "1e7feef5-2436-55bd-8778-cb075ecd081e",
+    "group": false
+  },
+  {
+    "index": 56,
+    "row_index": 74,
+    "speaker": "朔奈",
+    "text": "屋根裏。みんな上がって",
+    "voice_name": "Liza",
+    "voice_id": "1e7feef5-2436-55bd-8778-cb075ecd081e",
+    "group": false
+  },
+  {
+    "index": 57,
+    "row_index": 75,
+    "speaker": "まひる",
+    "text": "ちょ、今は暴れないで！",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 58,
+    "row_index": 75,
+    "speaker": "あかね",
+    "text": "早く！",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 59,
+    "row_index": 76,
+    "speaker": "暁",
+    "text": "急げ。来るぞ",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 60,
+    "row_index": 78,
+    "speaker": "おばあ",
+    "text": "何を探してるんだい？",
+    "voice_name": "Isla",
+    "voice_id": "7367e919-3069-5a0b-939e-dfb1c0fd91b4",
+    "group": false
+  },
+  {
+    "index": 61,
+    "row_index": 79,
+    "speaker": "先輩",
+    "text": "……昨日",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 62,
+    "row_index": 81,
+    "speaker": "先輩",
+    "text": "店を閉める直前まで、黒板は前の日のままじゃった",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 63,
+    "row_index": 82,
+    "speaker": "先輩",
+    "text": "じゃが、夜には書き換わっとった",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 64,
+    "row_index": 84,
+    "speaker": "先輩",
+    "text": "閉店したあとも、ここには誰かが残っとるんじゃろ",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 65,
+    "row_index": 85,
+    "speaker": "おばあ",
+    "text": "私が住んでいるからねぇ",
+    "voice_name": "Isla",
+    "voice_id": "7367e919-3069-5a0b-939e-dfb1c0fd91b4",
+    "group": false
+  },
+  {
+    "index": 66,
+    "row_index": 87,
+    "speaker": "おばあ",
+    "text": "店の奥が住まいなんだよ。知らなかったかい？",
+    "voice_name": "Isla",
+    "voice_id": "7367e919-3069-5a0b-939e-dfb1c0fd91b4",
+    "group": false
+  },
+  {
+    "index": 67,
+    "row_index": 88,
+    "speaker": "後輩",
+    "text": "……筋は通っていますね",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 68,
+    "row_index": 90,
+    "speaker": "後輩",
+    "text": "事実でしょ",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 69,
+    "row_index": 91,
+    "speaker": "先輩",
+    "text": "……奥も見せてもらう",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 70,
+    "row_index": 92,
+    "speaker": "おばあ",
+    "text": "やれやれ。散らかってても知らないよ",
+    "voice_name": "Isla",
+    "voice_id": "7367e919-3069-5a0b-939e-dfb1c0fd91b4",
+    "group": false
+  },
+  {
+    "index": 71,
+    "row_index": 96,
+    "speaker": "ステラ",
+    "text": "……ニャ",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 72,
+    "row_index": 105,
+    "speaker": "後輩",
+    "text": "……部屋、ありましたね",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 73,
+    "row_index": 106,
+    "speaker": "先輩",
+    "text": "ああ",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 74,
+    "row_index": 109,
+    "speaker": "後輩",
+    "text": "酒も客もいない。現行犯じゃないと、どうにもできないっすね",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 75,
+    "row_index": 110,
+    "speaker": "先輩",
+    "text": "……そうじゃな",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 76,
+    "row_index": 116,
+    "speaker": "先輩",
+    "text": "また明日来るぞ",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 77,
+    "row_index": 119,
+    "speaker": "まひる",
+    "text": "……行った？",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 78,
+    "row_index": 120,
+    "speaker": "暁",
+    "text": "……行った",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 79,
+    "row_index": 121,
+    "speaker": "あかね",
+    "text": "はぁぁぁ……",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": true
+  },
+  {
+    "index": 80,
+    "row_index": 121,
+    "speaker": "朔奈",
+    "text": "はぁぁぁ……",
+    "voice_name": "Liza",
+    "voice_id": "1e7feef5-2436-55bd-8778-cb075ecd081e",
+    "group": true
+  },
+  {
+    "index": 81,
+    "row_index": 121,
+    "speaker": "まひる",
+    "text": "はぁぁぁ……",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": true
+  },
+  {
+    "index": 82,
+    "row_index": 121,
+    "speaker": "海凪",
+    "text": "はぁぁぁ……",
+    "voice_name": "Luna",
+    "voice_id": "375a3398-e3b4-4f91-845d-42181e352899",
+    "group": true
+  },
+  {
+    "index": 83,
+    "row_index": 122,
+    "speaker": "まひる",
+    "text": "寿命縮んだー……",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 84,
+    "row_index": 124,
+    "speaker": "まひる",
+    "text": "もう降りていいよね？",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 85,
+    "row_index": 125,
+    "speaker": "暁",
+    "text": "いや",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 86,
+    "row_index": 126,
+    "speaker": "暁",
+    "text": "あいつら、また明日来るって言ってただろ。外で見張っている可能性もある",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 87,
+    "row_index": 127,
+    "speaker": "あかね",
+    "text": "……じゃあ、今日は？",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 88,
+    "row_index": 128,
+    "speaker": "朔奈",
+    "text": "ここに泊まりましょうか",
+    "voice_name": "Liza",
+    "voice_id": "1e7feef5-2436-55bd-8778-cb075ecd081e",
+    "group": false
+  },
+  {
+    "index": 89,
+    "row_index": 129,
+    "speaker": "まひる",
+    "text": "え？",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 90,
+    "row_index": 130,
+    "speaker": "朔奈",
+    "text": "外に出ない方が安全でしょ？",
+    "voice_name": "Liza",
+    "voice_id": "1e7feef5-2436-55bd-8778-cb075ecd081e",
+    "group": false
+  },
+  {
+    "index": 91,
+    "row_index": 131,
+    "speaker": "まひる",
+    "text": "……お泊まり！？",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 92,
+    "row_index": 132,
+    "speaker": "海凪",
+    "text": "急に楽しそうにしないでください",
+    "voice_name": "Luna",
+    "voice_id": "375a3398-e3b4-4f91-845d-42181e352899",
+    "group": false
+  },
+  {
+    "index": 93,
+    "row_index": 134,
+    "speaker": "暁",
+    "text": "……なんだよ",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 94,
+    "row_index": 135,
+    "speaker": "海凪",
+    "text": "勤務中では？",
+    "voice_name": "Luna",
+    "voice_id": "375a3398-e3b4-4f91-845d-42181e352899",
+    "group": false
+  },
+  {
+    "index": 95,
+    "row_index": 136,
+    "speaker": "暁",
+    "text": "お前らを助けに来たんだろうが！",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 96,
+    "row_index": 137,
+    "speaker": "朔奈",
+    "text": "ふふ。ありがとう、暁",
+    "voice_name": "Liza",
+    "voice_id": "1e7feef5-2436-55bd-8778-cb075ecd081e",
+    "group": false
+  },
+  {
+    "index": 97,
+    "row_index": 138,
+    "speaker": "暁",
+    "text": "……ったく",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 98,
+    "row_index": 139,
+    "speaker": "暁",
+    "text": "私は様子見て戻る。ここにいたら逆に怪しまれるからな",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 99,
+    "row_index": 140,
+    "speaker": "あかね",
+    "text": "暁さん、大丈夫？",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 100,
+    "row_index": 141,
+    "speaker": "暁",
+    "text": "記者を舐めんな。こういう時に怪しまれず歩くのも、仕事のうちだ",
+    "voice_name": "Ainsley",
+    "voice_id": "731b4ffe-e95e-59f4-8c00-81608936091f",
+    "group": false
+  },
+  {
+    "index": 101,
+    "row_index": 142,
+    "speaker": "まひる",
+    "text": "なんか本当に、お泊まり会みたい！",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 102,
+    "row_index": 143,
+    "speaker": "まひる",
+    "text": "じゃあ今度、ちゃんとやろうよ！ 普通のお泊まり会！",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 103,
+    "row_index": 144,
+    "speaker": "朔奈",
+    "text": "私は賛成",
+    "voice_name": "Liza",
+    "voice_id": "1e7feef5-2436-55bd-8778-cb075ecd081e",
+    "group": false
+  },
+  {
+    "index": 104,
+    "row_index": 145,
+    "speaker": "あかね",
+    "text": "……じゃあ、いつか",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 105,
+    "row_index": 146,
+    "speaker": "まひる",
+    "text": "決まりー！",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 106,
+    "row_index": 148,
+    "speaker": "まひる",
+    "text": "ねえねえ",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 107,
+    "row_index": 149,
+    "speaker": "まひる",
+    "text": "全然眠くな……",
+    "voice_name": "Chloe",
+    "voice_id": "e9cfbbf0-4476-46be-b396-596eb774b165",
+    "group": false
+  },
+  {
+    "index": 108,
+    "row_index": 150,
+    "speaker": "海凪",
+    "text": "寝ましたね",
+    "voice_name": "Luna",
+    "voice_id": "375a3398-e3b4-4f91-845d-42181e352899",
+    "group": false
+  },
+  {
+    "index": 109,
+    "row_index": 151,
+    "speaker": "海凪",
+    "text": "私たちも寝ましょうか",
+    "voice_name": "Luna",
+    "voice_id": "375a3398-e3b4-4f91-845d-42181e352899",
+    "group": false
+  },
+  {
+    "index": 110,
+    "row_index": 153,
+    "speaker": "あかね",
+    "text": "昨日、私が黒板を忘れなかったら――",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 111,
+    "row_index": 154,
+    "speaker": "あかね",
+    "text": "でも、後悔してるだけじゃ守れない",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 112,
+    "row_index": 155,
+    "speaker": "あかね",
+    "text": "……絶対に、ここは守る",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  },
+  {
+    "index": 113,
+    "row_index": 158,
+    "speaker": "ステラ",
+    "text": "ニャ",
+    "voice_name": "Gracie",
+    "voice_id": "09878754-f20b-5330-9790-58a8027ab5b2",
+    "group": false
+  }
+]

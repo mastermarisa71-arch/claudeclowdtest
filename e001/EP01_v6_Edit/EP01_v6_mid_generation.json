@@ -1,0 +1,53 @@
+[
+  {
+    "sheet": 1,
+    "references": [
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M01_start_9panel.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M01_end_9panel.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M01_ref03_akane_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M01_ref04_sakuna_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M01_ref05_mahiru_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M01_ref06_kairi_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M01_ref07_akira_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M01_ref08_senpai_moto_260914.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M01_ref09_kohai_moto_260914.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M01_ref10_月灯_店内配置図_カメラ位置.png"
+    ],
+    "missing_endpoints": [],
+    "prompt_path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\EP01_v6_mid_prompt_M01.txt"
+  },
+  {
+    "sheet": 2,
+    "references": [
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M02_start_9panel.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M02_end_9panel.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M02_ref03_akane_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M02_ref04_sakuna_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M02_ref05_mahiru_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M02_ref06_kairi_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M02_ref07_akira_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M02_ref08_senpai_moto_260914.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M02_ref09_kohai_moto_260914.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M02_ref10_月灯_店内配置図_カメラ位置.png"
+    ],
+    "missing_endpoints": [],
+    "prompt_path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\EP01_v6_mid_prompt_M02.txt"
+  },
+  {
+    "sheet": 3,
+    "references": [
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M03_start_9panel.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M03_end_9panel.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M03_ref03_akane_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M03_ref04_sakuna_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M03_ref05_mahiru_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M03_ref06_kairi_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M03_ref07_akira_moto_260909.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M03_ref08_senpai_moto_260914.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M03_ref09_kohai_moto_260914.png",
+      "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\mid_references\\M03_ref10_月灯_店内配置図_カメラ位置.png"
+    ],
+    "missing_endpoints": [],
+    "prompt_path": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_v6_Edit\\EP01_v6_mid_prompt_M03.txt"
+  }
+]

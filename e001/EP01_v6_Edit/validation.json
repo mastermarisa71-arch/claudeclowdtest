@@ -1,0 +1,16 @@
+{
+  "frames": 7682,
+  "seconds": 320.0833333333333,
+  "placements": 203,
+  "picture_clips": 225,
+  "voice_clips": 84,
+  "missing_media": [],
+  "incompatible_audio": [],
+  "video_tracks": 3,
+  "audio_tracks": 23,
+  "static_only": true,
+  "speed_range": [
+    100,
+    120.0
+  ]
+}

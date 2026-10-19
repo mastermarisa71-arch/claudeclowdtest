@@ -1,0 +1,416 @@
+[
+  {
+    "index": 1,
+    "text": "あ！ おばあちゃんから明日のおすすめー！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\004_C004_Chloe.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\001_Chloe.wav"
+  },
+  {
+    "index": 2,
+    "text": "なになに？",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\005_C005_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\002_Gracie.wav"
+  },
+  {
+    "index": 3,
+    "text": "あんぱんだってー！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\006_C006_Chloe.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\003_Chloe.wav"
+  },
+  {
+    "index": 4,
+    "text": "じゃあ、明日の合言葉はあんぱんだね",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\007_C007_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\004_Gracie.wav"
+  },
+  {
+    "index": 5,
+    "text": "随分普通ですね",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\008_C008_Luna.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\005_Luna.wav"
+  },
+  {
+    "index": 6,
+    "text": "普通だからいいのよ。見られても、ただのおすすめにしか見えないでしょう？",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\009_C009_Liza.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\006_Liza.wav"
+  },
+  {
+    "index": 7,
+    "text": "じゃあ、今のうちに書いておこう！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\010_C010_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\007_Gracie.wav"
+  },
+  {
+    "index": 8,
+    "text": "『まひる特製・秘密のあんぱん』は？",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\012_C012_Chloe.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\008_Chloe.wav"
+  },
+  {
+    "index": 9,
+    "text": "秘密って言っちゃってるじゃん！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\013_C013_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\009_Gracie.wav"
+  },
+  {
+    "index": 10,
+    "text": "あ、そっかー！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\014_C014_Chloe.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\010_Chloe.wav"
+  },
+  {
+    "index": 11,
+    "text": "いらっしゃいませ！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\018_C018_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\011_Gracie.wav"
+  },
+  {
+    "index": 12,
+    "text": "いらっしゃいませー！ ……って、え",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\022_C022_Chloe.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\012_Chloe.wav"
+  },
+  {
+    "index": 13,
+    "text": "あら、いらっしゃい",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\024_C024_Isla.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\013_Isla.wav"
+  },
+  {
+    "index": 14,
+    "text": "おばあ！ 今日はあんぱんじゃな！ 表の黒板、見たぞ！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\025_C025_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\014_Gracie.wav"
+  },
+  {
+    "index": 15,
+    "text": "先輩、パンのことだけは見逃さないっすもんねー",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\028_C028_Ainsley.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\015_Ainsley.wav"
+  },
+  {
+    "index": 16,
+    "text": "こっちはいいから、みんな品出しお願いね",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\029_C029_Isla.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\016_Isla.wav"
+  },
+  {
+    "index": 17,
+    "text": "あれが……捜査官？",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\032_C032_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\017_Gracie.wav"
+  },
+  {
+    "index": 18,
+    "text": "ええ",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\033_C033_Liza.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\018_Liza.wav"
+  },
+  {
+    "index": 19,
+    "text": "……初めて近くで見ました",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\034_C034_Luna.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\019_Luna.wav"
+  },
+  {
+    "index": 20,
+    "text": "思っていたより、かわいらしい方ですね",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\035_C035_Luna.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\020_Luna.wav"
+  },
+  {
+    "index": 21,
+    "text": "ね！ なんかちっちゃくなーい？",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\036_C036_Chloe.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\021_Chloe.wav"
+  },
+  {
+    "index": 22,
+    "text": "……あちらの方は、大きいですけど",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\038_C038_Luna.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\022_Luna.wav"
+  },
+  {
+    "index": 23,
+    "text": "海凪、どこ見てんのー？",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\041_C041_Chloe.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\023_Chloe.wav"
+  },
+  {
+    "index": 24,
+    "text": "……身長の話です",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\042_C042_Luna.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\024_Luna.wav"
+  },
+  {
+    "index": 25,
+    "text": "二人とも、聞こえるって",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\043_C043_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\025_Gracie.wav"
+  },
+  {
+    "index": 26,
+    "text": "仕事、仕事",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\044_C044_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\026_Gracie.wav"
+  },
+  {
+    "index": 29,
+    "text": "はいよ。あんぱんは、そこの籠だよ",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\046_C046_Isla.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\029_Isla.wav"
+  },
+  {
+    "index": 30,
+    "text": "おお！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\047_C047_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\030_Gracie.wav"
+  },
+  {
+    "index": 31,
+    "text": "……奥の、右から二番目じゃ",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\050_C050_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\031_Gracie.wav"
+  },
+  {
+    "index": 32,
+    "text": "どれも同じっすよ",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\051_C051_Ainsley.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\032_Ainsley.wav"
+  },
+  {
+    "index": 33,
+    "text": "違う。焼き色が一番いい",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\052_C052_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\033_Gracie.wav"
+  },
+  {
+    "index": 34,
+    "text": "……見る目、すごい",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\053_C053_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\034_Gracie.wav"
+  },
+  {
+    "index": 35,
+    "text": "まだ何も言っとらん！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\059_C059_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\035_Gracie.wav"
+  },
+  {
+    "index": 36,
+    "text": "……かわい",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\061_C061_Chloe.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\036_Chloe.wav"
+  },
+  {
+    "index": 37,
+    "text": "まひるちゃん！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\062_C062_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\037_Gracie.wav"
+  },
+  {
+    "index": 38,
+    "text": "……取れたぞ！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\064_C064_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\038_Gracie.wav"
+  },
+  {
+    "index": 39,
+    "text": "あーしが持ち上げたんすけどね",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\066_C066_Ainsley.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\039_Ainsley.wav"
+  },
+  {
+    "index": 40,
+    "text": "細かいことはいい！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\067_C067_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\040_Gracie.wav"
+  },
+  {
+    "index": 41,
+    "text": "全然怖くないじゃーん",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\069_C069_Chloe.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\041_Chloe.wav"
+  },
+  {
+    "index": 42,
+    "text": "まひる",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\070_C070_Liza.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\042_Liza.wav"
+  },
+  {
+    "index": 43,
+    "text": "制服を着てる意味、忘れないで",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\071_C071_Liza.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\043_Liza.wav"
+  },
+  {
+    "index": 44,
+    "text": "……はーい",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\072_C072_Chloe.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\044_Chloe.wav"
+  },
+  {
+    "index": 45,
+    "text": "ほら、こっちまだ並べ終わってないよ",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\073_C073_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\045_Gracie.wav"
+  },
+  {
+    "index": 46,
+    "text": "そういえばおばあ、あの子たちは？",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\074_C074_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\046_Gracie.wav"
+  },
+  {
+    "index": 48,
+    "text": "いつもおばあを手伝ってくれて、ありがとうな！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\079_C079_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\048_Gracie.wav"
+  },
+  {
+    "index": 49,
+    "text": "い、いえ！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\080_C080_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\049_Gracie.wav"
+  },
+  {
+    "index": 50,
+    "text": "こちらこそ、いつもお世話になっています",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\081_C081_Liza.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\050_Liza.wav"
+  },
+  {
+    "index": 51,
+    "text": "ほら、あんたは自分のパンの心配しな",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\082_C082_Isla.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\051_Isla.wav"
+  },
+  {
+    "index": 52,
+    "text": "あっ！ 潰れる！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\083_C083_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\052_Gracie.wav"
+  },
+  {
+    "index": 53,
+    "text": "じゃあな、おばあ！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\085_C085_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\053_Gracie.wav"
+  },
+  {
+    "index": 54,
+    "text": "毎度あり。またおいで",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\086_C086_Isla.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\054_Isla.wav"
+  },
+  {
+    "index": 55,
+    "text": "どーもー",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\087_C087_Ainsley.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\055_Ainsley.wav"
+  },
+  {
+    "index": 56,
+    "text": "もう一個買えばよかった",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\091_C091_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\056_Gracie.wav"
+  },
+  {
+    "index": 57,
+    "text": "……あんなちっこい人、本当に捜査官なのー？",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\095_C095_Chloe.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\057_Chloe.wav"
+  },
+  {
+    "index": 58,
+    "text": "制服着てたでしょ",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\096_C096_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\058_Gracie.wav"
+  },
+  {
+    "index": 59,
+    "text": "でもさー、後輩さんに持ち上げられてたよ？",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\097_C097_Chloe.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\059_Chloe.wav"
+  },
+  {
+    "index": 60,
+    "text": "……猫のようでしたね",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\098_C098_Luna.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\060_Luna.wav"
+  },
+  {
+    "index": 61,
+    "text": "おばあさまとお話ししている時は、普通のお客様でしたね",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\100_C100_Luna.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\061_Luna.wav"
+  },
+  {
+    "index": 62,
+    "text": "普通のお客様でも、捜査官は捜査官よ",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\101_C101_Liza.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\062_Liza.wav"
+  },
+  {
+    "index": 63,
+    "text": "うん。私たちも気を抜かないようにしよ",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\102_C102_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\063_Gracie.wav"
+  },
+  {
+    "index": 64,
+    "text": "ほらほら、おしゃべりはその辺にして",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\103_C103_Isla.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\064_Isla.wav"
+  },
+  {
+    "index": 65,
+    "text": "あ、はい！ 次のパン出します！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\104_C104_Gracie.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\065_Gracie.wav"
+  },
+  {
+    "index": 66,
+    "text": "私もやるー！",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\105_C105_Chloe.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\066_Chloe.wav"
+  },
+  {
+    "index": 67,
+    "text": "そういや、隣町の店、一軒やられたらしいぞ",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\108_C108_Ainsley.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\067_Ainsley.wav"
+  },
+  {
+    "index": 68,
+    "text": "……潜り酒場？",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\110_C110_Liza.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\068_Liza.wav"
+  },
+  {
+    "index": 69,
+    "text": "ああ。最近やたら腕の立つ捜査官がいるらしい。２人組でな、特に先輩の方が――",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\111_C111_Ainsley.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\069_Ainsley.wav"
+  },
+  {
+    "index": 70,
+    "text": "小柄で、見た目は子供みたいだって",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\112_C112_Ainsley.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\070_Ainsley.wav"
+  },
+  {
+    "index": 71,
+    "text": "……ちっちゃい？",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\114_C114_Chloe.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\071_Chloe.wav"
+  },
+  {
+    "index": 72,
+    "text": "もしかして……",
+    "source": "C:\\Users\\kaka\\Documents\\Codex\\2026-09-30\\sa\\outputs\\EP02_v4_Premiere_MONO\\audio_mono_pcm48\\116_C116_Luna.wav",
+    "dest": "C:\\Users\\kaka\\Desktop\\e002素材\\e002\\audio_wav\\072_Luna.wav"
+  }
+]

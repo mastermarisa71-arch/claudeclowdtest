@@ -1,0 +1,86 @@
+{
+  "EP01_v2_24fps.xml": {
+    "frames": "7817",
+    "fps": "24",
+    "picture_clips": 194,
+    "missing": [],
+    "audio_formats": [
+      [
+        1,
+        48000
+      ]
+    ],
+    "transitions": 5
+  },
+  "EP01_v2_Short_24fps.xml": {
+    "frames": "7658",
+    "fps": "24",
+    "picture_clips": 190,
+    "missing": [],
+    "audio_formats": [
+      [
+        1,
+        48000
+      ]
+    ],
+    "transitions": 5
+  },
+  "EP01_v2_mix.wav": {
+    "seconds": 325.7083333333333,
+    "peak_dBFS": -3.76
+  },
+  "EP01_v2_Short_mix.wav": {
+    "seconds": 319.0833333333333,
+    "peak_dBFS": -3.76
+  },
+  "native": {
+    "xml_parsed": true,
+    "timecode_effect_mentions": 2,
+    "new_sequence_names": [
+      "EP01_v2_24fps",
+      "EP01_v2_Short_24fps",
+      "EP01_v2_24fps",
+      "EP01_v2_Short_24fps",
+      "EP01_v2_24fps",
+      "EP01_v2_Short_24fps"
+    ]
+  },
+  "EP01_v2_review.mp4": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 960,
+        "height": 540,
+        "r_frame_rate": "24/1"
+      },
+      {
+        "codec_name": "aac",
+        "r_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "325.708333"
+    }
+  },
+  "EP01_v2_Short_review.mp4": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 960,
+        "height": 540,
+        "r_frame_rate": "24/1"
+      },
+      {
+        "codec_name": "aac",
+        "r_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "319.083333"
+    }
+  }
+}

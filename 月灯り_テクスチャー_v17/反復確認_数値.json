@@ -1,0 +1,30 @@
+[
+  {
+    "key": "floor_oak",
+    "width": 2048,
+    "height": 2048,
+    "seam_difference_rgb255_x": 10.304850260416666,
+    "seam_difference_rgb255_y": 8.52099609375
+  },
+  {
+    "key": "wall_plaster",
+    "width": 2048,
+    "height": 2048,
+    "seam_difference_rgb255_x": 4.417643229166667,
+    "seam_difference_rgb255_y": 4.893717447916667
+  },
+  {
+    "key": "table_oak",
+    "width": 2048,
+    "height": 2048,
+    "seam_difference_rgb255_x": 10.28271484375,
+    "seam_difference_rgb255_y": 11.1884765625
+  },
+  {
+    "key": "seat_green_fabric",
+    "width": 2048,
+    "height": 2048,
+    "seam_difference_rgb255_x": 13.888509114583334,
+    "seam_difference_rgb255_y": 16.540201822916668
+  }
+]

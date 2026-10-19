@@ -1,0 +1,20 @@
+{
+  "frames": 7820,
+  "duration": "00:05:25:20",
+  "new_sheets": 20,
+  "new_panels": 180,
+  "timeline_rows": 182,
+  "reused_voices": 73,
+  "new_voices": 7,
+  "sound_clips": 62,
+  "audio_tracks": 23,
+  "all_media_present": true,
+  "all_audio_mono_48k_PCM16": true,
+  "native_reference_checks": true,
+  "native_timecode_effect": true,
+  "premiere_app_verified": false,
+  "visual_limitations": [
+    "S9-02は閉じたノート。指定文をテロップで補足。"
+  ],
+  "motion_cut_count": 6
+}

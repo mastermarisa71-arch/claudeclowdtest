@@ -1,0 +1,59 @@
+{
+  "projectId": "c65157fe-47e4-4a90-b50f-9fc3dc9de318",
+  "model": "gpt-image-2.5-flare",
+  "quality": "high",
+  "dimensions": [
+    2048,
+    2048
+  ],
+  "assets": [
+    {
+      "key": "floor_oak",
+      "label": "床・板張り",
+      "prompt": "Seamless repeatable square albedo/base-color texture for the wooden floor of Tsukiakari, a warm intimate anime speakeasy mixing 1920s Art Deco with contemporary life. Orthographic straight-down surface only, fills the whole image, no perspective, no scene, no border, no objects, no text. Represents exactly a 1.2 by 1.2 metre floor patch: eight parallel oak boards, each 15 cm wide, running vertically from top to bottom, with subtle staggered end joints. Restrained medium toasted warm brown oak, slightly darker than honey oak tabletops, neutral color under perfectly uniform diffuse lighting. Fine long grain, discreet small knots, gentle differences between boards, narrow clean seams, well-maintained floor with only sparse understated wear. Moderate low contrast, crisp readable structural board lines suitable for later anime style transfer, no noisy micro-detail. Tile continuously in both axes: all left/right and top/bottom edges must match exactly in color, grain, board seams and end-joint continuity. No shadows, ambient occlusion, highlights, varnish glare, lighting gradient, vignette, watermark or labels. Flat albedo texture, not a rendered slab, not a tile preview grid.",
+      "requestId": "b88cc1ee-797b-4620-906b-99339b83d345",
+      "workId": "work_job_884df90ae5694090",
+      "imageId": "img_2be1102ea8ceb9730ae6",
+      "storagePath": "images/img_2be1102ea8ceb9730ae6/original.png",
+      "objectGeneration": "1791659297041235",
+      "physicalTileMetres": 1.2,
+      "intendedLocalFile": "floor_oak_albedo.png"
+    },
+    {
+      "key": "wall_plaster",
+      "label": "壁・塗り壁",
+      "prompt": "Seamless repeatable square albedo/base-color texture, warm ivory lime plaster for Tsukiakari, a soft intimate 1920s-inspired anime speakeasy. Single flat plaster surface completely filling the frame, orthographic straight-on, no perspective, no frame, no objects or text. Physical sample width 1 metre. Pale warm cream ivory with a faint beige undertone, very subtle broad irregular trowel movement and fine mineral character. Well-kept, clean, no cracks, chips, masonry, decorative motifs, wallpaper pattern or heavy mottling. Quiet restrained contrast, coherent large-scale painterly material definition rather than photoreal noisy grain. Exactly uniform neutral diffuse lighting, no baked shadows or highlights, no vignette, no center brightening or edge darkening. All opposite edges must match seamlessly for repeating in both axes. Output only the full-bleed flat albedo image, not an interior wall scene, not a sphere or a 3x3 preview.",
+      "requestId": "88d59bb9-f67d-467b-8e98-0c21e4804eb4",
+      "workId": "work_job_f990d83c5daa4864",
+      "imageId": "img_bca8e52fa874f45c061f",
+      "storagePath": "images/img_bca8e52fa874f45c061f/original.png",
+      "objectGeneration": "1791659302719319",
+      "physicalTileMetres": 1,
+      "intendedLocalFile": "wall_plaster_albedo.png"
+    },
+    {
+      "key": "table_oak",
+      "label": "天板・木材",
+      "prompt": "Seamless repeatable square albedo/base-color texture of honey-toned oak furniture wood for tabletops and the curved piano bar in Tsukiakari, a warm soft anime speakeasy inspired by 1920s Art Deco. Orthographic straight-down full-bleed wood surface only. Represent a 1 metre square sample of continuous joined furniture timber: elegant fine straight grain running vertically top to bottom, gentle natural elongated grain curves, subtle variation, almost no knots. Warm amber honey brown, more golden and slightly lighter than a toasted brown oak floor, not orange or red. Furniture-quality clean continuous surface, no floor plank seams, dark gaps, boards, tile borders, inlay, metal, labels or rendered slab edges. Satin finish is to be defined later in the shader: this image is neutral base color only, no gloss spots, baked reflections, cast shadows, lighting gradients, vignette or bevel shading. Low to moderate contrast and readable restrained wood character suited to anime backgrounds; no excessive micro-noise. Make both pairs of opposite edges match exactly for seamless repeating. Single flat texture image, not a material display ball, no collage, no repeated-grid preview.",
+      "requestId": "13aa6f5d-682f-4fae-b572-7931a7c0040c",
+      "workId": "work_job_0b3a8add547644ef",
+      "imageId": "img_1a34e2cef2c591d04292",
+      "storagePath": "images/img_1a34e2cef2c591d04292/original.png",
+      "objectGeneration": "1791659299322143",
+      "physicalTileMetres": 1,
+      "intendedLocalFile": "table_oak_albedo.png"
+    },
+    {
+      "key": "seat_green_fabric",
+      "label": "椅子・緑の張り地",
+      "prompt": "Seamless repeatable square albedo/base-color texture of muted deep teal-green woven upholstery fabric for seats and sofas in Tsukiakari, a warm intimate 1920s-inspired anime speakeasy. Flat fabric sample only, full-bleed, orthographic straight-on. Represents a 30 by 30 cm patch. Solid sophisticated desaturated bottle green with a teal undertone; subtle tightly woven cloth structure, soft matte fabric, very low-contrast crosswise interlaced threads. No decorative pattern, stripes, floral print, buttons, tufting, stitched seams, piping, folds, cushion silhouette, wrinkles, wear, furniture or text: those features will be modelled separately. Calm broad consistent color suitable for later anime style transfer, weave fine and discreet rather than noisy, no moire. Perfectly even neutral lighting, no shadows, highlights, baked shading, vignette, raised fabric swatch edge or gradient. All opposite edges must match precisely for seamless tiling in both directions. Output only one square base-color texture, not a grid or material sphere.",
+      "requestId": "9f7e8340-6b99-4f89-b190-5bd1a2ddd37c",
+      "workId": "work_job_ad20acd326a14562",
+      "imageId": "img_acd5a8b3711ba23a9dcb",
+      "storagePath": "images/img_acd5a8b3711ba23a9dcb/original.png",
+      "objectGeneration": "1791659304138459",
+      "physicalTileMetres": 0.3,
+      "intendedLocalFile": "seat_green_fabric_albedo.png"
+    }
+  ]
+}

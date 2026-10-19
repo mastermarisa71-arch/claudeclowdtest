@@ -1,0 +1,58 @@
+﻿番号,カット,開始TC,秒数,トラック,音,原素材,音量RMS目標dB,ハンドル秒,ファイル
+1,S1-01①,00:00:00:00,47.083333333333336,環境_外,夜の外気,wind,-43,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\001_wind.wav
+2,S2-14①,00:00:50:14,169.20833333333334,環境_店内,店内の日常,bar_room,-41,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\002_bar_room.wav
+3,S1-01①,00:00:00:00,8.5,劇伴_序章,序章・物語の始まり,v3_opening,-29,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\003_v3_opening.wav
+4,S1-04①,00:00:08:12,4.708333333333333,劇伴_捜査官,巡回の赤い光,v3_thriller,-34,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\004_v3_thriller.wav
+5,S1-08①,00:00:13:05,20.0,劇伴_序章,扉へ進む希望,v3_opening,-30,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\005_v3_opening.wav
+6,S2-08②,00:00:33:05,20.875,劇伴_序章,扉を開ける・タイトルへの到達,v3_opening,-28,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\006_v3_opening.wav
+7,S3-01,00:00:54:02,42.791666666666664,劇伴_日常,アフォガードの掛け合い,v3_banter,-33,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\007_v3_banter.wav
+8,S3-16,00:01:36:21,15.541666666666666,劇伴_感情,禁止された日常と写真,v3_heart,-31,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\008_v3_heart.wav
+9,S4-01,00:01:52:10,14.541666666666666,劇伴_日常,暁が帰ってくる,v3_banter,-33,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\009_v3_banter.wav
+10,S4-05①,00:02:06:23,4.041666666666667,劇伴_感情,おかえり・ただいま,v3_heart,-32,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\010_v3_heart.wav
+11,S4-06,00:02:11:00,23.291666666666668,劇伴_日常,店員たちの日常,v3_banter,-34,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\011_v3_banter.wav
+12,S5-04①,00:02:34:07,34.25,劇伴_感情,本音と仲間の肯定,v3_heart,-31,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\012_v3_heart.wav
+13,S6-03,00:03:08:13,32.625,劇伴_営業,ピアノが先・身体が後,v3_ensemble,-31,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\013_v3_ensemble.wav
+14,S7-19②,00:04:09:03,31.083333333333332,劇伴_回復,大丈夫そうねの後・平穏,v3_heart,-31,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\014_v3_heart.wav
+15,S7-20,00:04:09:17,30.5,環境_店内,安堵した店内,bar_room,-42,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\015_bar_room.wav
+16,S8-01①,00:04:40:05,30.25,劇伴_捜査官,捜査官・細かい弦の脈動,v3_thriller,-29,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\016_v3_thriller.wav
+17,S8-11,00:05:10:11,7.625,劇伴_捜査官,黒板・疑いが強まる,v3_thriller,-27,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\017_v3_thriller.wav
+18,S8-14,00:05:18:02,1.0,劇伴_捜査官,バッジ・緊張の頂点,v3_thriller,-25,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\018_v3_thriller.wav
+19,S1-01①,00:00:00:00,47.083333333333336,環境_外の人声,遠い人のざわめき,v3_street,-45,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\019_v3_street.wav
+20,S7-04,00:03:39:19,18.916666666666668,環境_外の人声,外の巡回の気配,v3_street,-50,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\020_v3_street.wav
+21,S8-01①,00:04:40:05,38.875,環境_外の人声,背後の街の気配,v3_street,-44,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\021_v3_street.wav
+22,S1-04①,00:00:08:12,6.0,SE_遠いサイレン,奥の通りのサイレン,v3_siren,-45,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\022_v3_siren.wav
+23,S7-04,00:03:39:19,6.0,SE_遠いサイレン,奥の通りのサイレン,v3_siren,-50,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\023_v3_siren.wav
+24,S8-03①,00:04:48:13,6.0,SE_遠いサイレン,奥の通りのサイレン,v3_siren,-45,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\024_v3_siren.wav
+25,S1-01①,00:00:00:00,9.0,仮鼻歌,暁の鼻歌,hum_adult,-32,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\025_hum_adult.wav
+26,S6-04③,00:03:12:06,1.5,仮鼻歌,あかねの最初の鼻歌,hum_young,-32,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\026_hum_young.wav
+27,S6-12①,00:03:28:19,9.5,仮鼻歌,営業の鼻歌・赤い光で止まる,hum_young,-34,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\027_hum_young.wav
+28,S7-09①,00:03:43:07,15.416666666666666,SE_時計,巡回の時計・無音の前まで,clock,-43,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\028_clock.wav
+29,S1-01①,00:00:00:00,1.5,SE_足音,S1-01① 動作音,steps,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\029_steps.wav
+30,S1-08①,00:00:13:05,2.0,SE_足音,S1-08① 動作音,steps,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\030_steps.wav
+31,S1-10,00:00:18:05,1.5833333333333333,SE_物音,S1-10 動作音,pen,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\031_pen.wav
+32,S1-11,00:00:20:05,1.0,SE_物音,S1-11 動作音,paper,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\032_paper.wav
+33,S2-01,00:00:21:17,0.7916666666666666,SE_物音,S2-01 動作音,paper,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\033_paper.wav
+34,S2-01,00:00:21:17,1.2916666666666667,SE_物音,S2-01 動作音,bell,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\034_bell.wav
+35,S2-04,00:00:26:17,0.7916666666666666,SE_足音,S2-04 動作音,steps,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\035_steps.wav
+36,S2-05,00:00:27:17,0.7083333333333334,SE_物音,S2-05 動作音,fabric,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\036_fabric.wav
+37,S2-08①,00:00:32:05,1.4166666666666667,SE_物音,S2-08① 動作音,door,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\037_door.wav
+38,S2-13①,00:00:47:02,0.7916666666666666,SE_物音,S2-13① 動作音,door,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\038_door.wav
+39,S2-13②,00:00:49:02,0.7916666666666666,SE_物音,S2-13② 動作音,fabric,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\039_fabric.wav
+40,S3-02①,00:00:57:02,1.2916666666666667,SE_物音,S3-02① 動作音,pour,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\040_pour.wav
+41,S3-09①,00:01:22:00,0.5833333333333334,SE_物音,S3-09① 動作音,fabric,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\041_fabric.wav
+42,S4-04①,00:02:03:10,0.7916666666666666,SE_物音,S4-04① 動作音,fabric,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\042_fabric.wav
+43,S4-05②,00:02:07:23,0.7916666666666666,SE_物音,S4-05② 動作音,glass,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\043_glass.wav
+44,S4-07②,00:02:12:20,1.0,SE_物音,S4-07② 動作音,cat,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\044_cat.wav
+45,S5-05,00:02:38:07,0.4166666666666667,SE_物音,S5-05 動作音,whisk,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\045_whisk.wav
+46,S6-01,00:03:05:01,0.4166666666666667,SE_物音,S6-01 動作音,glass,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\046_glass.wav
+47,S6-12①,00:03:28:19,0.5833333333333334,SE_物音,S6-12① 動作音,whisk,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\047_whisk.wav
+48,S6-12③,00:03:29:23,0.5833333333333334,SE_物音,S6-12③ 動作音,shaker,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\048_shaker.wav
+49,S6-12④,00:03:30:14,0.5833333333333334,SE_物音,S6-12④ 動作音,glass,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\049_glass.wav
+50,S7-04,00:03:39:19,0.20833333333333334,SE_物音,S7-04 動作音,switch,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\050_switch.wav
+51,S7-13,00:03:53:21,0.6666666666666666,SE_物音,S7-13 動作音,cat,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\051_cat.wav
+52,S7-15②,00:03:57:16,0.5833333333333334,SE_物音,S7-15② 動作音,fabric,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\052_fabric.wav
+53,S7-18②,00:04:04:05,1.0833333333333333,SE_足音,S7-18② 動作音,steps,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\053_steps.wav
+54,S7-24①,00:04:20:20,0.4166666666666667,SE_物音,S7-24① 動作音,glass,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\054_glass.wav
+55,S7-28,00:04:31:05,0.20833333333333334,SE_物音,S7-28 動作音,switch,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\055_switch.wav
+56,S8-02①,00:04:43:05,1.4166666666666667,SE_足音,S8-02① 動作音,steps,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\056_steps.wav
+57,S8-10,00:05:08:23,1.4166666666666667,SE_足音,S8-10 動作音,steps,-36,1.0,C:\Users\kaka\Desktop\e002素材\e001\EP01_v6_Edit\audio_clips\057_steps.wav

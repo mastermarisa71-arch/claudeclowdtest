@@ -1,0 +1,15 @@
+*.mp4
+*.mov
+*.avi
+*.zip
+*.wav
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.psd
+*.blend
+*.blend1
+*.obj
+*.fbx
+node_modules/

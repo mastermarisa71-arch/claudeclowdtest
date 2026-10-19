@@ -1,0 +1,35 @@
+{
+  "projectId": "c65157fe-47e4-4a90-b50f-9fc3dc9de318",
+  "model": "gpt-image-2.5-flare",
+  "quality": "high",
+  "size": [
+    2048,
+    2048
+  ],
+  "assets": [
+    {
+      "key": "furniture_dark_walnut",
+      "prompt": "Seamless square full-bleed albedo/base-color texture for warm intimate Tsukiakari anime speakeasy furnishings. Orthographic flat surface only, perfectly uniform neutral diffuse light. No perspective, shadows, highlights, gloss reflections, vignette, objects, frame, labels, text, watermark or preview grid. Restrained clean low-contrast wood grain, not noisy, no scratches or damage. Grain runs vertically from top to bottom; both pairs of opposite edges should match for repetition. One metre square material sample. Dark chocolate brown walnut cabinetry, rich restrained umber, fine elegant elongated grain, occasional quiet cathedral figure, no black patches, no orange, no plank seams or board gaps. Clean furniture-quality satin walnut. Clearly much darker than honey oak tables.",
+      "requestId": "ad9fd3f0-7f77-4354-90a4-2cc83a4182ef",
+      "workId": "work_job_bac5f1f8be794d33",
+      "imageId": "img_a633c883e2bf33e35eda",
+      "storagePath": "images/img_a633c883e2bf33e35eda/original.png"
+    },
+    {
+      "key": "ceiling_smoked_oak",
+      "prompt": "Seamless square full-bleed albedo/base-color texture for warm intimate Tsukiakari anime speakeasy furnishings. Orthographic flat surface only, perfectly uniform neutral diffuse light. No perspective, shadows, highlights, gloss reflections, vignette, objects, frame, labels, text, watermark or preview grid. Restrained clean low-contrast wood grain, not noisy, no scratches or damage. Grain runs vertically from top to bottom; both pairs of opposite edges should match for repetition. One metre square material sample. Smoked oak for old substantial ceiling beams, muted medium-dark greyish warm brown, soft long straight growth lines, slight broad natural variation, very sparse small knots, matte time-aged wood, not distressed or rotten. No plank seams. Less saturated and less glossy looking than cabinet walnut, slightly lighter in value than dark chocolate walnut.",
+      "requestId": "6b34abb1-94fa-44ae-a583-7785e260d0cf",
+      "workId": "work_job_cfb0bfccf7d04766",
+      "imageId": "img_39ba5860f2496953172f",
+      "storagePath": "images/img_39ba5860f2496953172f/original.png"
+    },
+    {
+      "key": "door_rich_walnut",
+      "prompt": "Seamless square full-bleed albedo/base-color texture for warm intimate Tsukiakari anime speakeasy furnishings. Orthographic flat surface only, perfectly uniform neutral diffuse light. No perspective, shadows, highlights, gloss reflections, vignette, objects, frame, labels, text, watermark or preview grid. Restrained clean low-contrast wood grain, not noisy, no scratches or damage. Grain runs vertically from top to bottom; both pairs of opposite edges should match for repetition. One metre square material sample. Solid thick carved entry door wood material, deep warm reddish walnut brown with subdued chestnut undertone, fine straight vertical grain, refined and calm. A plain timber surface ONLY: do not depict a door, carving, panels, grooves, handle, metal or decoration; those are actual 3D geometry added later. No plank seams. Distinct from chocolate furniture walnut and grey-brown ceiling oak, without becoming orange.",
+      "requestId": "80b4b86c-6a44-46be-b503-31d98ec10c27",
+      "workId": "work_job_02c08a00f16240c6",
+      "imageId": "img_43e9ca0aa7e82ebe2844",
+      "storagePath": "images/img_43e9ca0aa7e82ebe2844/original.png"
+    }
+  ]
+}

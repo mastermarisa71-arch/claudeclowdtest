@@ -1,0 +1,128 @@
+{
+  "月明かり店内.png": {
+    "inputArtifactId": "artifact_input_1da80acc824fe0899d6f1f3bbb536c343b2e2e5e380dd9e5d1b1647846d1038b",
+    "source": {
+      "type": "upload",
+      "uploadId": "upload_c14225dca8974e3a",
+      "selectionId": "ep09-select-979270e85cd1c-1791256962023",
+      "objectGeneration": "1791256950983752"
+    }
+  },
+  "akane_moto_260909.png": {
+    "inputArtifactId": "artifact_input_1d3d91df711c6fb054c6251407bd2a8f68cc3403e5c096cc2d208e15890c8d5f",
+    "source": {
+      "type": "upload",
+      "uploadId": "upload_a860e934c6004a45",
+      "selectionId": "ep09-11edae9ed15a8-1791257053687",
+      "objectGeneration": "1791257051991662"
+    }
+  },
+  "akira_moto_260909.png": {
+    "inputArtifactId": "artifact_input_da762c38ddfb7c9c278e197a8a87c157d1cecbb681e4ed06f31157c282ba0e06",
+    "source": {
+      "type": "upload",
+      "uploadId": "upload_ab7a58ee74494cc4",
+      "selectionId": "ep09-116c829e80508-1791257061612",
+      "objectGeneration": "1791257059909233"
+    }
+  },
+  "kairi_moto_260909.png": {
+    "inputArtifactId": "artifact_input_8591793f1936615af95ba2a2b5b0363b99cf7f62ca2b2ae57318658fb31bd6ca",
+    "source": {
+      "type": "upload",
+      "uploadId": "upload_437b0f84a594431b",
+      "selectionId": "ep09-2dbcd6ad8da7d8-1791257069270",
+      "objectGeneration": "1791257067574190"
+    }
+  },
+  "kohai_moto_260914.png": {
+    "inputArtifactId": "artifact_input_c0cc1b53563a43f2485467001894717f8362cc03df96b8132f41893501d1ec90",
+    "source": {
+      "type": "upload",
+      "uploadId": "upload_45aec966136c40c8",
+      "selectionId": "ep09-f755b0c5f89e68-1791257082274",
+      "objectGeneration": "1791257080577588"
+    }
+  },
+  "mahiru_moto_260909.png": {
+    "inputArtifactId": "artifact_input_45ac0bcf899fa9d4215d02de5b252888c9bd7f840bbdac10097ed55f83f63940",
+    "source": {
+      "type": "upload",
+      "uploadId": "upload_ed592f12706c4cc1",
+      "selectionId": "ep09-a574c8d5168e9-1791257104244",
+      "objectGeneration": "1791257102546922"
+    }
+  },
+  "sakuna_moto_260909.png": {
+    "inputArtifactId": "artifact_input_5a5f4749f6d9df6e45aed4e362fae970067eb192596c4ad1db954f68b804b9dd",
+    "source": {
+      "type": "upload",
+      "uploadId": "upload_f6e4bec48ece4d15",
+      "selectionId": "ep09-3bd241264b60a8-1791257115734",
+      "objectGeneration": "1791257114035858"
+    }
+  },
+  "senpai_moto_260914.png": {
+    "inputArtifactId": "artifact_input_c0c0ea898b188939ff72bc3870507e272bc3c9bb9c54dc291e52de89565a0634",
+    "source": {
+      "type": "upload",
+      "uploadId": "upload_722459f09432485b",
+      "selectionId": "ep09-9c4f3cdfc70b-1791257123836",
+      "objectGeneration": "1791257122135104"
+    }
+  },
+  "stera_moto_260914.png": {
+    "inputArtifactId": "artifact_input_7b7856b572f1e0021b269111bf6b52929592401b28a75100c9bc3108df566c2a",
+    "source": {
+      "type": "upload",
+      "uploadId": "upload_3b4008264da74cc1",
+      "selectionId": "ep09-8c20aefac1eb68-1791257135249",
+      "objectGeneration": "1791257133550952"
+    }
+  },
+  "パン屋外観.png": {
+    "inputArtifactId": "artifact_input_8d0e6ec1691da8d1502bc8923338fd624bd2092b52f5bae980c2e94cedec55e5",
+    "source": {
+      "type": "upload",
+      "uploadId": "upload_b52654cdc2b84682",
+      "selectionId": "ep09-04359b7a1993e-1791257172878",
+      "objectGeneration": "1791257171181637"
+    }
+  },
+  "パン屋店内.png": {
+    "inputArtifactId": "artifact_input_3163915f4b64fe32a70f450ce386378818dd1f222622c4fad7832b41be5c0af3",
+    "source": {
+      "type": "upload",
+      "uploadId": "upload_96df09f1c5dd4834",
+      "selectionId": "ep09-401c24af8ee58-1791257184677",
+      "objectGeneration": "1791257182982284"
+    }
+  },
+  "月灯_店内配置図_カメラ位置.png": {
+    "inputArtifactId": "artifact_input_9e29aa30a861da38686bda23bd3ae74d1c077e583e688833f46812297f40c27e",
+    "source": {
+      "type": "upload",
+      "uploadId": "upload_8ea3b30ffe474615",
+      "selectionId": "ep09-c389cd52ef81b8-1791257192804",
+      "objectGeneration": "1791257191107869"
+    }
+  },
+  "月明かり屋根裏部屋.png": {
+    "inputArtifactId": "artifact_input_9c6069f29d1b6f1de79e56bf17959c3f4cedd65c36e0d2b32bb86b0d9acab6e9",
+    "source": {
+      "type": "upload",
+      "uploadId": "upload_fd13a41a2498488d",
+      "selectionId": "ep09-f52318982ceb38-1791257217457",
+      "objectGeneration": "1791257215754126"
+    }
+  },
+  "月明かり控室.png": {
+    "inputArtifactId": "artifact_input_24ed33b2ce72facddbcfb641e0d86205458a509fd479b522598ebe3b2454b8f4",
+    "source": {
+      "type": "upload",
+      "uploadId": "upload_4314bb60f3fb438f",
+      "selectionId": "ep09-275e86ae459ab8-1791257229008",
+      "objectGeneration": "1791257227309964"
+    }
+  }
+}

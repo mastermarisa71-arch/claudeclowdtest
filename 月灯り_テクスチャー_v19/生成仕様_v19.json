@@ -1,0 +1,30 @@
+[
+  {
+    "file": "wall_old_brick_albedo.png",
+    "imageId": "img_ee8333575b99e9c27578",
+    "workId": "work_job_4f7e5dee33354c84",
+    "projectId": "c65157fe-47e4-4a90-b50f-9fc3dc9de318",
+    "model": "gpt-image-2.5-flare",
+    "prompt": "Create a seamless tileable square PBR albedo texture only, straight-on orthographic flat old handmade brick masonry for a warm intimate 1920s secret cocktail bar. Entire image consists of exactly FOUR brick lengths across and TWELVE horizontal courses vertically, each course staggered by half a brick, seamless left-right and top-bottom. Actual tile represents 0.92m by 0.92m, bricks about 22cm long by 6.7cm tall, narrow 8mm mortar joints. Muted dusty russet, umber and terracotta brown bricks, gently varied colors, softened edges, fine porous texture. Mortar muted medium taupe gray, NOT white, low contrast. Clean maintained antique masonry, no dramatic damage, no stains or graffiti. Uniform neutral diffuse illumination, no directional shadows, no vignetting, no perspective, no objects, no text, no borders, not a photograph of a room. High quality physically usable base-color texture.",
+    "size": [
+      2048,
+      2048
+    ],
+    "storagePath": "images/img_ee8333575b99e9c27578/original.png",
+    "objectGeneration": "1791661816796293"
+  },
+  {
+    "file": "ceiling_warm_boards_albedo.png",
+    "imageId": "img_857641789e3bc6d5a6c2",
+    "workId": "work_job_94527ba8e5314e04",
+    "projectId": "c65157fe-47e4-4a90-b50f-9fc3dc9de318",
+    "model": "gpt-image-2.5-flare",
+    "prompt": "Create a seamless tileable square PBR albedo texture only of warm medium brown aged oak tongue-and-groove ceiling boards for an intimate 1920s secret cocktail bar. Exactly SIX equal-width straight boards across the image, grain and long boards run VERTICALLY from top to bottom, no cross joints, subtle thin dark seams between boards. Represents 1.2m square, each board 20cm wide. Rich muted chestnut and tobacco brown with a slight honey warmth, neither pale cream nor orange, lighter than very dark walnut beams. Fine restrained flowing woodgrain, minimal small knots, soft satin worn finish, no heavy distress or scratches. Seamless left-right and top-bottom, uniform flat neutral illumination, no reflections, directional shadows, vignetting, perspective, objects, lettering or borders. Detailed usable material texture, not a room photograph.",
+    "size": [
+      2048,
+      2048
+    ],
+    "storagePath": "images/img_857641789e3bc6d5a6c2/original.png",
+    "objectGeneration": "1791661822992498"
+  }
+]

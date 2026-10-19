@@ -1,0 +1,1106 @@
+[
+  {
+    "key": "bell",
+    "type": "sfx",
+    "taskId": "744ff587-5faa-46b1-ba41-2406f369799c",
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/9ab0a453-1839-4884-ac15-0b6a37eba970/EP01_SE_____.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiYWIwY2JlZWQ5MDA5MDc1YyIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ2NzI0NX0.3nhQA77dYnal0ytghOU16GewiJQgL9JCGdofUJ_g27w",
+      "taskId": "744ff587-5faa-46b1-ba41-2406f369799c",
+      "prompt": "EP01_SE_入口の鈴",
+      "meta": {
+        "durationSeconds": 2
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\bell.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\bell.wav",
+    "seconds": 2.0,
+    "rms_db": -27.176076889038086,
+    "peak_db": -3.2584023475646973
+  },
+  {
+    "key": "piano_main",
+    "type": "music",
+    "taskId": "f6a94b2b-a5d4-4590-a379-edfb7c9ecf80",
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/lyria3-pro/f6a94b2b-a5d4-4590-a379-edfb7c9ecf80/EP01_BGM_________.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiNTYyMTViOWRjZjcyMDE1OCIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ5MDcxN30.YhHmEwWUspSfux2UDqSYuWcviwXTEWCGLxJAX-HIxJU",
+      "taskId": "f6a94b2b-a5d4-4590-a379-edfb7c9ecf80",
+      "prompt": "Instrumental solo acoustic upright piano for a small secret Japanese speakeasy bar, intimate warm amber room, elegant understated late-night jazz. Gentle relaxed swing around 72 BPM, soft felt-like touch, mellow seventh and ninth chords, a simple memorable four-note motif. A human pianist playing alone in the corner, moderate natural room resonance. Sparse continuous accompaniment under Japanese dialogue, stable dynamics and spacious pauses, no dramatic climax, no percussion, no bass instrument, no strings, no vocals. Soft 4-bar introduction, a flowing quiet main section, a related variation and a delicate resolved ending. Cozy with a trace of melancholy, original composition.",
+      "meta": {
+        "durationSeconds": 146.155042
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\piano_main.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\piano_main.wav",
+    "seconds": 146.15510416666666,
+    "rms_db": -15.89905834197998,
+    "peak_db": -0.12252837419509888
+  },
+  {
+    "key": "piano_soft",
+    "type": "music",
+    "taskId": "45fbb599-f217-4127-b425-b8c386d6db4a",
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/lyria3-clip/45fbb599-f217-4127-b425-b8c386d6db4a/EP01_BGM_________.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiYTJjNjhkYjMyMTkyY2Q5ZSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ5NDE5NX0.NmiPorYwrFlKMMcWCzdzdMa0I51gsJZpzb1YF26DJk4",
+      "taskId": "45fbb599-f217-4127-b425-b8c386d6db4a",
+      "prompt": "Instrumental solo felt acoustic piano, warm intimate small speakeasy. Quiet lyrical jazz ballad, around 68 BPM, sparse gentle melody in C major with wistful minor colors, flowing soft broken chords, stable low dynamics and room for spoken dialogue. Tender relief and a place to belong, human pianist in a small wooden bar. A modest phrase with an unobtrusive ending suitable for a loop. No vocals, no drums, no other instruments, no cinematic swell.",
+      "meta": {
+        "durationSeconds": 30.772167
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\piano_soft.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\piano_soft.wav",
+    "seconds": 30.77225,
+    "rms_db": -15.76988410949707,
+    "peak_db": -0.08845286071300507
+  },
+  {
+    "key": "ending",
+    "type": "music",
+    "taskId": "8f6b9bb8-6caf-4d68-8fc4-9eda73406adc",
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/lyria3-clip/8f6b9bb8-6caf-4d68-8fc4-9eda73406adc/EP01_BGM_______.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiYjRmZDJkZTc5NTVmMTNjMiIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ2NzIzOX0.ZsdFL3Uc7SoY8pRZoqIvRcTh23SGeDsLKFy18h7NOlw",
+      "taskId": "8f6b9bb8-6caf-4d68-8fc4-9eda73406adc",
+      "prompt": "Original instrumental minimalist mystery underscore for the final night scene of a quiet Japanese animation. Very sparse muted piano single notes over an almost imperceptible low cello harmonic drone, slow 55 BPM, subtle unresolved curiosity rather than horror. Starts with silence-like space, gentle questioning motif, only a restrained low unresolved chord at the end. Stable subdued dynamics, no loud hits, no percussion, no vocals, no heroic melody, plenty of empty space for dialogue. Small scale, intimate, melancholy and suspicious.",
+      "meta": {
+        "durationSeconds": 24.555042
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\ending.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\ending.wav",
+    "seconds": 24.555104166666666,
+    "rms_db": -14.818563461303711,
+    "peak_db": -0.12629291415214539
+  },
+  {
+    "key": "wind",
+    "type": "sfx",
+    "duration": 10,
+    "loop": true,
+    "name": "EP01_AMB_夜の路地",
+    "promptText": "Very quiet night wind in an empty narrow cobblestone alley, soft airy movement between buildings, faint distant urban hush. Still dry night, no rain, no vehicles nearby, no footsteps, no voices, no music. Seamless restrained ambience.",
+    "taskId": "9033f396-98d1-4568-bbae-470fe3b29805",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "9033f396-98d1-4568-bbae-470fe3b29805",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "Very quiet night wind in an empty narrow cobblestone alley, soft airy movement between buildings, faint distant urban hush. Still dry night, no rain, no vehicles nearby, no footsteps, no voices, no music. Seamless restrained ambience.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 10
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "Very quiet night wind in an empty narrow cobblestone alley, soft airy movement between buildings, faint distant urban hush. Still dry night, no rain, no vehicles nearby, no footsteps, no voices, no music. Seamless restrained ambience.",
+          "duration": 10,
+          "loop": true,
+          "name": "EP01_AMB_夜の路地",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1840
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/0e59cf7e-12f9-464a-829f-dccad3d6b804/EP01_AMB_____.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiZmNlZmVlZmZiNTljMzU1NCIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ2NDMxOX0.sTNR2-Jpi7-rOhTxfKS-HhF_QT42N4ktAG9bXmno3MY",
+      "taskId": "9033f396-98d1-4568-bbae-470fe3b29805",
+      "prompt": "EP01_AMB_夜の路地",
+      "meta": {
+        "durationSeconds": 10
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\wind.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\wind.wav",
+    "seconds": 10.0,
+    "rms_db": -41.3460578918457,
+    "peak_db": -29.811079025268555
+  },
+  {
+    "key": "steps",
+    "type": "sfx",
+    "duration": 6,
+    "name": "EP01_SE_石畳の足音",
+    "promptText": "One person in low heeled leather shoes walks slowly on dry cobblestones, six separated natural footsteps with short pauses, crisp soles and soft heel taps, close clean foley in a narrow nighttime alley. No voices, music or traffic.",
+    "taskId": "454a646a-cd1c-43f5-9370-63fbe6faf3ca",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "454a646a-cd1c-43f5-9370-63fbe6faf3ca",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "One person in low heeled leather shoes walks slowly on dry cobblestones, six separated natural footsteps with short pauses, crisp soles and soft heel taps, close clean foley in a narrow nighttime alley. No voices, music or traffic.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 6
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "One person in low heeled leather shoes walks slowly on dry cobblestones, six separated natural footsteps with short pauses, crisp soles and soft heel taps, close clean foley in a narrow nighttime alley. No voices, music or traffic.",
+          "duration": 6,
+          "name": "EP01_SE_石畳の足音",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1834
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/37360345-563e-434f-938c-610c7ef5d709/EP01_SE______.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMmY1Zjc3ZTAzMTNkNDkyZCIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ5NjE2MH0.yILhVt345grGOb8FyDRO5lVIZHZkG8hiZ03WM4IQFvg",
+      "taskId": "454a646a-cd1c-43f5-9370-63fbe6faf3ca",
+      "prompt": "EP01_SE_石畳の足音",
+      "meta": {
+        "durationSeconds": 6
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\steps.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\steps.wav",
+    "seconds": 6.0,
+    "rms_db": -38.46885299682617,
+    "peak_db": -6.296913146972656
+  },
+  {
+    "key": "bar_room",
+    "type": "sfx",
+    "duration": 12,
+    "loop": true,
+    "name": "EP01_AMB_店内のざわめき",
+    "promptText": "Small cozy wooden bar interior, quiet indistinct adult conversation murmur far in background, an occasional soft chuckle and tiny glass tinkle. No intelligible words, no distinct foreground voice, no music, no footsteps. Low steady intimate room ambience, seamless loop.",
+    "taskId": "90672117-6818-482f-96a7-9ad12e8429e7",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "90672117-6818-482f-96a7-9ad12e8429e7",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "Small cozy wooden bar interior, quiet indistinct adult conversation murmur far in background, an occasional soft chuckle and tiny glass tinkle. No intelligible words, no distinct foreground voice, no music, no footsteps. Low steady intimate room ambience, seamless loop.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 12
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "Small cozy wooden bar interior, quiet indistinct adult conversation murmur far in background, an occasional soft chuckle and tiny glass tinkle. No intelligible words, no distinct foreground voice, no music, no footsteps. Low steady intimate room ambience, seamless loop.",
+          "duration": 12,
+          "loop": true,
+          "name": "EP01_AMB_店内のざわめき",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1822
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/12837d74-930d-4c9e-80b9-098f218de7f1/EP01_AMB________.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiNTAzZGYxZDQxYWM1NjQ2NSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ1NjA4NH0.RzsIRoW6WMD_rv0HMBxd9djkfrvYdNYOPjRRcjt9wQY",
+      "taskId": "90672117-6818-482f-96a7-9ad12e8429e7",
+      "prompt": "EP01_AMB_店内のざわめき",
+      "meta": {
+        "durationSeconds": 12
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\bar_room.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\bar_room.wav",
+    "seconds": 12.0,
+    "rms_db": -54.29540252685547,
+    "peak_db": -37.225467681884766
+  },
+  {
+    "key": "door",
+    "type": "sfx",
+    "duration": 3,
+    "name": "EP01_SE_木製扉",
+    "promptText": "An old heavy wooden bar door gently opens with a soft hinge creak, then closes with a muted wooden thud and tiny latch click. Close isolated clean foley, no bell, no voices, no music.",
+    "taskId": "c2a57372-43b9-4ab4-8868-489b87030f4a",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "c2a57372-43b9-4ab4-8868-489b87030f4a",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "An old heavy wooden bar door gently opens with a soft hinge creak, then closes with a muted wooden thud and tiny latch click. Close isolated clean foley, no bell, no voices, no music.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 3
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "An old heavy wooden bar door gently opens with a soft hinge creak, then closes with a muted wooden thud and tiny latch click. Close isolated clean foley, no bell, no voices, no music.",
+          "duration": 3,
+          "name": "EP01_SE_木製扉",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1819
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/4957977f-0be8-4712-8559-abc99052e932/EP01_SE____.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiNDAxZTgxZTY0YTFmOGRjZiIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ3ODc1OH0.nP7G-br_QETsUAgHPWM_BfEIi0jNiShy3GYA7g0cf8o",
+      "taskId": "c2a57372-43b9-4ab4-8868-489b87030f4a",
+      "prompt": "EP01_SE_木製扉",
+      "meta": {
+        "durationSeconds": 3
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\door.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\door.wav",
+    "seconds": 3.0,
+    "rms_db": -33.73992156982422,
+    "peak_db": -1.0769274234771729
+  },
+  {
+    "key": "paper",
+    "type": "sfx",
+    "duration": 4,
+    "name": "EP01_SE_紙の手渡し",
+    "promptText": "Close clean foley of a small notebook paper sheet: a short neat paper tear, a pause, then gentle folding and unfolding rustle. Light dry thin paper, no voices, music or pen sounds.",
+    "taskId": "521f61ed-d261-4f6e-a119-c728d03402fe",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "521f61ed-d261-4f6e-a119-c728d03402fe",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "Close clean foley of a small notebook paper sheet: a short neat paper tear, a pause, then gentle folding and unfolding rustle. Light dry thin paper, no voices, music or pen sounds.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 4
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "Close clean foley of a small notebook paper sheet: a short neat paper tear, a pause, then gentle folding and unfolding rustle. Light dry thin paper, no voices, music or pen sounds.",
+          "duration": 4,
+          "name": "EP01_SE_紙の手渡し",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1815
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/0436b90f-3252-448c-b423-a1f5466c7396/EP01_SE______.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiOTJmZjlhZmU1MTYxZTA2OSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ0MDg5NH0.A_fuzy1Nf8YQRxK0tl19XRshQ2Ljx1hIQ960uO6bfgc",
+      "taskId": "521f61ed-d261-4f6e-a119-c728d03402fe",
+      "prompt": "EP01_SE_紙の手渡し",
+      "meta": {
+        "durationSeconds": 4
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\paper.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\paper.wav",
+    "seconds": 4.0,
+    "rms_db": -41.75450897216797,
+    "peak_db": -9.010857582092285
+  },
+  {
+    "key": "glass",
+    "type": "sfx",
+    "duration": 4,
+    "name": "EP01_SE_グラスと氷",
+    "promptText": "Isolated delicate bar glass foley: one small crystal glass set gently on a wooden counter, pause, then two ice cubes softly clink inside the glass, pause, then a light fingertip tap on its rim. Dry intimate recording, no voices or music.",
+    "taskId": "0f8afa19-7504-4215-b507-c55366887040",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "0f8afa19-7504-4215-b507-c55366887040",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "Isolated delicate bar glass foley: one small crystal glass set gently on a wooden counter, pause, then two ice cubes softly clink inside the glass, pause, then a light fingertip tap on its rim. Dry intimate recording, no voices or music.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 4
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "Isolated delicate bar glass foley: one small crystal glass set gently on a wooden counter, pause, then two ice cubes softly clink inside the glass, pause, then a light fingertip tap on its rim. Dry intimate recording, no voices or music.",
+          "duration": 4,
+          "name": "EP01_SE_グラスと氷",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1811
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/02f2e11b-6571-4323-8da9-86c43a4d0a45/EP01_SE______.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiODgxNTdiZDFmYWZmZDRjYyIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ5MzMyOX0.n1lpgweHMctLYZD2kmwId86s8d0Pfa4qFkCrsbBjPhw",
+      "taskId": "0f8afa19-7504-4215-b507-c55366887040",
+      "prompt": "EP01_SE_グラスと氷",
+      "meta": {
+        "durationSeconds": 4
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\glass.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\glass.wav",
+    "seconds": 4.0,
+    "rms_db": -30.10466766357422,
+    "peak_db": -2.279953956604004
+  },
+  {
+    "key": "shaker",
+    "type": "sfx",
+    "duration": 4,
+    "name": "EP01_SE_シェイカー",
+    "promptText": "A bartender rhythmically shakes a metal cocktail shaker with ice, small crisp shh-ka shh-ka movement at 72 beats per minute for a few beats, then stops. Dry isolated close bar foley, no voices, music or background noise.",
+    "taskId": "9e829b9d-6d85-495f-816c-c059e58b8ca7",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "9e829b9d-6d85-495f-816c-c059e58b8ca7",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "A bartender rhythmically shakes a metal cocktail shaker with ice, small crisp shh-ka shh-ka movement at 72 beats per minute for a few beats, then stops. Dry isolated close bar foley, no voices, music or background noise.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 4
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "A bartender rhythmically shakes a metal cocktail shaker with ice, small crisp shh-ka shh-ka movement at 72 beats per minute for a few beats, then stops. Dry isolated close bar foley, no voices, music or background noise.",
+          "duration": 4,
+          "name": "EP01_SE_シェイカー",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1807
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/b80ed192-1fc2-42b7-8322-563997685fb0/EP01_SE______.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiZjYzNTFhZTQ3OWI3NjUwNiIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ4MTgyOH0.LPMzJlouK7nGcu2QERzVf38CsDoijgTY5mzrLek52s4",
+      "taskId": "9e829b9d-6d85-495f-816c-c059e58b8ca7",
+      "prompt": "EP01_SE_シェイカー",
+      "meta": {
+        "durationSeconds": 4
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\shaker.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\shaker.wav",
+    "seconds": 4.0,
+    "rms_db": -20.268280029296875,
+    "peak_db": -3.598637342453003
+  },
+  {
+    "key": "whisk",
+    "type": "sfx",
+    "duration": 3,
+    "name": "EP01_SE_泡立て器",
+    "promptText": "A hand whisk gently stirs cream in a stainless steel mixing bowl, soft rhythmic scrape and swish, then stops with one delicate metal tap on the rim. Close clean isolated foley, no voices, no music.",
+    "taskId": "0ba5a013-04c7-4cfc-b51d-7e33e8c56013",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "0ba5a013-04c7-4cfc-b51d-7e33e8c56013",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "A hand whisk gently stirs cream in a stainless steel mixing bowl, soft rhythmic scrape and swish, then stops with one delicate metal tap on the rim. Close clean isolated foley, no voices, no music.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 3
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "A hand whisk gently stirs cream in a stainless steel mixing bowl, soft rhythmic scrape and swish, then stops with one delicate metal tap on the rim. Close clean isolated foley, no voices, no music.",
+          "duration": 3,
+          "name": "EP01_SE_泡立て器",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1804
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/fce5a4e2-7be1-48aa-822c-57977b48efa4/EP01_SE_____.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiOThhZTg2NDY3MzI4YTQxYyIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ5MTI3MH0.PNG_RBj3AUIB2YCaIAYM2JyZuBSMDIMZreo1a-l6i48",
+      "taskId": "0ba5a013-04c7-4cfc-b51d-7e33e8c56013",
+      "prompt": "EP01_SE_泡立て器",
+      "meta": {
+        "durationSeconds": 3
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\whisk.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\whisk.wav",
+    "seconds": 3.0,
+    "rms_db": -34.648231506347656,
+    "peak_db": -11.600868225097656
+  },
+  {
+    "key": "fabric",
+    "type": "sfx",
+    "duration": 3,
+    "name": "EP01_SE_衣服の動き",
+    "promptText": "Soft cotton and wool clothing foley, a jacket being taken off and draped over a wooden chair, a gentle fabric swish and a quiet chair creak. Close dry recording, no footsteps, no voices, no music.",
+    "taskId": "4b4cb638-7d93-4b97-a256-9bd13b6efd35",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "4b4cb638-7d93-4b97-a256-9bd13b6efd35",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "Soft cotton and wool clothing foley, a jacket being taken off and draped over a wooden chair, a gentle fabric swish and a quiet chair creak. Close dry recording, no footsteps, no voices, no music.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 3
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "Soft cotton and wool clothing foley, a jacket being taken off and draped over a wooden chair, a gentle fabric swish and a quiet chair creak. Close dry recording, no footsteps, no voices, no music.",
+          "duration": 3,
+          "name": "EP01_SE_衣服の動き",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1801
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/d4f2b8c3-ba8c-4ea3-86a7-81757bb44fe7/EP01_SE______.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiOTdmMTQxMzcwZjhjOWM5ZCIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ0MjQ4N30.8MpwS7VD66Y79kSs1t4JPIXRX8iflr-MseYbJYrHz3I",
+      "taskId": "4b4cb638-7d93-4b97-a256-9bd13b6efd35",
+      "prompt": "EP01_SE_衣服の動き",
+      "meta": {
+        "durationSeconds": 3
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\fabric.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\fabric.wav",
+    "seconds": 3.0,
+    "rms_db": -40.40489196777344,
+    "peak_db": -13.28138542175293
+  },
+  {
+    "key": "cat",
+    "type": "sfx",
+    "duration": 2,
+    "name": "EP01_SE_ステラの小さな声",
+    "promptText": "A small domestic cat gives one short gentle startled meow, then a tiny soft chirp. Natural cute quiet cat voice, not aggressive, isolated clean recording, no human voices or music.",
+    "taskId": "253c90ab-cce2-4356-8701-ac4d2dabcf54",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "253c90ab-cce2-4356-8701-ac4d2dabcf54",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "A small domestic cat gives one short gentle startled meow, then a tiny soft chirp. Natural cute quiet cat voice, not aggressive, isolated clean recording, no human voices or music.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 2
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "A small domestic cat gives one short gentle startled meow, then a tiny soft chirp. Natural cute quiet cat voice, not aggressive, isolated clean recording, no human voices or music.",
+          "duration": 2,
+          "name": "EP01_SE_ステラの小さな声",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1799
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/447b147c-77c0-44a6-9c4b-5782f907c0b6/EP01_SE_________.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiODZhOWNkYTI4NDAzMWE3ZSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTUwNTU3MH0.9CIWm6OOpmrQ8np5l6GFw6t3PoDpbTG55FWm2Ax5iZo",
+      "taskId": "253c90ab-cce2-4356-8701-ac4d2dabcf54",
+      "prompt": "EP01_SE_ステラの小さな声",
+      "meta": {
+        "durationSeconds": 2
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\cat.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\cat.wav",
+    "seconds": 2.0,
+    "rms_db": -23.774227142333984,
+    "peak_db": -7.054126739501953
+  },
+  {
+    "key": "hum_adult",
+    "type": "sfx",
+    "duration": 8,
+    "name": "EP01_仮鼻歌_暁",
+    "promptText": "A calm adult woman quietly hums a simple lilting four-note tune through closed lips, soft natural 'mmm', casual walking pace, intimate restrained breathy humming. Solo unaccompanied human voice, no lyrics or speech, no instruments, no background sound.",
+    "taskId": "9f7f2d97-6bcf-4006-9b4c-142af0c273a0",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "9f7f2d97-6bcf-4006-9b4c-142af0c273a0",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "A calm adult woman quietly hums a simple lilting four-note tune through closed lips, soft natural 'mmm', casual walking pace, intimate restrained breathy humming. Solo unaccompanied human voice, no lyrics or speech, no instruments, no background sound.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 8
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "A calm adult woman quietly hums a simple lilting four-note tune through closed lips, soft natural 'mmm', casual walking pace, intimate restrained breathy humming. Solo unaccompanied human voice, no lyrics or speech, no instruments, no background sound.",
+          "duration": 8,
+          "name": "EP01_仮鼻歌_暁",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1791
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/42bae7ec-64f2-43ef-8cef-aef9c7e97c4d/EP01______.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMWMwM2ZkMzgzMTc0NzU4NCIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTUxMTQ4MH0.ujQEnMmaQOjneYBopt8ouvAT2JiTCUUgqNXhJGkYPvs",
+      "taskId": "9f7f2d97-6bcf-4006-9b4c-142af0c273a0",
+      "prompt": "EP01_仮鼻歌_暁",
+      "meta": {
+        "durationSeconds": 8
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\hum_adult.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\hum_adult.wav",
+    "seconds": 8.0,
+    "rms_db": -34.17833709716797,
+    "peak_db": -25.715362548828125
+  },
+  {
+    "key": "hum_young",
+    "type": "sfx",
+    "duration": 8,
+    "name": "EP01_仮鼻歌_あかね",
+    "promptText": "A cheerful young adult woman softly hums a simple relaxed four-note tune through closed lips at 68 beats per minute, gentle natural 'mmm', shy warm smile. Solo unaccompanied human humming, no words or speech, no instruments or background noise.",
+    "taskId": "17da0d1a-9418-4bf8-b508-50ad03a5dd53",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "17da0d1a-9418-4bf8-b508-50ad03a5dd53",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "A cheerful young adult woman softly hums a simple relaxed four-note tune through closed lips at 68 beats per minute, gentle natural 'mmm', shy warm smile. Solo unaccompanied human humming, no words or speech, no instruments or background noise.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 8
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "A cheerful young adult woman softly hums a simple relaxed four-note tune through closed lips at 68 beats per minute, gentle natural 'mmm', shy warm smile. Solo unaccompanied human humming, no words or speech, no instruments or background noise.",
+          "duration": 8,
+          "name": "EP01_仮鼻歌_あかね",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1783
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/4e6ffac6-361a-4ce4-9389-3a3fa55f4777/EP01________.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMzQwOTQ5YjlhZGQ4ZjU1YyIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ1NTkyOX0.UcPqlfm6d-_hMNQgcG1DBIJ4UhhLbRUTt5VZDTuGi-0",
+      "taskId": "17da0d1a-9418-4bf8-b508-50ad03a5dd53",
+      "prompt": "EP01_仮鼻歌_あかね",
+      "meta": {
+        "durationSeconds": 8
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\hum_young.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\hum_young.wav",
+    "seconds": 8.0,
+    "rms_db": -33.52988815307617,
+    "peak_db": -23.68450355529785
+  },
+  {
+    "key": "pen",
+    "type": "sfx",
+    "duration": 4,
+    "name": "EP01_SE_ノートを書く",
+    "promptText": "A ballpoint pen writes short smooth lines on a paper notebook, faint dry nib scratching, a small pause then another line, close detailed quiet foley. No voices, music or background noise.",
+    "taskId": "99e1bf32-fcb7-4614-aa9d-6bcf26846b5a",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "99e1bf32-fcb7-4614-aa9d-6bcf26846b5a",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "A ballpoint pen writes short smooth lines on a paper notebook, faint dry nib scratching, a small pause then another line, close detailed quiet foley. No voices, music or background noise.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 4
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "A ballpoint pen writes short smooth lines on a paper notebook, faint dry nib scratching, a small pause then another line, close detailed quiet foley. No voices, music or background noise.",
+          "duration": 4,
+          "name": "EP01_SE_ノートを書く",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1779
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/c5a21fa8-6369-41c7-902b-91b9b2c60d00/EP01_SE_______.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiNzIzNmVkMzAyZDUxYjBkNiIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ0MDY4OH0.Y6DRCjBfkj8rhniGhtWTCDKSrhpSdzdjPONaRzrnVhs",
+      "taskId": "99e1bf32-fcb7-4614-aa9d-6bcf26846b5a",
+      "prompt": "EP01_SE_ノートを書く",
+      "meta": {
+        "durationSeconds": 4
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\pen.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\pen.wav",
+    "seconds": 4.0,
+    "rms_db": -48.983314514160156,
+    "peak_db": -32.02213668823242
+  },
+  {
+    "key": "pour",
+    "type": "sfx",
+    "duration": 2,
+    "name": "EP01_SE_カクテルを注ぐ",
+    "promptText": "A small amount of cocktail liquid pours gently from a metal shaker into a crystal stemmed glass, a thin smooth stream with a short final drip. Isolated clean close bar foley, no voices or music.",
+    "taskId": "a368a12e-ecf9-4f5a-b4c8-d07ca6b62b94",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "a368a12e-ecf9-4f5a-b4c8-d07ca6b62b94",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "A small amount of cocktail liquid pours gently from a metal shaker into a crystal stemmed glass, a thin smooth stream with a short final drip. Isolated clean close bar foley, no voices or music.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 2
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "A small amount of cocktail liquid pours gently from a metal shaker into a crystal stemmed glass, a thin smooth stream with a short final drip. Isolated clean close bar foley, no voices or music.",
+          "duration": 2,
+          "name": "EP01_SE_カクテルを注ぐ",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1777
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/1eb6654d-b478-42e3-a406-70a634228b41/EP01_SE________.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiOThjMWY2ZTg4OGJkNGQ0YyIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ2OTI4OH0.N-em7hrAbsYlNAChmfihZJ0b8q5cLcm75ajt7vnR_oQ",
+      "taskId": "a368a12e-ecf9-4f5a-b4c8-d07ca6b62b94",
+      "prompt": "EP01_SE_カクテルを注ぐ",
+      "meta": {
+        "durationSeconds": 2
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_original\\pour.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v1\\audio_sources\\pour.wav",
+    "seconds": 2.0,
+    "rms_db": -29.861846923828125,
+    "peak_db": -1.4509410858154297
+  },
+  {
+    "key": "opening_cinema",
+    "name": "EP01_v2_開幕と期待",
+    "promptText": "Original cinematic chamber-orchestral score for a fantasy mystery drama. Cohesive musical palette: D minor turning to D Dorian, a short rising three-note motif D-F-A answered by E-D, felt piano, warm cello, expressive restrained strings, delicate hammered dulcimer, subtle low frame drum. Original composition, do not quote any existing melody. No lyrics, no spoken words. Opening theme with a palpable feeling that the story is about to begin. 84 BPM. First 4 bars: immediately audible wondrous celesta and a lyrical cello motif, gentle forward motion beneath narration. Next 8 bars: steady soft low percussion and growing strings, hopeful mysterious journey rather than sorrow. Develop into a sweeping emotional orchestral lift with a distant wordless choir as texture and soaring upper strings, then a graceful warm cadence. Distinct beginning, purposeful development, a real cinematic climax, then softer atmospheric continuation. Medium dynamic range, narration-friendly center, no bombastic brass or trailer impacts. Music only.",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "182d1874-4cc7-4d16-a266-b0dea4dd3ef8",
+      "taskType": "workflow_lyria3_pro",
+      "outputKind": "audio",
+      "prompt": "Original cinematic chamber-orchestral score for a fantasy mystery drama. Cohesive musical palette: D minor turning to D Dorian, a short rising three-note motif D-F-A answered by E-D, felt piano, warm cello, expressive restrained strings, delicate hammered dulcimer, subtle low frame drum. Original composition, do not quote any existing melody. No lyrics, no spoken words. Opening theme with a palpable feeling that the story is about to begin. 84 BPM. First 4 bars: immediately audible wondrous celesta and a lyrical cello motif, gentle forward motion beneath narration. Next 8 bars: steady soft low percussion and growing strings, hopeful mysterious journey rather than sorrow. Develop into a sweeping emotional orchestral lift with a distant wordless choir as texture and soaring upper strings, then a graceful warm cadence. Distinct beginning, purposeful development, a real cinematic climax, then softer atmospheric continuation. Medium dynamic range, narration-friendly center, no bombastic brass or trailer impacts. Music only.",
+      "meta": {
+        "modelId": "lyria-3-pro",
+        "modelLabel": "Lyria 3 Pro"
+      },
+      "_regenerate": {
+        "tool": "generate_music",
+        "arguments": {
+          "promptText": "Original cinematic chamber-orchestral score for a fantasy mystery drama. Cohesive musical palette: D minor turning to D Dorian, a short rising three-note motif D-F-A answered by E-D, felt piano, warm cello, expressive restrained strings, delicate hammered dulcimer, subtle low frame drum. Original composition, do not quote any existing melody. No lyrics, no spoken words. Opening theme with a palpable feeling that the story is about to begin. 84 BPM. First 4 bars: immediately audible wondrous celesta and a lyrical cello motif, gentle forward motion beneath narration. Next 8 bars: steady soft low percussion and growing strings, hopeful mysterious journey rather than sorrow. Develop into a sweeping emotional orchestral lift with a distant wordless choir as texture and soaring upper strings, then a graceful warm cadence. Distinct beginning, purposeful development, a real cinematic climax, then softer atmospheric continuation. Medium dynamic range, narration-friendly center, no bombastic brass or trailer impacts. Music only.",
+          "model": "lyria-3-pro",
+          "name": "EP01_v2_開幕と期待",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1357
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/lyria3-pro/182d1874-4cc7-4d16-a266-b0dea4dd3ef8/EP01_v2______.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiNzkwNGQ2ODQ3N2ZlMWNlMCIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ2NDE5Nn0.Q42amQG6O3ny-oBSwdW9hXRln6DON2Zh6m-VKneM55s",
+      "taskId": "182d1874-4cc7-4d16-a266-b0dea4dd3ef8",
+      "prompt": "Original cinematic chamber-orchestral score for a fantasy mystery drama. Cohesive musical palette: D minor turning to D Dorian, a short rising three-note motif D-F-A answered by E-D, felt piano, warm cello, expressive restrained strings, delicate hammered dulcimer, subtle low frame drum. Original composition, do not quote any existing melody. No lyrics, no spoken words. Opening theme with a palpable feeling that the story is about to begin. 84 BPM. First 4 bars: immediately audible wondrous celesta and a lyrical cello motif, gentle forward motion beneath narration. Next 8 bars: steady soft low percussion and growing strings, hopeful mysterious journey rather than sorrow. Develop into a sweeping emotional orchestral lift with a distant wordless choir as texture and soaring upper strings, then a graceful warm cadence. Distinct beginning, purposeful development, a real cinematic climax, then softer atmospheric continuation. Medium dynamic range, narration-friendly center, no bombastic brass or trailer impacts. Music only.",
+      "meta": {
+        "durationSeconds": 147.539542
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v2\\audio_original\\opening_cinema.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v2\\audio_sources\\opening_cinema.wav",
+    "seconds": 147.53960416666666,
+    "rms_db": -15.885576248168945,
+    "peak_db": -0.00026507634902372956
+  },
+  {
+    "key": "daily_cinema",
+    "name": "EP01_v2_店内の日常",
+    "promptText": "Original cinematic chamber-orchestral score for a fantasy mystery drama. Cohesive musical palette: D minor turning to D Dorian, a short rising three-note motif D-F-A answered by E-D, felt piano, warm cello, expressive restrained strings, delicate hammered dulcimer, subtle low frame drum. Original composition, do not quote any existing melody. No lyrics, no spoken words. Quiet daily-life underscore inside a cozy secret nighttime cafe. 84 BPM, D Dorian warmth. Intimate felt piano and soft pizzicato cello, delicate dulcimer, very light brushed percussion, warm held strings. Gentle curiosity, lightly playful conversational flow, affectionate ensemble chemistry; not sentimental or sad. Consistent low intensity so character dialogue is the focus. Introduce the rising three-note motif sparsely, breathe between phrases, gradual small lifts every 16 bars without a big climax. Pure instrumental, no choir or vocals, no busy lead melody, no heavy drums. Sustained flowing underscore with no long silent introduction and a clean soft ending.",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "777785d6-995e-4e13-aaff-fcc5421fd68b",
+      "taskType": "workflow_lyria3_pro",
+      "outputKind": "audio",
+      "prompt": "Original cinematic chamber-orchestral score for a fantasy mystery drama. Cohesive musical palette: D minor turning to D Dorian, a short rising three-note motif D-F-A answered by E-D, felt piano, warm cello, expressive restrained strings, delicate hammered dulcimer, subtle low frame drum. Original composition, do not quote any existing melody. No lyrics, no spoken words. Quiet daily-life underscore inside a cozy secret nighttime cafe. 84 BPM, D Dorian warmth. Intimate felt piano and soft pizzicato cello, delicate dulcimer, very light brushed percussion, warm held strings. Gentle curiosity, lightly playful conversational flow, affectionate ensemble chemistry; not sentimental or sad. Consistent low intensity so character dialogue is the focus. Introduce the rising three-note motif sparsely, breathe between phrases, gradual small lifts every 16 bars without a big climax. Pure instrumental, no choir or vocals, no busy lead melody, no heavy drums. Sustained flowing underscore with no long silent introduction and a clean soft ending.",
+      "meta": {
+        "modelId": "lyria-3-pro",
+        "modelLabel": "Lyria 3 Pro"
+      },
+      "_regenerate": {
+        "tool": "generate_music",
+        "arguments": {
+          "promptText": "Original cinematic chamber-orchestral score for a fantasy mystery drama. Cohesive musical palette: D minor turning to D Dorian, a short rising three-note motif D-F-A answered by E-D, felt piano, warm cello, expressive restrained strings, delicate hammered dulcimer, subtle low frame drum. Original composition, do not quote any existing melody. No lyrics, no spoken words. Quiet daily-life underscore inside a cozy secret nighttime cafe. 84 BPM, D Dorian warmth. Intimate felt piano and soft pizzicato cello, delicate dulcimer, very light brushed percussion, warm held strings. Gentle curiosity, lightly playful conversational flow, affectionate ensemble chemistry; not sentimental or sad. Consistent low intensity so character dialogue is the focus. Introduce the rising three-note motif sparsely, breathe between phrases, gradual small lifts every 16 bars without a big climax. Pure instrumental, no choir or vocals, no busy lead melody, no heavy drums. Sustained flowing underscore with no long silent introduction and a clean soft ending.",
+          "model": "lyria-3-pro",
+          "name": "EP01_v2_店内の日常",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1349
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/lyria3-pro/777785d6-995e-4e13-aaff-fcc5421fd68b/EP01_v2______.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMDU4YmU0ZGFmN2U3MjdiMyIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTUwNTM3MH0.YIo2qikf948TkMloMieJA1D_aodafQ5ZUOAgy4qB1Sk",
+      "taskId": "777785d6-995e-4e13-aaff-fcc5421fd68b",
+      "prompt": "Original cinematic chamber-orchestral score for a fantasy mystery drama. Cohesive musical palette: D minor turning to D Dorian, a short rising three-note motif D-F-A answered by E-D, felt piano, warm cello, expressive restrained strings, delicate hammered dulcimer, subtle low frame drum. Original composition, do not quote any existing melody. No lyrics, no spoken words. Quiet daily-life underscore inside a cozy secret nighttime cafe. 84 BPM, D Dorian warmth. Intimate felt piano and soft pizzicato cello, delicate dulcimer, very light brushed percussion, warm held strings. Gentle curiosity, lightly playful conversational flow, affectionate ensemble chemistry; not sentimental or sad. Consistent low intensity so character dialogue is the focus. Introduce the rising three-note motif sparsely, breathe between phrases, gradual small lifts every 16 bars without a big climax. Pure instrumental, no choir or vocals, no busy lead melody, no heavy drums. Sustained flowing underscore with no long silent introduction and a clean soft ending.",
+      "meta": {
+        "durationSeconds": 180.323208
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v2\\audio_original\\daily_cinema.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v2\\audio_sources\\daily_cinema.wav",
+    "seconds": 180.32327083333334,
+    "rms_db": -15.100774765014648,
+    "peak_db": -0.04571251571178436
+  },
+  {
+    "key": "suspense_cinema",
+    "name": "EP01_v2_捜査官の緊迫",
+    "promptText": "Original cinematic chamber-orchestral score for a fantasy mystery drama. Cohesive musical palette: D minor turning to D Dorian, a short rising three-note motif D-F-A answered by E-D, felt piano, warm cello, expressive restrained strings, delicate hammered dulcimer, subtle low frame drum. Original composition, do not quote any existing melody. No lyrics, no spoken words. Tense investigator scene outside a secret cafe at night. 84 BPM. Immediate low string ostinato with quiet pulsing frame drum, ticking dulcimer, ominous cello playing the same rising three-note motif in fragmented minor form. A genuine feeling of danger and someone discovering the secret. Steady suspense, uneasy restrained high string tremolo and deep bass tension, gradually increasing rhythmic urgency, then a wider ominous string swell. No huge impacts, no jump scares, no action drums, no heroic fanfare. Instrumental, no vocals, no lyrics. Dialogue-friendly but clearly suspenseful, not soft sad piano. Full developed cue, then a dark unresolved ending.",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "fdfbbc73-1fbb-4926-b368-3cd7c48143bb",
+      "taskType": "workflow_lyria3_pro",
+      "outputKind": "audio",
+      "prompt": "Original cinematic chamber-orchestral score for a fantasy mystery drama. Cohesive musical palette: D minor turning to D Dorian, a short rising three-note motif D-F-A answered by E-D, felt piano, warm cello, expressive restrained strings, delicate hammered dulcimer, subtle low frame drum. Original composition, do not quote any existing melody. No lyrics, no spoken words. Tense investigator scene outside a secret cafe at night. 84 BPM. Immediate low string ostinato with quiet pulsing frame drum, ticking dulcimer, ominous cello playing the same rising three-note motif in fragmented minor form. A genuine feeling of danger and someone discovering the secret. Steady suspense, uneasy restrained high string tremolo and deep bass tension, gradually increasing rhythmic urgency, then a wider ominous string swell. No huge impacts, no jump scares, no action drums, no heroic fanfare. Instrumental, no vocals, no lyrics. Dialogue-friendly but clearly suspenseful, not soft sad piano. Full developed cue, then a dark unresolved ending.",
+      "meta": {
+        "modelId": "lyria-3-pro",
+        "modelLabel": "Lyria 3 Pro"
+      },
+      "_regenerate": {
+        "tool": "generate_music",
+        "arguments": {
+          "promptText": "Original cinematic chamber-orchestral score for a fantasy mystery drama. Cohesive musical palette: D minor turning to D Dorian, a short rising three-note motif D-F-A answered by E-D, felt piano, warm cello, expressive restrained strings, delicate hammered dulcimer, subtle low frame drum. Original composition, do not quote any existing melody. No lyrics, no spoken words. Tense investigator scene outside a secret cafe at night. 84 BPM. Immediate low string ostinato with quiet pulsing frame drum, ticking dulcimer, ominous cello playing the same rising three-note motif in fragmented minor form. A genuine feeling of danger and someone discovering the secret. Steady suspense, uneasy restrained high string tremolo and deep bass tension, gradually increasing rhythmic urgency, then a wider ominous string swell. No huge impacts, no jump scares, no action drums, no heroic fanfare. Instrumental, no vocals, no lyrics. Dialogue-friendly but clearly suspenseful, not soft sad piano. Full developed cue, then a dark unresolved ending.",
+          "model": "lyria-3-pro",
+          "name": "EP01_v2_捜査官の緊迫",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1341
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/lyria3-pro/fdfbbc73-1fbb-4926-b368-3cd7c48143bb/EP01_v2_______.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiZjZkYWI5MTA1NjQ2YzYwYiIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ0OTM2MH0.LAy-RoZeODnv-_qgELderGE_OfyBUDeW3OBZsf_xcpQ",
+      "taskId": "fdfbbc73-1fbb-4926-b368-3cd7c48143bb",
+      "prompt": "Original cinematic chamber-orchestral score for a fantasy mystery drama. Cohesive musical palette: D minor turning to D Dorian, a short rising three-note motif D-F-A answered by E-D, felt piano, warm cello, expressive restrained strings, delicate hammered dulcimer, subtle low frame drum. Original composition, do not quote any existing melody. No lyrics, no spoken words. Tense investigator scene outside a secret cafe at night. 84 BPM. Immediate low string ostinato with quiet pulsing frame drum, ticking dulcimer, ominous cello playing the same rising three-note motif in fragmented minor form. A genuine feeling of danger and someone discovering the secret. Steady suspense, uneasy restrained high string tremolo and deep bass tension, gradually increasing rhythmic urgency, then a wider ominous string swell. No huge impacts, no jump scares, no action drums, no heroic fanfare. Instrumental, no vocals, no lyrics. Dialogue-friendly but clearly suspenseful, not soft sad piano. Full developed cue, then a dark unresolved ending.",
+      "meta": {
+        "durationSeconds": 144.1175
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v2\\audio_original\\suspense_cinema.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v2\\audio_sources\\suspense_cinema.wav",
+    "seconds": 144.1175625,
+    "rms_db": -15.285966873168945,
+    "peak_db": -0.12494824826717377
+  },
+  {
+    "key": "v3_opening",
+    "model": "lyria-3-pro",
+    "bpm": 108,
+    "name": "EP01_v3_物語の始まり",
+    "promptText": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. 108 BPM, a purposeful forward-moving opening, not a slow ambient ballad. Immediate eighth-note piano and pizzicato cello pulse beneath narration, mysterious blue nighttime atmosphere, changing string harmony, a touch of danger. Within the first 12 bars build into a luminous full string statement of the theme, a feeling that a hidden warm world is opening. Clearly articulated short notes and phrase development, emotional lift, a gentle wordless choir only in the larger climax. Dynamic sections of tension, hope and a broad cinematic arrival. Keep narrative space but do not remain static or serene. Music only.",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "89ceb56b-6873-4bd7-a7e0-e3756555bce1",
+      "taskType": "workflow_lyria3_pro",
+      "outputKind": "audio",
+      "prompt": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. 108 BPM, a purposeful forward-moving opening, not a slow ambient ballad. Immediate eighth-note piano and pizzicato cello pulse beneath narration, mysterious blue nighttime atmosphere, changing string harmony, a touch of danger. Within the first 12 bars build into a luminous full string statement of the theme, a feeling that a hidden warm world is opening. Clearly articulated short notes and phrase development, emotional lift, a gentle wordless choir only in the larger climax. Dynamic sections of tension, hope and a broad cinematic arrival. Keep narrative space but do not remain static or serene. Music only.",
+      "meta": {
+        "modelId": "lyria-3-pro",
+        "modelLabel": "Lyria 3 Pro"
+      },
+      "_regenerate": {
+        "tool": "generate_music",
+        "arguments": {
+          "promptText": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. 108 BPM, a purposeful forward-moving opening, not a slow ambient ballad. Immediate eighth-note piano and pizzicato cello pulse beneath narration, mysterious blue nighttime atmosphere, changing string harmony, a touch of danger. Within the first 12 bars build into a luminous full string statement of the theme, a feeling that a hidden warm world is opening. Clearly articulated short notes and phrase development, emotional lift, a gentle wordless choir only in the larger climax. Dynamic sections of tension, hope and a broad cinematic arrival. Keep narrative space but do not remain static or serene. Music only.",
+          "model": "lyria-3-pro",
+          "name": "EP01_v3_物語の始まり",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1333
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/lyria3-pro/89ceb56b-6873-4bd7-a7e0-e3756555bce1/EP01_v3_______.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiZWJhMzk2MmJlZmEwMjJiOCIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ2NTc3MX0.iRBFJQxW-foBs1-Ktvki3M-nhcIhVVIdxsadPvhibFk",
+      "taskId": "89ceb56b-6873-4bd7-a7e0-e3756555bce1",
+      "prompt": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. 108 BPM, a purposeful forward-moving opening, not a slow ambient ballad. Immediate eighth-note piano and pizzicato cello pulse beneath narration, mysterious blue nighttime atmosphere, changing string harmony, a touch of danger. Within the first 12 bars build into a luminous full string statement of the theme, a feeling that a hidden warm world is opening. Clearly articulated short notes and phrase development, emotional lift, a gentle wordless choir only in the larger climax. Dynamic sections of tension, hope and a broad cinematic arrival. Keep narrative space but do not remain static or serene. Music only.",
+      "meta": {
+        "durationSeconds": 148.323208
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v3\\audio_original\\v3_opening.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v3\\audio_sources\\v3_opening.wav",
+    "seconds": 148.32327083333334
+  },
+  {
+    "key": "v3_banter",
+    "model": "lyria-3-pro",
+    "bpm": 116,
+    "name": "EP01_v3_会話と掛け合い",
+    "promptText": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. 116 BPM, light mischievous daily-life chamber underscore, animated playful pizzicato violins and cello, nimble eighth-note piano, marimba and brushed percussion. Warm witty banter between friends at a hidden cafe. Clear pulse and short notes, small playful rises and responses every four bars; elegant, light and quiet, not cartoon circus slapstick. Pure instrumental, no choir. Modest arrangement so dialogue remains central. Changes in orchestration and harmony, no long sustained ambient pads, no sentimental slow melody. Developed track with several playful and tender phrases.",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "2a6827a6-681b-4188-8d31-fa5413e0cb93",
+      "taskType": "workflow_lyria3_pro",
+      "outputKind": "audio",
+      "prompt": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. 116 BPM, light mischievous daily-life chamber underscore, animated playful pizzicato violins and cello, nimble eighth-note piano, marimba and brushed percussion. Warm witty banter between friends at a hidden cafe. Clear pulse and short notes, small playful rises and responses every four bars; elegant, light and quiet, not cartoon circus slapstick. Pure instrumental, no choir. Modest arrangement so dialogue remains central. Changes in orchestration and harmony, no long sustained ambient pads, no sentimental slow melody. Developed track with several playful and tender phrases.",
+      "meta": {
+        "modelId": "lyria-3-pro",
+        "modelLabel": "Lyria 3 Pro"
+      },
+      "_regenerate": {
+        "tool": "generate_music",
+        "arguments": {
+          "promptText": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. 116 BPM, light mischievous daily-life chamber underscore, animated playful pizzicato violins and cello, nimble eighth-note piano, marimba and brushed percussion. Warm witty banter between friends at a hidden cafe. Clear pulse and short notes, small playful rises and responses every four bars; elegant, light and quiet, not cartoon circus slapstick. Pure instrumental, no choir. Modest arrangement so dialogue remains central. Changes in orchestration and harmony, no long sustained ambient pads, no sentimental slow melody. Developed track with several playful and tender phrases.",
+          "model": "lyria-3-pro",
+          "name": "EP01_v3_会話と掛け合い",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1325
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/lyria3-pro/2a6827a6-681b-4188-8d31-fa5413e0cb93/EP01_v3________.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMWZmZWY4NzdhNjQyZDgyMCIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTUwNDI0N30.OmASqWFc6FiWrQRyB4P1JjR1IKuFO6lAwjsL59JQqFg",
+      "taskId": "2a6827a6-681b-4188-8d31-fa5413e0cb93",
+      "prompt": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. 116 BPM, light mischievous daily-life chamber underscore, animated playful pizzicato violins and cello, nimble eighth-note piano, marimba and brushed percussion. Warm witty banter between friends at a hidden cafe. Clear pulse and short notes, small playful rises and responses every four bars; elegant, light and quiet, not cartoon circus slapstick. Pure instrumental, no choir. Modest arrangement so dialogue remains central. Changes in orchestration and harmony, no long sustained ambient pads, no sentimental slow melody. Developed track with several playful and tender phrases.",
+      "meta": {
+        "durationSeconds": 147.043208
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v3\\audio_original\\v3_banter.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v3\\audio_sources\\v3_banter.wav",
+    "seconds": 147.04327083333334
+  },
+  {
+    "key": "v3_heart",
+    "model": "lyria-3-pro",
+    "bpm": 92,
+    "name": "EP01_v3_失いたくない時間",
+    "promptText": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. 92 BPM, intimate heartfelt dramatic string theme about ordinary human warmth threatened by unfair prohibitions. Opening with expressive solo cello and restrained piano, space for a whispered confession. Gradually add flowing violin harmony and gentle eighth-note inner motion, develop from fragile sadness to compassion, solidarity, and warm resolution. A genuine emotional melodic arc with clear lifts after heartfelt sentences; not a static quiet pad, not tragic funeral music. Swell into a restrained moving ensemble climax, then a delicate reassuring reprise. Pure instrumental, no vocals, no percussion-heavy action, no triumphal brass. Natural changing dynamics.",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "4cfca185-d3f0-4ce2-9505-268f41200327",
+      "taskType": "workflow_lyria3_pro",
+      "outputKind": "audio",
+      "prompt": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. 92 BPM, intimate heartfelt dramatic string theme about ordinary human warmth threatened by unfair prohibitions. Opening with expressive solo cello and restrained piano, space for a whispered confession. Gradually add flowing violin harmony and gentle eighth-note inner motion, develop from fragile sadness to compassion, solidarity, and warm resolution. A genuine emotional melodic arc with clear lifts after heartfelt sentences; not a static quiet pad, not tragic funeral music. Swell into a restrained moving ensemble climax, then a delicate reassuring reprise. Pure instrumental, no vocals, no percussion-heavy action, no triumphal brass. Natural changing dynamics.",
+      "meta": {
+        "modelId": "lyria-3-pro",
+        "modelLabel": "Lyria 3 Pro"
+      },
+      "_regenerate": {
+        "tool": "generate_music",
+        "arguments": {
+          "promptText": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. 92 BPM, intimate heartfelt dramatic string theme about ordinary human warmth threatened by unfair prohibitions. Opening with expressive solo cello and restrained piano, space for a whispered confession. Gradually add flowing violin harmony and gentle eighth-note inner motion, develop from fragile sadness to compassion, solidarity, and warm resolution. A genuine emotional melodic arc with clear lifts after heartfelt sentences; not a static quiet pad, not tragic funeral music. Swell into a restrained moving ensemble climax, then a delicate reassuring reprise. Pure instrumental, no vocals, no percussion-heavy action, no triumphal brass. Natural changing dynamics.",
+          "model": "lyria-3-pro",
+          "name": "EP01_v3_失いたくない時間",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1317
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/lyria3-pro/4cfca185-d3f0-4ce2-9505-268f41200327/EP01_v3_________.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiOTBjNTg0NmI3M2QwMTM4ZSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ5MDc5NX0.CVVgXK8cWsJCOyooqbpDtlShJ9_o9kQ-aEODmlTbA2A",
+      "taskId": "4cfca185-d3f0-4ce2-9505-268f41200327",
+      "prompt": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. 92 BPM, intimate heartfelt dramatic string theme about ordinary human warmth threatened by unfair prohibitions. Opening with expressive solo cello and restrained piano, space for a whispered confession. Gradually add flowing violin harmony and gentle eighth-note inner motion, develop from fragile sadness to compassion, solidarity, and warm resolution. A genuine emotional melodic arc with clear lifts after heartfelt sentences; not a static quiet pad, not tragic funeral music. Swell into a restrained moving ensemble climax, then a delicate reassuring reprise. Pure instrumental, no vocals, no percussion-heavy action, no triumphal brass. Natural changing dynamics.",
+      "meta": {
+        "durationSeconds": 165.746875
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v3\\audio_original\\v3_heart.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v3\\audio_sources\\v3_heart.wav",
+    "seconds": 165.74695833333334
+  },
+  {
+    "key": "v3_ensemble",
+    "model": "lyria-3-clip",
+    "bpm": 103,
+    "name": "EP01_v3_営業の音が重なる",
+    "promptText": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. Exactly 103 BPM in 4/4: one quarter-note beat approximately 0.583 seconds. A short flowing warm cafe ensemble cue starting immediately with a gentle piano motif. Add light cello pizzicato, eighth-note dulcimer and delicate shaker-like percussion progressively, each layer joining an affectionate shared rhythm. Start restrained and build to a smiling lively culmination with brighter violin harmony in the second half. No vocals, no dramatic brass. A joyful living room of people making music through everyday work, clear beat suitable for fast hand-detail montage cuts. No quiet lead-in.",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "9669acd9-8bba-4c39-92e1-4ea33d630158",
+      "taskType": "workflow_lyria3_clip",
+      "outputKind": "audio",
+      "prompt": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. Exactly 103 BPM in 4/4: one quarter-note beat approximately 0.583 seconds. A short flowing warm cafe ensemble cue starting immediately with a gentle piano motif. Add light cello pizzicato, eighth-note dulcimer and delicate shaker-like percussion progressively, each layer joining an affectionate shared rhythm. Start restrained and build to a smiling lively culmination with brighter violin harmony in the second half. No vocals, no dramatic brass. A joyful living room of people making music through everyday work, clear beat suitable for fast hand-detail montage cuts. No quiet lead-in.",
+      "meta": {
+        "modelId": "lyria-3-clip",
+        "modelLabel": "Lyria 3 Clip"
+      },
+      "_regenerate": {
+        "tool": "generate_music",
+        "arguments": {
+          "promptText": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. Exactly 103 BPM in 4/4: one quarter-note beat approximately 0.583 seconds. A short flowing warm cafe ensemble cue starting immediately with a gentle piano motif. Add light cello pizzicato, eighth-note dulcimer and delicate shaker-like percussion progressively, each layer joining an affectionate shared rhythm. Start restrained and build to a smiling lively culmination with brighter violin harmony in the second half. No vocals, no dramatic brass. A joyful living room of people making music through everyday work, clear beat suitable for fast hand-detail montage cuts. No quiet lead-in.",
+          "model": "lyria-3-clip",
+          "name": "EP01_v3_営業の音が重なる",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1313
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/lyria3-clip/9669acd9-8bba-4c39-92e1-4ea33d630158/EP01_v3_________.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMjBiZmY2MWU2NDYxMGExYiIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ1MTI5NH0.XLcV-_o4pyTl7g3JnjVu2Ao5Dw4lzz4fYyugoZkPNJ4",
+      "taskId": "9669acd9-8bba-4c39-92e1-4ea33d630158",
+      "prompt": "Original cinematic fantasy-mystery score, D minor / D Dorian harmonic world, recurring short D-F-A rising motif answered E-D, acoustic chamber orchestra, warm cello and expressive violins with felt piano and delicate hammered dulcimer. No quotations of existing music, no lyrics or spoken words. Exactly 103 BPM in 4/4: one quarter-note beat approximately 0.583 seconds. A short flowing warm cafe ensemble cue starting immediately with a gentle piano motif. Add light cello pizzicato, eighth-note dulcimer and delicate shaker-like percussion progressively, each layer joining an affectionate shared rhythm. Start restrained and build to a smiling lively culmination with brighter violin harmony in the second half. No vocals, no dramatic brass. A joyful living room of people making music through everyday work, clear beat suitable for fast hand-detail montage cuts. No quiet lead-in.",
+      "meta": {
+        "durationSeconds": 30.772167
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v3\\audio_original\\v3_ensemble.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v3\\audio_sources\\v3_ensemble_tempo.wav",
+    "seconds": 30.77225,
+    "tempo_adjustment": 0.9771721723080262,
+    "tempo_target": 102.85714285714285
+  },
+  {
+    "key": "v3_thriller",
+    "model": "lyria-3-pro",
+    "bpm": 152,
+    "name": "EP01_v3_捜査官_弦の16分音符",
+    "promptText": "Original cinematic psychological mystery thriller underscore. 152 BPM, urgent and tightly articulated. IMMEDIATE continuous SIXTEENTH-NOTE spiccato violin ostinato, racing repeated short bowed string notes, restless viola counter-pattern and tense staccato cello, low strings pulsing on the beats. D minor with chromatic semitone clashes and diminished harmony, fragments of a D-F-A motif, unresolved harmonic turns. An investigator is about to uncover a hidden forbidden cafe; danger, suspicion, held breath, NOT a fight. Rapid intricate acoustic strings are the dominant sound. Build in layers with sharper high-register violin repetitions, tremolo and low rumble, sparse taut frame-drum accents only. Clearly faster than a gentle 80-BPM cue. No legato romantic theme, no slow piano, no serene pads, no heroic fanfare, no epic battle drums, no sung choir, no vocals. Start with the fast strings from the first second, keep nervous motion throughout, increasingly urgent sections and a dark final accented chord.",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "4c401a7c-cd0f-47e0-8cb0-82bf4a2b35ab",
+      "taskType": "workflow_lyria3_pro",
+      "outputKind": "audio",
+      "prompt": "Original cinematic psychological mystery thriller underscore. 152 BPM, urgent and tightly articulated. IMMEDIATE continuous SIXTEENTH-NOTE spiccato violin ostinato, racing repeated short bowed string notes, restless viola counter-pattern and tense staccato cello, low strings pulsing on the beats. D minor with chromatic semitone clashes and diminished harmony, fragments of a D-F-A motif, unresolved harmonic turns. An investigator is about to uncover a hidden forbidden cafe; danger, suspicion, held breath, NOT a fight. Rapid intricate acoustic strings are the dominant sound. Build in layers with sharper high-register violin repetitions, tremolo and low rumble, sparse taut frame-drum accents only. Clearly faster than a gentle 80-BPM cue. No legato romantic theme, no slow piano, no serene pads, no heroic fanfare, no epic battle drums, no sung choir, no vocals. Start with the fast strings from the first second, keep nervous motion throughout, increasingly urgent sections and a dark final accented chord.",
+      "meta": {
+        "modelId": "lyria-3-pro",
+        "modelLabel": "Lyria 3 Pro"
+      },
+      "_regenerate": {
+        "tool": "generate_music",
+        "arguments": {
+          "promptText": "Original cinematic psychological mystery thriller underscore. 152 BPM, urgent and tightly articulated. IMMEDIATE continuous SIXTEENTH-NOTE spiccato violin ostinato, racing repeated short bowed string notes, restless viola counter-pattern and tense staccato cello, low strings pulsing on the beats. D minor with chromatic semitone clashes and diminished harmony, fragments of a D-F-A motif, unresolved harmonic turns. An investigator is about to uncover a hidden forbidden cafe; danger, suspicion, held breath, NOT a fight. Rapid intricate acoustic strings are the dominant sound. Build in layers with sharper high-register violin repetitions, tremolo and low rumble, sparse taut frame-drum accents only. Clearly faster than a gentle 80-BPM cue. No legato romantic theme, no slow piano, no serene pads, no heroic fanfare, no epic battle drums, no sung choir, no vocals. Start with the fast strings from the first second, keep nervous motion throughout, increasingly urgent sections and a dark final accented chord.",
+          "model": "lyria-3-pro",
+          "name": "EP01_v3_捜査官_弦の16分音符",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1305
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/lyria3-pro/4c401a7c-cd0f-47e0-8cb0-82bf4a2b35ab/EP01_v3_______16___.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiZjhlZDYyNjcwYWZkNjc5YyIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ5Mzk5MX0._rbusClEs0xCW18P4Moxy0h-25l2rcPheEFUBYPXRjM",
+      "taskId": "4c401a7c-cd0f-47e0-8cb0-82bf4a2b35ab",
+      "prompt": "Original cinematic psychological mystery thriller underscore. 152 BPM, urgent and tightly articulated. IMMEDIATE continuous SIXTEENTH-NOTE spiccato violin ostinato, racing repeated short bowed string notes, restless viola counter-pattern and tense staccato cello, low strings pulsing on the beats. D minor with chromatic semitone clashes and diminished harmony, fragments of a D-F-A motif, unresolved harmonic turns. An investigator is about to uncover a hidden forbidden cafe; danger, suspicion, held breath, NOT a fight. Rapid intricate acoustic strings are the dominant sound. Build in layers with sharper high-register violin repetitions, tremolo and low rumble, sparse taut frame-drum accents only. Clearly faster than a gentle 80-BPM cue. No legato romantic theme, no slow piano, no serene pads, no heroic fanfare, no epic battle drums, no sung choir, no vocals. Start with the fast strings from the first second, keep nervous motion throughout, increasingly urgent sections and a dark final accented chord.",
+      "meta": {
+        "durationSeconds": 159.190167
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v3\\audio_original\\v3_thriller.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v3\\audio_sources\\v3_thriller_tempo.wav",
+    "seconds": 159.19020833333335,
+    "tempo_adjustment": 1.0133333333333334,
+    "tempo_target": 152
+  },
+  {
+    "key": "v3_street",
+    "type": "sfx",
+    "duration": 12,
+    "loop": true,
+    "name": "EP01_v3_街の見回り_遠い人声",
+    "promptText": "Distant subdued nighttime street activity: several people murmuring quietly in different directions, scattered boots on pavement, coats rustling, faint unintelligible radio chatter from a patrol. Calm controlled presence, not a fight or crowd shouting. Perspective from an empty side alley, diffuse and far away. No clear words, music, alarms or sirens. Low-key seamless background.",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "0821acc7-5586-43a0-a08d-f433bede81ee",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "Distant subdued nighttime street activity: several people murmuring quietly in different directions, scattered boots on pavement, coats rustling, faint unintelligible radio chatter from a patrol. Calm controlled presence, not a fight or crowd shouting. Perspective from an empty side alley, diffuse and far away. No clear words, music, alarms or sirens. Low-key seamless background.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 12
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "Distant subdued nighttime street activity: several people murmuring quietly in different directions, scattered boots on pavement, coats rustling, faint unintelligible radio chatter from a patrol. Calm controlled presence, not a fight or crowd shouting. Perspective from an empty side alley, diffuse and far away. No clear words, music, alarms or sirens. Low-key seamless background.",
+          "duration": 12,
+          "loop": true,
+          "name": "EP01_v3_街の見回り_遠い人声",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1293
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/6eeb372f-ad63-48cb-af8b-edf8eece57d2/EP01_v3___________.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiZWMwNWU0OWE2MWJlOTU1ZCIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTUxNDc3OH0.-9gUyG9GQ-goKyNGmU_lbEYBAfwrgPdsOqN7h2wFykg",
+      "taskId": "0821acc7-5586-43a0-a08d-f433bede81ee",
+      "prompt": "EP01_v3_街の見回り_遠い人声",
+      "meta": {
+        "durationSeconds": 12
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v3\\audio_original\\v3_street.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v3\\audio_sources\\v3_street.wav",
+    "seconds": 12.0
+  },
+  {
+    "key": "v3_siren",
+    "type": "sfx",
+    "duration": 8,
+    "name": "EP01_v3_遠いサイレン",
+    "promptText": "A distant emergency patrol siren slowly passes two streets away at night, restrained alternating wail through buildings, begins faint, briefly comes nearer, then recedes. No nearby aggressive blaring, no horns, voices, explosions, music or engine roar. Realistic subdued city distance, clean isolated sound.",
+    "result": {
+      "kind": "task_pending",
+      "taskId": "fe1ee371-a168-4c3c-987f-dc1416063c3c",
+      "taskType": "workflow_audio_sfx",
+      "outputKind": "audio",
+      "prompt": "A distant emergency patrol siren slowly passes two streets away at night, restrained alternating wail through buildings, begins faint, briefly comes nearer, then recedes. No nearby aggressive blaring, no horns, voices, explosions, music or engine roar. Realistic subdued city distance, clean isolated sound.",
+      "meta": {
+        "modelId": "workflow_audio_sfx",
+        "modelLabel": "Sound Effects",
+        "durationSeconds": 8
+      },
+      "_regenerate": {
+        "tool": "generate_sound_effect",
+        "arguments": {
+          "promptText": "A distant emergency patrol siren slowly passes two streets away at night, restrained alternating wail through buildings, begins faint, briefly comes nearer, then recedes. No nearby aggressive blaring, no horns, voices, explosions, music or engine roar. Realistic subdued city distance, clean isolated sound.",
+          "duration": 8,
+          "name": "EP01_v3_遠いサイレン",
+          "rationale": "User clicked Re-generate in the inline viewer to create another variation with the same parameters."
+        }
+      },
+      "creditsRemaining": 1285
+    },
+    "finished": {
+      "kind": "audio",
+      "url": "https://dnznrvs05pmza.cloudfront.net/audio_sfx/f6634500-e04a-4f49-98dc-634e905773d4/EP01_v3_______.mp3?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiOGI2NjViNjg1MmRkOGRmYiIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MTQ4MzQ5Nn0.ce2QnnJofADbKEYuj4AuQaCjIxpOnjFAJcS22efiCVE",
+      "taskId": "fe1ee371-a168-4c3c-987f-dc1416063c3c",
+      "prompt": "EP01_v3_遠いサイレン",
+      "meta": {
+        "durationSeconds": 8
+      }
+    },
+    "source_mp3": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v3\\audio_original\\v3_siren.mp3",
+    "source_wav": "C:\\Users\\kaka\\Desktop\\e002素材\\e001\\EP01_Sound_v3\\audio_sources\\v3_siren.wav",
+    "seconds": 8.0
+  }
+]
