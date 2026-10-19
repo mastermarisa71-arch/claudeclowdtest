@@ -170,6 +170,17 @@ CREATE TABLE IF NOT EXISTS boards (
   UNIQUE(episode_id, code)
 );
 
+-- Premiere との橋渡し。エージェントの編集操作をキューに積み、Premiere の中のパネルが取り出して実行する。
+-- 監督が Premiere で手直ししたタイムラインは、パネルから state として送り返され、エージェントはそこから続ける。
+CREATE TABLE IF NOT EXISTS premiere_queue (
+  id INTEGER PRIMARY KEY, ts TEXT, episode TEXT, command TEXT, args_json TEXT,
+  status TEXT DEFAULT 'pending',       -- pending/running/done/failed
+  result_json TEXT DEFAULT '', done_at TEXT
+);
+CREATE TABLE IF NOT EXISTS premiere_states (
+  id INTEGER PRIMARY KEY, ts TEXT, episode TEXT, actor TEXT, state_json TEXT, diff_json TEXT
+);
+
 -- 使用量。生成1回ごとに、サービス・単位・クレジットを記録して、話数ごとの予算と比べる。
 CREATE TABLE IF NOT EXISTS usage (
   id INTEGER PRIMARY KEY,
@@ -191,7 +202,9 @@ MIGRATIONS = {
                  "is_test": "INTEGER DEFAULT 0"},   # テストの回：予算を超えても止めずに警告だけ
     "reviews": {"checks_json": "TEXT DEFAULT ''"},   # AI セルフレビューの観点ごとの合否
     # draft（480p）→ upscale（ドラフトをそのまま拡大）→ final（拡大版を入力に 1080p で生成）
-    "takes": {"tier": "TEXT DEFAULT ''", "source_take_id": "INTEGER", "shot_id": "INTEGER", "board_id": "INTEGER"},
+    "takes": {"tier": "TEXT DEFAULT ''", "source_take_id": "INTEGER", "shot_id": "INTEGER", "board_id": "INTEGER",
+              "submitted_at": "TEXT", "finished_at": "TEXT",
+              "role": "TEXT DEFAULT ''"},   # 音声：voice（仮の声）/ actor（声優）/ sfx / music
 }
 
 

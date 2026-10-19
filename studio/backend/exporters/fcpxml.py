@@ -32,7 +32,24 @@ def timeline(cuts: list[dict], selected: dict[int, dict]) -> list[dict]:
     return items
 
 
-def to_xmeml(name: str, items: list[dict]) -> str:
+def _audio_tracks(audio: list[dict]) -> str:
+    """audio: [{"track": "A1 声", "take": {...}, "start": frame, "end": frame}]"""
+    tracks: dict[str, list[str]] = {}
+    for i, a in enumerate(audio, start=1):
+        p = config.MEDIA_DIR / a["take"]["file_path"]
+        dur = a["end"] - a["start"]
+        tracks.setdefault(a["track"], []).append(f"""
+          <clipitem id="aclip-{i:03d}">
+            <name>{escape(p.name)}</name>
+            <duration>{dur}</duration>{_rate()}
+            <start>{a['start']}</start><end>{a['end']}</end><in>0</in><out>{dur}</out>
+            <file id="afile-{i:03d}"><name>{escape(p.name)}</name><pathurl>{_pathurl(p)}</pathurl>{_rate()}
+              <media><audio><channelcount>1</channelcount></audio></media></file>
+          </clipitem>""")
+    return "".join(f"<track><name>{escape(n)}</name>{''.join(c)}</track>" for n, c in sorted(tracks.items()))
+
+
+def to_xmeml(name: str, items: list[dict], audio: list[dict] | None = None) -> str:
     total = items[-1]["end"] if items else 0
     clips = []
     for i, it in enumerate(items, start=1):
@@ -65,7 +82,7 @@ def to_xmeml(name: str, items: list[dict]) -> str:
           <name>V1 採用テイク</name>{''.join(clips)}
         </track>
       </video>
-      <audio><track/></audio>
+      <audio>{_audio_tracks(audio or []) or "<track/>"}</audio>
     </media>
   </sequence>
 </xmeml>

@@ -25,7 +25,15 @@ ROLE = {
                  "Do not copy the pose, the turnaround layout, or the plain background of the sheet",
     "prop": "the design of the {name} only (shape, color, material). Do not copy its background",
 }
-HEIGHT_ORDER = "後輩 > 暁 > 朔奈 > あかね > まひる > 海凪 > おばあ > 先輩 > ステラ"
+# 英語のプロンプトでの呼び名（参照画像のファイル名に合わせる）
+ROMAJI = {"あかね": "Akane", "朔奈": "Sakuna", "まひる": "Mahiru", "海凪": "Kairi", "暁": "Akira",
+          "おばあ": "Obaa (the old baker)", "ステラ": "Stella (black cat)", "先輩": "Senpai (senior inspector)",
+          "後輩": "Kohai (junior inspector)"}
+HEIGHT_ORDER = "Kohai > Akira > Sakuna > Akane > Mahiru > Kairi > Obaa > Senpai > Stella"
+
+
+def en(name: str) -> str:
+    return ROMAJI.get(name, name)
 
 
 # ---- マルチショットの分け方 ----
@@ -191,7 +199,7 @@ def build_brief(conn, shot_id: int, tier: str = "draft") -> dict:
     lines = ["ASSETS"]
     for i, (kind, name, _) in enumerate(refs, 1):
         tag[(kind, name)] = f"@Image {i}"
-        lines.append(f"@Image {i}: {ROLE[kind].format(name=name)}.")
+        lines.append(f"@Image {i}: {ROLE[kind].format(name=en(name) if kind == 'character' else name)}.")
 
     total = _segments(cs)[-1][1] if cs else 4
     duration = min(config.SHOT_MAX_SECONDS, max(4, total))
@@ -215,7 +223,7 @@ def build_brief(conn, shot_id: int, tier: str = "draft") -> dict:
     for n, (a, b, g) in enumerate(_segments(cs), 1):
         c0 = g[0]
         who = [x for x in cast if any(x in f"{c.get('picture')}{c.get('acting')}{c.get('layout')}" for c in g)]
-        ref_note = "、".join(f"{x}＝{tag[('character', x)]}" for x in who if ('character', x) in tag)
+        ref_note = ", ".join(f"{en(x)} = {tag[('character', x)]}" for x in who if ('character', x) in tag)
         bgtag = next((tag[k] for k in tag if k[0] == "bg" and k[1].endswith(f":{(c0.get('camera_pos') or '')[:1]}")), "")
         lines.append(f"SHOT {n} [{a}-{b}s] {c0['cut']}  camera position {c0.get('camera_pos') or '-'}"
                      + (f" (set {bgtag})" if bgtag else "") + f", {c0.get('camerawork') or 'locked-off'}")
@@ -230,13 +238,13 @@ def build_brief(conn, shot_id: int, tier: str = "draft") -> dict:
             if c.get("dialogue"):
                 for m in re.finditer(r"([^\s「」]+?)(（[^）]*）)?「([^」]*)」", c["dialogue"]):
                     off = " (off-screen voice; show the listener's reaction)" if m.group(2) and "OFF" in m.group(2) else ""
-                    lines.append(f'  Dialogue ({m.group(1)}, Japanese){off}: "{m.group(3)}"')
+                    lines.append(f'  Dialogue ({en(m.group(1))}, Japanese){off}: "{m.group(3)}"')
             if c.get("sound"):
                 lines.append(f"  SFX: {c['sound']}")
         for x in who:
             row = dict_rows.get(x)
             if row:
-                lines.append(f"  {x} habits: {row['歩き方・立ち方']} / {row['物の持ち方']}")
+                lines.append(f"  {en(x)} habits: {row['歩き方・立ち方']} / {row['物の持ち方']}")
     lines += ["", "CONTINUITY",
               "Each character's face, hair, outfit and colors follow their @Image sheet in every shot, "
               "including after cuts and angle changes.",
@@ -289,4 +297,9 @@ def lint(prompt: str, n_refs: int) -> list[str]:
         issues.append("「No subtitles.」がない")
     if re.search(r"Dialogue \((?![^)]*Japanese)", prompt):
         issues.append("台詞に言語（Japanese）の指定がない行がある")
+    # プロンプトは英語（台詞の中身だけ日本語）。骨組みの日本語（字コンテの文）が残っていないか
+    jp = sum(len(re.findall(r"[\u3040-\u30ff\u4e00-\u9fff]", re.sub(r"\([^)]*\)", "", ln)))
+             for ln in prompt.splitlines() if not ln.strip().startswith("Dialogue"))
+    if jp > 20:
+        issues.append(f"台詞以外に日本語が {jp} 文字。英語に直す（字コンテの文をそのまま残さない）")
     return issues

@@ -23,18 +23,21 @@ BLENDER_EXE = os.environ.get("BLENDER_EXE", "blender")   # 例：C:/Program File
 
 # 予算は円。1話の基準は 5万円（テストの回は超えてよい：episode-set --test）。
 DEFAULT_BUDGET_YEN = 50000
-# 1回あたりの目安（円）。動画は「1秒あたり」。【仮の値】実際の単価に合わせて直す。
+# 1回あたりの目安（円）。動画は「1秒あたり」で、段階ごとの単価は TIERS の yen_per_sec を使う。
+# 画像・音声は【仮の値】。実際の単価が分かったら直す。
 COST_TABLE = {
-    ("hamster", "sheet"): 40, ("hamster", "image"): 20, ("hamster", "video"): 20, ("hamster", "audio"): 5,
+    ("hamster", "sheet"): 40, ("hamster", "image"): 20, ("hamster", "video"): 17, ("hamster", "audio"): 5,
     ("runway", "image"): 20, ("runway", "video"): 20, ("runway", "audio"): 10,
     ("elevenlabs", "audio"): 5, ("blender", "bg"): 0, ("manual", "*"): 0,
 }
 PER_SECOND_KINDS = {"video"}
-# 動画の段階。cost は draft を 1 とした倍率（【仮の値】）。
+# 動画の段階と、HAMSTER（Seedance 2.5）の実際の単価（2026-10 監督より。15秒の生成で
+# 480p 250円・720p 550円・1080p 1,400円 → 1秒あたりに換算）。15秒以外は未確認で、長い方が割安の見込み。
 TIERS = {
-    "draft": {"resolution": "854x480", "cost": 1.0},      # 480p ドラフト。全部出し切って映像にしてから判断する
-    "upscale": {"resolution": "1920x1080", "cost": 0.3},  # （任意）単純な拡大
-    "final": {"resolution": "1920x1080", "cost": 3.0},    # 採用したドラフトを入力に 1080p で作り直す
+    "draft": {"resolution": "854x480", "yen_per_sec": 250 / 15},     # 480p ドラフト。全部出し切って通しで判断
+    "mid": {"resolution": "1280x720", "yen_per_sec": 550 / 15},      # 720p（必要なときだけ）
+    "upscale": {"resolution": "1920x1080", "yen_per_sec": 1400 / 15},
+    "final": {"resolution": "1920x1080", "yen_per_sec": 1400 / 15},  # 採用したドラフトを入力に 1080p
 }
 # Seedance 2.5（HAMSTER 経由）の制限。1本の長さと、1回に渡す参照画像の数。
 SHOT_MAX_SECONDS = 30

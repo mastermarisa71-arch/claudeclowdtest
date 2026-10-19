@@ -136,6 +136,14 @@ async function viewCut(id, params) {
   };
 
   const bind = () => {
+    const cm = document.getElementById("comment");
+    if (cm) cm.addEventListener("voice", (e) => {
+      const v = parseVoice(e.detail);
+      if (v.verdict) verdict = v.verdict;
+      v.tags.forEach((t) => tags.add(t));
+      const text = cm.value.replace(e.detail, v.comment);
+      draw(); addMics(); document.getElementById("comment").value = text;
+    });
     const ep = params.get("ep"); if (!ep) document.getElementById("back").href = "javascript:history.back()";
     document.querySelectorAll("[data-v]").forEach((b) => (b.onclick = () => { verdict = b.dataset.v; keep(draw); }));
     document.querySelectorAll("[data-t]").forEach((b) => (b.onclick = () => { tags.has(b.dataset.t) ? tags.delete(b.dataset.t) : tags.add(b.dataset.t); keep(draw); }));
@@ -237,7 +245,7 @@ async function viewBrief(params) {
 }
 
 // ---------- 話数のタブ ----------
-const epTabs = (code, now) => `<div class="row tabs">${[["design", "設計"], ["cuts", "コマ"], ["shots", "ショット"], ["awaiting", "AIが通したもの"], ["edit", "編集（ライブ）"]]
+const epTabs = (code, now) => `<div class="row tabs">${[["design", "設計"], ["cuts", "コマ"], ["shots", "ショット"], ["awaiting", "AIが通したもの"], ["edit", "編集（ライブ）"], ["stats", "実績"]]
   .map(([k, l]) => `<a class="btn ${k === now ? "on" : ""}" href="#/ep/${code}${k === "cuts" ? "" : "/" + k}">${l}</a>`).join("")}
   <a class="btn" href="#/brief?ep=${code}">ブリーフ</a></div>`;
 
@@ -304,16 +312,30 @@ async function viewShots(code) {
 // ---------- AI が通したもの：監督が上から流し見する ----------
 async function viewAwaiting(code) {
   const list = await api(`/api/episodes/${code}/awaiting`);
-  $view.innerHTML = `${epTabs(code, "awaiting")}<h1>AIが通したもの <span class="muted small">${list.length}件。良ければ「良い」で流し、気になるものだけ開いて直しを書く</span></h1>
+  $view.innerHTML = `${epTabs(code, "awaiting")}<h1>AIが通したもの <span class="muted small">${list.length}件。キー 1＝良い・2＝採用・3＝話して直し。気になるものだけ開いて直しを書く</span></h1>
     <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${list.map((t) => `<div class="card">
       <a class="stage" style="display:block" href="#/cut/${t.cut_id}?take=${t.id}&ep=${code}">${media(t)}</a>
       <div class="row"><b>${h(t.cut)}${h(t.panel)}</b><span class="small muted">#${t.id} ${h(t.provider)}</span></div>
       <div class="small agent">AI：${h(t.ai_comment) || "観点すべて合格"}</div>
       <div class="row" style="margin-top:6px"><button data-good="${t.id}">良い</button><button data-sel="${t.id}">採用</button>
+        <button data-voice="${t.id}" title="話してレビュー（例：『修正、あかねの向きが逆』）">🎤</button>
         <a class="btn" href="#/cut/${t.cut_id}?take=${t.id}&ep=${code}">直しを書く</a></div></div>`).join("") || `<p class="muted">確認待ちはありません。</p>`}</div>`;
   const quick = (id, verdict) => api("/api/reviews", { method: "POST", body: { target_type: "take", target_id: +id, verdict } }).then(route);
   document.querySelectorAll("[data-good]").forEach((b) => (b.onclick = () => quick(b.dataset.good, "良い")));
   document.querySelectorAll("[data-sel]").forEach((b) => (b.onclick = () => quick(b.dataset.sel, "採用")));
+  document.querySelectorAll("[data-voice]").forEach((b) => (b.onclick = () => { b.classList.add("on"); listen((text) => {
+    const v = parseVoice(text);
+    api("/api/reviews", { method: "POST", body: { target_type: "take", target_id: +b.dataset.voice, verdict: v.verdict || "修正", tags: v.tags, comment: v.comment } }).then(route);
+  }); }));
+  // キーボード：先頭のカードに 1＝良い 2＝採用 3＝話して直し
+  document.onkeydown = (e) => {
+    if (!location.hash.includes("/awaiting") || e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT") return;
+    const first = document.querySelector("[data-good]");
+    if (!first) return;
+    if (e.key === "1") quick(first.dataset.good, "良い");
+    if (e.key === "2") quick(first.dataset.good, "採用");
+    if (e.key === "3") document.querySelector("[data-voice]").click();
+  };
 }
 
 // ---------- 編集（ライブ）：採用テイクを通しで再生し、エージェントの操作を見ながら手直しする ----------
@@ -327,7 +349,7 @@ async function viewEdit(code, params) {
   const startOf = (k) => cuts.slice(0, k).reduce((s, c) => s + (c.seconds || 0), 0);
   $view.innerHTML = `${epTabs(code, "edit")}
     <div class="editor">
-      <div><div class="stage" id="mon"></div><div class="sub" id="sub"></div>
+      <div><div class="stage" id="mon"></div><div class="sub" id="sub"></div><div id="snd" class="row"></div>
         <div class="row" style="margin:8px 0"><button id="prev">◀</button><button class="primary" id="play">再生</button><button id="next">▶</button>
           <span id="tc" class="muted"></span><span style="flex:1"></span>
           <button id="export">Premiere 用 XML</button></div>
@@ -342,8 +364,12 @@ async function viewEdit(code, params) {
     document.getElementById("tc").textContent = `${c.cut}${c.panel}　${fmt(startOf(i))} / ${fmt(total)}`;
     document.querySelectorAll("#tl a").forEach((a) => a.classList.toggle("now", +a.dataset.k === i));
     const vid = document.querySelector("#mon video");
-    if (vid) {   // ショットの動画は、このコマの位置から映す
-      vid.muted = false;
+    const aud = c._play.audio || [];
+    document.getElementById("snd").innerHTML = aud.map((a) => `<audio src="/media/${encodeURI(a.file_path)}" data-role="${h(a.role)}"></audio>`).join("")
+      + (aud.length ? `<span class="small muted">音：${aud.map((a) => ({ actor: "声優", voice: "仮の声", sfx: "効果音", music: "劇伴" }[a.role] || a.role)).join("・")}</span>` : "");
+    if (playing) document.querySelectorAll("#snd audio").forEach((a) => a.play().catch(() => {}));
+    if (vid) {   // ショットの動画は、このコマの位置から映す。Seedance の音は使わない
+      vid.muted = true;
       const seek = () => { vid.currentTime = c._play.offset || 0; if (playing) vid.play().catch(() => {}); };
       vid.readyState >= 1 ? seek() : vid.addEventListener("loadedmetadata", seek, { once: true });
     }
@@ -392,6 +418,51 @@ try {
   };
 } catch (e) { /* SSE が使えない環境では通知なしで動く */ }
 
+// ---------- 音声入力：話した言葉をそのままレビューに ----------
+// 先頭の言葉で判定（「採用」「良い」「保留」「修正」「却下」）、観点の言葉（配置・表情…）はタグに拾う。
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+function parseVoice(text) {
+  const t = text.trim();
+  const verdict = META.verdicts.find((v) => t.startsWith(v)) || (/^(OK|オッケー|いいね|いい)/.test(t) ? "良い" : null);
+  const tagWords = { "配置": "配置・左右", "左右": "配置・左右", "向き": "配置・左右", "表情": "表情", "芝居": "芝居", "動き": "芝居",
+    "崩れ": "キャラ崩れ", "顔": "キャラ崩れ", "構図": "構図", "光": "光・色", "色": "光・色", "背景": "背景", "カメラ": "カメラワーク",
+    "尺": "尺・テンポ", "テンポ": "尺・テンポ", "間": "尺・テンポ", "台詞": "台詞・声", "声": "台詞・声", "音": "音", "つなぎ": "つなぎ", "意図": "意図", "小物": "小物" };
+  const tags = [...new Set(Object.entries(tagWords).filter(([w]) => t.includes(w)).map(([, tg]) => tg))];
+  const comment = verdict ? t.slice(verdict.length).replace(/^[、。,\s]+/, "") : t;
+  return { verdict, tags, comment };
+}
+function listen(onText) {
+  if (!SR) { alert("このブラウザは音声入力に対応していません（Chrome / Edge で使えます）"); return; }
+  const r = new SR(); r.lang = "ja-JP"; r.interimResults = false;
+  r.onresult = (e) => onText(e.results[0][0].transcript);
+  r.start();
+  return r;
+}
+function addMics() {   // 文字を書く欄すべてに 🎤 を付ける
+  document.querySelectorAll("textarea:not([data-mic])").forEach((ta) => {
+    ta.dataset.mic = "1";
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "mic"; b.textContent = "🎤"; b.title = "話して入力（先頭に『良い』『修正』などで判定も入る）";
+    b.onclick = () => { b.classList.add("on"); listen((t) => { b.classList.remove("on"); ta.value = (ta.value ? ta.value + " " : "") + t;
+      ta.dispatchEvent(new CustomEvent("voice", { detail: t })); }); };
+    ta.insertAdjacentElement("afterend", b);
+  });
+}
+
+// ---------- 実績：工程ごとの費用と待ち時間 ----------
+async function viewStats(code) {
+  const r = await api(`/api/episodes/${code}/stats`);
+  const pct = Math.min(100, (100 * r.spent) / r.budget);
+  $view.innerHTML = `${epTabs(code, "stats")}<h1>${h(code)} 実績 <span class="muted small">どの工程で、いくら使い、どれだけ待ったか</span></h1>
+    <div class="card"><div class="row"><b>${r.spent.toLocaleString()}円</b><span class="muted">/ ${r.budget.toLocaleString()}円${r.is_test ? "（テストの回）" : ""}</span></div>
+      <div class="meter"><i style="width:${pct}%;background:${pct > 85 ? "var(--red)" : "var(--amber)"}"></i></div></div>
+    <table class="cuts" style="margin-top:12px"><tr><th>工程</th><th>回数</th><th>失敗</th><th>採用</th><th>費用</th><th>動画の秒数</th>
+      <th>生成の待ち（平均／合計 分）</th><th>監督のレビューまで（平均 分）</th></tr>
+      ${r.stages.map((s) => `<tr><td>${h(s.stage)}</td><td>${s.n}</td><td>${s.failed}</td><td>${s.adopted}</td><td>${s.yen.toLocaleString()}円</td>
+        <td>${s.video_seconds}</td><td>${s.gen_wait_min ?? "-"} / ${s.gen_wait_total_min}</td><td>${s.review_wait_min ?? "-"}</td></tr>`).join("")}</table>
+    <p class="small muted">生成の待ちは「送ってから出来上がるまで」、レビューまでは「出来上がってから監督が最初に見るまで」。テストの回の数字で、段取りと予算の目安を直していく。</p>`;
+}
+
 // ---------- ルーター ----------
 async function route() {
   delete liveHandlers.edit;
@@ -402,6 +473,7 @@ async function route() {
     if (parts[0] === "ep" && parts[2] === "design") await viewDesign(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "awaiting") await viewAwaiting(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "shots") await viewShots(parts[1]);
+    else if (parts[0] === "ep" && parts[2] === "stats") await viewStats(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "edit") await viewEdit(parts[1], params);
     else if (parts[0] === "ep") await viewEpisode(parts[1]);
     else if (parts[0] === "cut") await viewCut(parts[1], params);
@@ -411,6 +483,7 @@ async function route() {
     else if (parts[0] === "brief") await viewBrief(params);
     else await viewHome();
   } catch (e) { $view.innerHTML = `<pre class="brief">${h(e.message)}</pre>`; }
+  addMics();
 }
 window.addEventListener("hashchange", route);
 api("/api/meta").then((m) => { META = m; route(); });

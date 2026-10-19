@@ -111,7 +111,29 @@ python studio/cli.py respond 5 "あかねを画面中央へ。表情は『上の
 - 直せないとき、直すと別の決まりと衝突するときは、`--status open` のまま理由を書き、人に判断を求める。
 - 同じ種類の指摘が続いたら `propose-rule "<次からのルール>" --scope character:あかね --from 5,8` で提案する。
 
-## 6. 書き出す
+## 6. 音と編集（Premiere で一緒に）
+
+Seedance の音は使わない。並べるときは Runway の仮の声・効果音・劇伴、声優の声が届いたらそれに差し替える。
+
+```
+python studio/cli.py audio-add EP09 --cut 12 --file v012.mp3 --role voice --speaker あかね   # 仮の声
+python studio/cli.py audio-add EP09 --cut 12 --file actor012.wav --role actor --speaker あかね  # 声優
+python studio/cli.py promote 31     # 声優の声があるショットは、その声に口を合わせて 1080p を作る
+```
+
+編集は Premiere の中のパネル経由（`studio/premiere/README.md`）。監督の手直しは正として扱い、勝手に戻さない。
+
+```
+python studio/cli.py pr-build EP09               # シーケンスを組む（ドラフトの段階から）
+python studio/cli.py pr-state EP09               # 監督が直した差分を読んでから続ける
+python studio/cli.py pr-replace EP09 SH03 --take 52
+python studio/cli.py pr-marker EP09 --at 12.5 --comment "ここの溜めはどうしますか"
+```
+
+使った額と待ち時間は `stats EP09` で確かめ、予算の残りが2割を切ったら監督に伝える。
+
+## 7. 書き出す（予備）
+
 
 ```
 python studio/cli.py export EP09

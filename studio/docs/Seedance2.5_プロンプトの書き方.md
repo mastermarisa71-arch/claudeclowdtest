@@ -1,6 +1,7 @@
 # Seedance 2.5 プロンプトの書き方（月灯り用）
 
-ショット（1本の動画、最大30秒）のプロンプトは、`shot-brief` が骨組みを作り、エージェントが仕上げる。
+ショット（1本の動画、最大30秒）のプロンプトは、`shot-brief` が骨組みを作り、エージェントが**英語で**仕上げる（英語の方が安定する。台詞の中身だけ日本語）。
+骨組みには字コンテの日本語がそのまま入っているので、意図を汲んで英語の具体的な動作に書き直す。監督は英語のプロンプトは見ず、その前の意図（字コンテ・設計・レビュー）で指示する。
 Seedance 2.5 は自分で考えて補うより、**書いたとおりに動く**。だから動き・秒数・誰がどの参照かを細かく書く。
 
 出典（公開ガイド。公式の ByteDance / Volcengine の文書は未確認なので、HAMSTER での実際の結果で上書きしていく）：
@@ -26,7 +27,8 @@ CONSTRAINTS   No on-screen text, no subtitles …（字幕・音の否定だけ�
 - **背景の参照**：カメラ位置・画角・家具の配置だけ。家具を足し引きしない。開始フレームではない。
 - **区切り**：1区切りは字コンテの1カット（①②③…）。区切りの中で「① 2s: … ② 1s: …」とコマの動きを秒で書く。カットが変わるところは「Hard cut to …」と書く。動きは「始まり→途中→終わり」を1つの動作として書き、1秒ごとに細切れにしない。
 - **芝居**：キャラの芝居の辞書（`06_設定/キャラ/<名前>.md`）のしぐさを、その感情の場面で具体的な動作として書く（「不安」ではなく「エプロンの裾を両手で握り、唇を噛む」）。
-- **台詞**：`Dialogue (あかね, Japanese): "え？"`。画面にいない話者は「off-screen voice; show the listener's reaction」。仮の声は Runway で別に作るので、ドラフトの口の動きの目安として書く。
+- **台詞**：`Dialogue (Akane, Japanese): "え？"`。画面にいない話者は「off-screen voice; show the listener's reaction」。Seedance が付ける音声は使わない（編集では切る）。台詞は口の動きのタイミングのために書く。
+- **声**：並べるときは Runway で作った仮の声（`audio-add --role voice`）。声優の声が届いたら `audio-add --role actor` で入れ、本番（1080p）をその音声に口を合わせて作り直す（`promote` が自動で @Audio として渡す）。
 - **画面の方向**：店＝右、外＝左。カウンターの内側から撮る区切りは「camera behind the counter, mirrored from position A」と書く。
 - **本番（1080p）**：採用したドラフトを入力に作る。冒頭に「Preserve the composition, camera position, timing, performance and lip movement of @Video 1. Only re-render at 1080p …」（`promote` が自動で付ける）。
 
@@ -36,6 +38,7 @@ CONSTRAINTS   No on-screen text, no subtitles …（字幕・音の否定だけ�
 - タイムラインが 0 秒から隙間なくつながり、30秒以内か
 - 「No subtitles.」があるか
 - 台詞に言語（Japanese）の指定があるか
+- 台詞以外に日本語が残っていないか（20文字まで。キャラ名は Akane / Sakuna / Mahiru / Kairi / Akira / Obaa / Stella / Senpai / Kohai）
 
 指摘があれば止まる（`--force` で無視できるが、理由を `--note` に書く）。
 

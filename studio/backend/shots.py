@@ -175,9 +175,25 @@ def promote(conn, take_id: int, to: str = "final", provider: str | None = None, 
     if not _human_approved(conn, draft_id):
         raise core.Blocked(f"ドラフト #{draft_id} は監督の「良い／採用」がまだです")
     params = json.loads(t["params_json"] or "{}")
+    audio_refs = []
     if to == "final" and t.get("shot_id"):
         from . import seedance
         prompt = seedance.build_brief(conn, t["shot_id"], "final")["prompt"]
+        # 声優の声が届いていれば、その音声に口を合わせて作る
+        sh = db.one(conn.execute("SELECT * FROM shots WHERE id=?", (t["shot_id"],)))
+        offset = 0.0
+        for cid in json.loads(sh["cut_ids_json"]):
+            c = db.one(conn.execute("SELECT * FROM cuts WHERE id=?", (cid,)))
+            a = db.one(conn.execute("SELECT * FROM takes WHERE cut_id=? AND kind='audio' AND role='actor' "
+                                    "AND file_path!='' ORDER BY selected DESC, id DESC LIMIT 1", (cid,)))
+            if a:
+                audio_refs.append({"file": a["file_path"], "at": round(offset, 2), "speaker": a["prompt"]})
+            offset += c["seconds"] or 0
+        if audio_refs:
+            prompt += "\n\nVOICE (lip-sync)\n" + "\n".join(
+                f"@Audio {i}: {r['speaker'] or 'dialogue'} voice actor recording, starts at {r['at']}s. "
+                "Match lip movement to this audio exactly; use it as the dialogue track."
+                for i, r in enumerate(audio_refs, 1))
     elif to == "final":
         prompt = build(conn, t["cut_id"], "final")["prompt"]
     else:
@@ -185,7 +201,7 @@ def promote(conn, take_id: int, to: str = "final", provider: str | None = None, 
     return core.generate(
         conn, episode=t["code"], cut_id=t["cut_id"], kind=t["kind"], provider=provider or t["provider"],
         model=t["model"], prompt=prompt, refs=json.loads(t["refs_json"] or "[]"),
-        params={"duration": params.get("duration", 5), "upscale": to == "upscale"}, tier=to,
+        params={"duration": params.get("duration", 5), "upscale": to == "upscale", "audio_refs": audio_refs}, tier=to,
         source_take_id=take_id, parent_take_id=take_id, shot_id=t.get("shot_id"),
         agent_note=note or f"#{take_id} から {to}")
 

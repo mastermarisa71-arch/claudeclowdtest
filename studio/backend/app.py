@@ -311,3 +311,38 @@ def shot_status(code: str, scode: str, s_: StatusIn):
         conn.execute("UPDATE shots SET status=? WHERE episode_id=? AND code=?", (s_.status, ep["id"], scode))
         db.log(conn, "human", "shot_status", {"episode": code, "shot": scode, "status": s_.status})
     return {"ok": True}
+
+
+# ---- Premiere の中のパネルとのやりとり ----
+
+@app.get("/api/premiere/commands")
+def pr_pending():
+    from . import premiere
+    with db.session() as conn:
+        return premiere.pending(conn)
+
+
+class PrResult(BaseModel):
+    ok: bool
+    result: dict = {}
+
+
+@app.post("/api/premiere/commands/{qid}/result")
+def pr_result(qid: int, r: PrResult):
+    from . import premiere
+    with db.session() as conn:
+        premiere.finish(conn, qid, r.ok, r.result)
+    return {"ok": True}
+
+
+@app.post("/api/premiere/state/{code}")
+def pr_state(code: str, state: dict):
+    from . import premiere
+    with db.session() as conn:
+        return premiere.receive_state(conn, code, state)
+
+
+@app.get("/api/episodes/{code}/stats")
+def ep_stats(code: str):
+    with db.session() as conn:
+        return core.stats(conn, code)

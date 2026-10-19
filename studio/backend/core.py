@@ -96,7 +96,7 @@ def attach_file(conn, take_id: int, src: Path, filename: str | None = None) -> s
     dest = config.MEDIA_DIR / rel
     dest.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(src, dest)
-    db.update(conn, "takes", take_id, {"file_path": rel.as_posix(), "status": "done"})
+    db.update(conn, "takes", take_id, {"file_path": rel.as_posix(), "status": "done", "finished_at": db.now()})
     return rel.as_posix()
 
 
@@ -118,8 +118,9 @@ class Blocked(RuntimeError):
 def estimate(provider: str, kind: str, units: float = 1, tier: str = "") -> float:
     """円の目安。動画は units＝秒。"""
     c = config.COST_TABLE
-    mult = config.TIERS.get(tier, {}).get("cost", 1.0)
-    return units * mult * c.get((provider, kind), c.get((provider, "*"), 0))
+    if kind in config.PER_SECOND_KINDS and provider not in ("manual", "blender") and tier in config.TIERS:
+        return units * config.TIERS[tier]["yen_per_sec"]
+    return units * c.get((provider, kind), c.get((provider, "*"), 0))
 
 
 def spent(conn, episode_id: int) -> float:
@@ -181,7 +182,7 @@ def generate(conn, *, episode: str, cut_id: int | None, kind: str, provider: str
                        prompt=prompt, refs=refs, params=params, status="queued", **extra)
     try:
         job = p.submit(GenerationRequest(kind, prompt, model, refs or [], params))
-        db.update(conn, "takes", take_id, {"external_job_id": job,
+        db.update(conn, "takes", take_id, {"external_job_id": job, "submitted_at": db.now(),
                                            "status": "running" if job else "awaiting_upload"})
         record_usage(conn, take_id, provider, kind, units=units, tier=tier)
     except Exception as e:  # 未接続・API エラーもテイクとして残し、画面とエージェントの両方から見えるようにする
@@ -203,10 +204,10 @@ def poll_running(conn) -> int:
             rel = Path(ep["code"]) / f"take{t['id']:05d}{ext}"
             (config.MEDIA_DIR / rel).parent.mkdir(parents=True, exist_ok=True)
             urllib.request.urlretrieve(st.result_urls[0], config.MEDIA_DIR / rel)
-            db.update(conn, "takes", t["id"], {"status": "done", "file_path": rel.as_posix()})
+            db.update(conn, "takes", t["id"], {"status": "done", "file_path": rel.as_posix(), "finished_at": db.now()})
             n += 1
         elif st.state == "failed":
-            db.update(conn, "takes", t["id"], {"status": "failed", "error": st.error})
+            db.update(conn, "takes", t["id"], {"status": "failed", "error": st.error, "finished_at": db.now()})
     return n
 
 
@@ -445,17 +446,42 @@ def playlist(conn, code: str, selected_only: bool = False) -> list[dict]:
             item.update(take=shot_takes[sh["id"]], offset=sum(secs[i] for i in sh["cut_ids"][:idx]),
                         shot_first=idx == 0, shot_seconds=sum(secs.values()))
         else:
-            own = [t for t in c["takes"] if t["file_path"] and not t.get("shot_id")]
+            own = [t for t in c["takes"] if t["file_path"] and not t.get("shot_id") and t["kind"] != "audio"]
             pick = next((t for t in own if t["selected"]), None) or (None if selected_only else (own[-1] if own else None))
             item["take"] = pick
+        item["audio"] = _cut_audio(c)
         out.append(item)
     return out
 
 
+AUDIO_ROLES = {"actor": "A1 声", "voice": "A1 声", "sfx": "A2 効果音", "music": "A3 劇伴"}
+
+
+def _cut_audio(c: dict) -> list[dict]:
+    """このコマで鳴らす音。声は 声優 ＞ 仮の声（Runway）の順で1つ、効果音・劇伴はそれぞれ採用中か最新。
+    Seedance がドラフトに付けた音声は使わない（編集では動画の音を切る）。"""
+    aud = [t for t in c["takes"] if t["kind"] == "audio" and t["file_path"]]
+    out = []
+    voice = [t for t in aud if t.get("role") in ("actor", "voice")]
+    pick = lambda ts: next((t for t in ts if t["selected"]), ts[-1] if ts else None)
+    v = pick([t for t in voice if t.get("role") == "actor"]) or pick([t for t in voice if t.get("role") == "voice"])
+    if v:
+        out.append(v)
+    for role in ("sfx", "music"):
+        x = pick([t for t in aud if t.get("role") == role])
+        if x:
+            out.append(x)
+    return out
+
+
 def export_timeline(conn, code: str) -> dict:
-    items, frame = [], 0
+    items, audio, frame = [], [], 0
     for p in playlist(conn, code, selected_only=True):
         dur = max(1, round((p["cut"]["seconds"] or 1.0) * config.FPS))
+        for a in p["audio"]:
+            alen = round(float(json.loads(a["params_json"] or "{}").get("audio_seconds", 0) or 0) * config.FPS) or dur
+            audio.append({"track": AUDIO_ROLES.get(a.get("role") or "voice", "A1 声"), "take": a,
+                          "start": frame, "end": frame + alen})
         if p["shot"] and p["take"]:
             if p["shot_first"]:     # ショットの動画は先頭のコマの位置に1本で置く
                 items.append({"cut": p["cut"], "take": p["take"], "start": frame,
@@ -466,8 +492,84 @@ def export_timeline(conn, code: str) -> dict:
     name = f"{code}_studio_{db.now()[:10]}"
     out_dir = config.DATA_DIR / "exports" / code
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / f"{name}.xml").write_text(fcpxml.to_xmeml(name, items), encoding="utf-8")
+    (out_dir / f"{name}.xml").write_text(fcpxml.to_xmeml(name, items, audio), encoding="utf-8")
     (out_dir / f"{name}.ffconcat").write_text(fcpxml.to_ffconcat(items), encoding="utf-8")
     missing = [f"{i['cut']['cut']}{i['cut']['panel']}" for i in items if not i["take"]]
     return {"xml": str(out_dir / f"{name}.xml"), "ffconcat": str(out_dir / f"{name}.ffconcat"),
             "frames": frame, "missing": missing}
+
+
+# ---- 実績：どの工程で、いくら使い、どれだけ待ったか ----
+
+def _secs(a: str, b: str) -> float:
+    from datetime import datetime
+    try:
+        return (datetime.fromisoformat(b) - datetime.fromisoformat(a)).total_seconds()
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def stage_of(t: dict) -> str:
+    if t.get("board_id") or t["kind"] == "sheet" or t.get("tier") == "board":
+        return "仮Vコン"
+    if t["kind"] == "video":
+        return {"draft": "480p ドラフト", "final": "1080p 本番", "mid": "720p"}.get(t.get("tier") or "", "動画")
+    if t["kind"] == "audio":
+        return "音声"
+    if t["kind"] == "bg":
+        return "背景"
+    return "その他"
+
+
+def stats(conn, code: str) -> dict:
+    """工程ごとの 回数・費用・生成の待ち時間・監督のレビューまでの時間。数字で段取りを直すための材料。"""
+    ep = db.episode_by_code(conn, code)
+    takes = db.rows(conn.execute("SELECT * FROM takes WHERE episode_id=?", (ep["id"],)))
+    cost = {r["take_id"]: r["c"] for r in db.rows(conn.execute(
+        "SELECT take_id, SUM(credits) c FROM usage WHERE episode_id=? GROUP BY take_id", (ep["id"],)))}
+    first_review = {r["target_id"]: r["ts"] for r in db.rows(conn.execute(
+        "SELECT target_id, MIN(created_at) ts FROM reviews WHERE target_type='take' AND created_by='human' "
+        "AND episode_id=? GROUP BY target_id", (ep["id"],)))}
+    st: dict[str, dict] = {}
+    for t in takes:
+        k = stage_of(t)
+        s_ = st.setdefault(k, {"stage": k, "n": 0, "failed": 0, "yen": 0.0, "seconds": 0.0,
+                               "gen_wait": [], "review_wait": [], "adopted": 0})
+        s_["n"] += 1
+        s_["failed"] += t["status"] == "failed"
+        s_["yen"] += cost.get(t["id"], 0)
+        s_["seconds"] += float(json.loads(t["params_json"] or "{}").get("duration", 0) or 0) if t["kind"] == "video" else 0
+        s_["adopted"] += bool(t["selected"])
+        if t.get("submitted_at") and t.get("finished_at"):
+            s_["gen_wait"].append(_secs(t["submitted_at"], t["finished_at"]))
+        if t.get("finished_at") and t["id"] in first_review:
+            s_["review_wait"].append(_secs(t["finished_at"], first_review[t["id"]]))
+    out = []
+    order = ["背景", "仮Vコン", "480p ドラフト", "720p", "1080p 本番", "動画", "音声", "その他"]
+    for k in sorted(st, key=lambda x: order.index(x) if x in order else 99):
+        s_ = st[k]
+        avg = lambda xs: round(sum(xs) / len(xs) / 60, 1) if xs else None
+        out.append({**{x: s_[x] for x in ("stage", "n", "failed", "adopted")}, "yen": round(s_["yen"]),
+                    "video_seconds": round(s_["seconds"]), "gen_wait_min": avg(s_["gen_wait"]),
+                    "gen_wait_total_min": round(sum(s_["gen_wait"]) / 60, 1),
+                    "review_wait_min": avg(s_["review_wait"])})
+    budget = ep.get("budget_credits") or config.DEFAULT_BUDGET_YEN
+    return {"episode": code, "stages": out, "spent": round(spent(conn, ep["id"])), "budget": budget,
+            "is_test": ep.get("is_test")}
+
+
+def add_audio(conn, *, episode: str, cut_id: int, src: Path, role: str = "voice", speaker: str = "",
+              note: str = "", created_by: str = "agent") -> int:
+    """声・効果音・劇伴をコマに付ける。role：voice（仮の声）/ actor（声優）/ sfx / music。"""
+    import subprocess
+    try:
+        secs = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0",
+                                     str(src)], capture_output=True, text=True).stdout.strip() or 0)
+    except (OSError, ValueError):
+        secs = 0
+    tid = add_take(conn, episode=episode, cut_id=cut_id, kind="audio",
+                   provider="actor" if role == "actor" else "manual", prompt=speaker,
+                   params={"audio_seconds": secs, "speaker": speaker}, agent_note=note, created_by=created_by)
+    attach_file(conn, tid, src)
+    db.update(conn, "takes", tid, {"role": role})
+    return tid

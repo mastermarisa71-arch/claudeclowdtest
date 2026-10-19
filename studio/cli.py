@@ -35,6 +35,13 @@
   shot-brief EP09 SH03 [--out p.txt]             Seedance 2.5 の骨組み（ASSETS/SUMMARY/TIMELINE/…）
   shot-shoot EP09 SH03 --prompt-file p.txt       仕上げたプロンプトを点検して 480p ドラフトを作る
   budget-plan EP09                               ショットの秒数から1話の費用を見積もる
+  stats EP09                                     工程ごとの回数・費用・生成の待ち時間・監督のレビューまでの時間
+  audio-add EP09 --cut 12 --file v.mp3 --role voice|actor|sfx|music [--speaker あかね]
+  pr-build EP09 [--selected]                     Premiere のパネルにシーケンスを組ませる（ドラフトの段階でも可）
+  pr-read EP09                                   Premiere の今のタイムラインを読み取らせる
+  pr-state EP09                                  監督が Premiere で直した差分（最後に届いた状態）
+  pr-replace EP09 SH03 --take 52                 同じ位置・長さのまま新しいテイクに差し替える
+  pr-marker EP09 --at 12.5 --comment "ここの溜めはどうしますか"
 """
 import argparse
 import json
@@ -43,7 +50,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from studio.backend import config, context, core, db, seedance, shots, storyboard  # noqa: E402
+from studio.backend import config, context, core, db, premiere, seedance, shots, storyboard  # noqa: E402
 from studio.backend.importers import bible, jikonte  # noqa: E402
 
 
@@ -128,6 +135,17 @@ def main(argv=None):
     p.add_argument("--prompt-file"); p.add_argument("--parent", type=int); p.add_argument("--fixes", default="")
     p.add_argument("--note", default=""); p.add_argument("--force", action="store_true", help="点検の指摘を無視して送る")
     p = sub.add_parser("budget-plan"); p.add_argument("episode")
+    p = sub.add_parser("stats"); p.add_argument("episode")
+    p = sub.add_parser("audio-add"); p.add_argument("episode"); p.add_argument("--cut", type=int, required=True)
+    p.add_argument("--file", required=True); p.add_argument("--role", default="voice",
+                                                            choices=["voice", "actor", "sfx", "music"])
+    p.add_argument("--speaker", default=""); p.add_argument("--note", default="")
+    p = sub.add_parser("pr-build"); p.add_argument("episode"); p.add_argument("--selected", action="store_true")
+    p = sub.add_parser("pr-read"); p.add_argument("episode")
+    p = sub.add_parser("pr-state"); p.add_argument("episode")
+    p = sub.add_parser("pr-replace"); p.add_argument("episode"); p.add_argument("clip"); p.add_argument("--take", type=int, required=True)
+    p = sub.add_parser("pr-marker"); p.add_argument("episode"); p.add_argument("--at", type=float, required=True)
+    p.add_argument("--comment", default=""); p.add_argument("--name", default="AI")
 
     a = ap.parse_args(argv)
     db.init()
@@ -307,11 +325,42 @@ def main(argv=None):
                 return 2
             print(json.dumps(db.one(conn.execute("SELECT id,status,tier,error FROM takes WHERE id=?", (tid,))),
                              ensure_ascii=False))
+        elif a.cmd == "stats":
+            r = core.stats(conn, a.episode)
+            print(f"{a.episode} 使用 {r['spent']:,}円 / 予算 {r['budget']:,.0f}円" + ("（テストの回）" if r["is_test"] else ""))
+            print(f"  {'工程':<10} 回数 失敗 採用  費用      動画秒  生成待ち(平均/合計 分)  レビューまで(平均 分)")
+            for s_ in r["stages"]:
+                print(f"  {s_['stage']:<10} {s_['n']:>4} {s_['failed']:>4} {s_['adopted']:>4} {s_['yen']:>7,}円 {s_['video_seconds']:>6}"
+                      f"   {s_['gen_wait_min'] or '-'} / {s_['gen_wait_total_min']}            {s_['review_wait_min'] or '-'}")
+        elif a.cmd == "audio-add":
+            print(core.add_audio(conn, episode=a.episode, cut_id=a.cut, src=Path(a.file), role=a.role,
+                                 speaker=a.speaker, note=a.note))
+        elif a.cmd == "pr-build":
+            args = premiere.build_args(conn, a.episode, draft_ok=not a.selected)
+            print(f"キュー #{premiere.enqueue(conn, a.episode, 'build', args)}：映像 {len(args['video'])} / 音 {len(args['audio'])} / {args['total']}秒")
+        elif a.cmd == "pr-read":
+            print(f"キュー #{premiere.enqueue(conn, a.episode, 'read', {})}（パネルが読み取ると pr-state で見られる）")
+        elif a.cmd == "pr-state":
+            st = premiere.last_state(conn, a.episode)
+            if not st:
+                print("まだ届いていません")
+            else:
+                print(f"{st['ts']} {st['actor']} {st['state'].get('note', '')}")
+                for d in st["diff"]:
+                    print(f"  {d['clip']}: {d['before']}秒 → {d['after']}秒 {d.get('note', '')}")
+                print(f"  映像クリップ {len(st['state'].get('video', []))} / 音 {len(st['state'].get('audio', []))}")
+        elif a.cmd == "pr-replace":
+            t = db.one(conn.execute("SELECT file_path FROM takes WHERE id=?", (a.take,)))
+            print(premiere.enqueue(conn, a.episode, "replace", {"name": a.clip,
+                                                                "path": str((config.MEDIA_DIR / t["file_path"]).resolve())}))
+        elif a.cmd == "pr-marker":
+            print(premiere.enqueue(conn, a.episode, "marker", {"at": a.at, "name": a.name, "comment": a.comment}))
         elif a.cmd == "budget-plan":
             ep = db.episode_by_code(conn, a.episode)
             shs = seedance.list_shots(conn, a.episode)
             secs = sum(min(config.SHOT_MAX_SECONDS, max(4, round(s["seconds"]))) for s in shs)
             nb = conn.execute("SELECT COUNT(*) FROM boards WHERE episode_id=?", (ep["id"],)).fetchone()[0]
+            nb = nb or round(secs / 1.6 / 9)
             rows = [("仮Vコン（9コマシート）", nb * 1.3, core.estimate("hamster", "sheet")),
                     ("480p ドラフト（秒）", secs * 1.5, core.estimate("hamster", "video", tier="draft")),
                     ("1080p 本番（秒）", secs * 1.1, core.estimate("hamster", "video", tier="final")),
@@ -324,7 +373,7 @@ def main(argv=None):
             budget = ep["budget_credits"] or config.DEFAULT_BUDGET_YEN
             print(f"  合計の見込み {total:,.0f}円 / 予算 {budget:,.0f}円" + ("（テストの回）" if ep["is_test"] else "")
                   + ("  ※超えます" if total > budget else ""))
-            print("  単価は config.COST_TABLE / TIERS の仮の値。実際の単価に直すと正確になる")
+            print("  動画は HAMSTER の 15秒の単価から換算（480p 250円・1080p 1,400円 / 15秒）。シートと音声は仮の値")
         elif a.cmd == "promote":
             try:
                 tid = shots.promote(conn, a.take, a.to, a.provider, a.note)
