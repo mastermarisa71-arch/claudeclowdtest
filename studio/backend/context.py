@@ -9,7 +9,8 @@
 """
 import json
 
-from . import config, db
+from . import config, core, db
+from .importers import bible
 
 CANON_FILES = [
     "00_正本/通し設計_正本.md",
@@ -18,7 +19,17 @@ CANON_FILES = [
     "04_制作ルール/生成と字コンテのルール.md",
     "01_シリーズ/映像の作り方の方針.md",
     "03_脚本/いまの版/INDEX.md",
+    "06_設定/INDEX.md",
 ]
+
+SELF_REVIEW = """生成したら、監督に見せる前に必ず自分で見る（`self-review`）。観点ごとに true か、だめな理由を書く：
+- 意図：字コンテの「演出意図」「表情・感情」が画面から読めるか
+- 配置・左右：カメラ位置と画面配置どおりか（店＝右、外＝左、Bは反転）
+- 芝居：そのキャラの性格・テンションと、06_設定の芝居の辞書に合うしぐさか
+- キャラ崩れ：外見・頭身・背の順・小物（ステラは全身黒、先輩の紋章は左腕）
+- 光・色：ルック（B日常/C緊迫/E情景/F外/N最も冷たい）どおりか
+- つなぎ：前後のコマと立ち位置・小物の状態がつながるか
+不合格は自分で直す（作り直しは上限まで）。上限を超えたら、迷っている点を書いて監督に回す。"""
 
 
 def _region(r: dict) -> str:
@@ -41,6 +52,26 @@ def build(conn, episode_code: str | None = None) -> str:
     if ep:
         out.append(f"- {config.VAULT_DIR.name}/02_各話/{ep['code']}/ と 03_脚本/いまの版/{ep['code']}_脚本_いまの版.md")
     out.append("")
+
+    if ep:
+        sc = core.scenes(conn, ep["code"])
+        budget = ep.get("budget_credits") or 0
+        out += [f"## 話数の状態：{ep['code']}", f"- 目標尺 {ep['target_seconds']}秒 / 締切 {ep.get('deadline') or '未設定'}"
+                f" / 使用 {sc['spent']:.0f}" + (f" / 予算 {budget:.0f}（残り {budget - sc['spent']:.0f}）" if budget else " / 予算 未設定")]
+        out += ["", "### 設計（シーン）"]
+        for s_ in sc["scenes"]:
+            out.append(f"- {s_['code']} [{s_['status']}] {s_['place']} {s_['time']} ルック{s_['look']} "
+                       f"目標{s_['target_seconds']}秒/今{s_['actual_seconds']}秒：{s_['purpose']}"
+                       + (f"\n  動線：{s_['blocking']}" if s_["blocking"] else ""))
+        if not sc["scenes"]:
+            out.append("- （まだ設計がない。字コンテより先に scene-set で作り、監督の承認をもらう）")
+        cast = sorted({c for r in conn.execute("SELECT picture, dialogue, layout, acting FROM cuts WHERE episode_id=?",
+                                                (ep["id"],)) for c in bible.characters_in(" ".join(map(str, r)))})
+        out += ["", "### この話に出るキャラ（生成とセルフレビューの前に読む）"]
+        out += [f"- {config.VAULT_DIR.name}/06_設定/キャラ/{c}.md" for c in cast] or ["- （字コンテ未取り込み）"]
+        out.append("")
+
+    out += ["## セルフレビュー", SELF_REVIEW, ""]
 
     out += ["## 2. 承認済みのルール（必ず守る）"]
     learned = db.rows(conn.execute("SELECT * FROM learnings WHERE status='approved' ORDER BY id"))

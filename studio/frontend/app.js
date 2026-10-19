@@ -31,7 +31,7 @@ async function viewHome() {
     <p class="muted">エージェントが作ったものに、ここでレビューをつけます。未対応のレビューはエージェントが次の作業で読みます。</p>
     <div class="grid">${eps.map((e) => {
       const i = STAGES.indexOf(e.stage);
-      return `<a class="card" href="#/ep/${e.code}"><h3>${h(e.code)} <span class="muted small">${h(e.title)}</span></h3>
+      return `<a class="card" href="#/ep/${e.code}/design"><h3>${h(e.code)} <span class="muted small">${h(e.title)}</span></h3>
         <div class="pipeline">${STAGES.map((s, j) => `<span class="${j < i ? "done" : j === i ? "now" : ""}">${s}</span>`).join("")}</div>
         <span class="stat">コマ <b>${e.n_cuts}</b></span><span class="stat">尺 <b>${e.seconds}</b>/${e.target_seconds}秒</span><br>
         <span class="stat">採用 <b>${e.n_selected}</b>/${e.n_cuts}</span><span class="stat">テイク <b>${e.n_takes}</b></span>
@@ -55,7 +55,7 @@ async function viewEpisode(code) {
       <td class="small muted">${h(c.intent)}</td>
       <td><div class="thumbs">${c.takes.map(thumb).join("") || `<span class="muted small">—</span>`}</div></td></tr>`;
   }).join("");
-  $view.innerHTML = `<div class="row"><h1>${h(episode.code)} ${h(episode.title)}</h1>
+  $view.innerHTML = `${epTabs(code, "cuts")}<div class="row"><h1>${h(episode.code)} ${h(episode.title)}</h1>
       <span class="muted">${cuts.length}コマ / ${total.toFixed(1)}秒（目標 ${episode.target_seconds}秒）</span>
       <span style="flex:1"></span><button id="export">Premiere 用 XML を書き出す</button></div>
     <div class="legend small muted"><span><i style="background:#3b3340"></i>テイクなし</span><span><i style="background:var(--blue)"></i>テイクあり</span>
@@ -201,12 +201,14 @@ async function viewCompare(params) {
 // ---------- レビューの受け箱 ----------
 async function viewReviews(params) {
   const status = params.get("status") || "open,working,proposed";
-  const list = await api(`/api/reviews?status=${status}`);
-  const tabs = [["open,working,proposed", "対応中すべて"], ["proposed", "エージェントの返答待ち確認"], ["open", "未着手"], ["resolved", "解決済み"]];
-  $view.innerHTML = `<h1>レビュー</h1><div class="row">${tabs.map(([s, l]) => `<a class="btn ${s === status ? "on" : ""}" href="#/reviews?status=${s}">${l}</a>`).join("")}</div>
+  const by = params.get("by") || "";
+  const list = await api(`/api/reviews?status=${status}${by ? `&by=${by}` : ""}`);
+  const tabs = [["open,working,proposed", "", "対応中すべて"], ["proposed", "", "エージェントの返答を確認"], ["open", "human", "自分の未着手"],
+    ["working", "agent", "AIが止めたもの"], ["resolved", "", "解決済み"]];
+  $view.innerHTML = `<h1>レビュー</h1><div class="row">${tabs.map(([s, b, l]) => `<a class="btn ${s === status && b === by ? "on" : ""}" href="#/reviews?status=${s}${b ? `&by=${b}` : ""}">${l}</a>`).join("")}</div>
     ${list.map((r) => `<div class="review ${r.status}"><div class="row">
       ${r.take_file ? `<a class="thumb" href="#/cut/${r.cut_ref}?take=${r.target_id}">${media({ kind: r.take_kind, file_path: r.take_file })}</a>` : ""}
-      <div style="flex:1"><div class="row"><b>${h(r.verdict)}</b><span class="badge">${h(r.status)}</span>
+      <div style="flex:1"><div class="row">${r.created_by === "agent" ? `<span class="badge proposed">AI</span>` : ""}<b>${h(r.verdict)}</b><span class="badge">${h(r.status)}</span>
         <a href="#/cut/${r.cut_ref}${r.target_type === "take" ? `?take=${r.target_id}` : ""}">${h(r.cut || "")}${h(r.panel || "")}</a>
         <span class="small muted">${h(r.target_type)}:${r.target_id} [${h(r.tags)}] #${r.id} ${h(r.created_at)}</span></div>
         <div>${h(r.comment)}</div>${r.agent_response ? `<div class="agent small">エージェント：${h(r.agent_response)}</div>` : ""}</div></div></div>`).join("") || `<p class="muted">なし</p>`}`;
@@ -230,13 +232,148 @@ async function viewBrief(params) {
   $view.innerHTML = `<h1>エージェントが見ているもの</h1><p class="muted">エージェントは作業の前にこのブリーフを読みます（<code>python studio/cli.py brief EP09</code>）。</p><pre class="brief">${h(text)}</pre>`;
 }
 
+// ---------- 話数のタブ ----------
+const epTabs = (code, now) => `<div class="row tabs">${[["design", "設計"], ["cuts", "コマ"], ["awaiting", "AIが通したもの"], ["edit", "編集（ライブ）"]]
+  .map(([k, l]) => `<a class="btn ${k === now ? "on" : ""}" href="#/ep/${code}${k === "cuts" ? "" : "/" + k}">${l}</a>`).join("")}
+  <a class="btn" href="#/brief?ep=${code}">ブリーフ</a></div>`;
+
+// ---------- 設計：シーンごとの狙い・尺・動線 ----------
+async function viewDesign(code) {
+  const [{ episode: ep, scenes, spent }, use] = await Promise.all([api(`/api/episodes/${code}/scenes`), api(`/api/episodes/${code}/usage`)]);
+  const planned = scenes.reduce((s, x) => s + (x.target_seconds || 0), 0);
+  const actual = scenes.reduce((s, x) => s + (x.actual_seconds || 0), 0);
+  const max = Math.max(ep.target_seconds, planned, actual, 1);
+  const pct = ep.budget_credits ? Math.min(100, (100 * spent) / ep.budget_credits) : 0;
+  $view.innerHTML = `${epTabs(code, "design")}<h1>${h(code)} 設計</h1>
+    <div class="card row" style="gap:20px">
+      <label>目標尺（秒）<input type="text" id="tgt" value="${ep.target_seconds}" style="width:80px"></label>
+      <label>締切<input type="text" id="dl" value="${h(ep.deadline || "")}" placeholder="2026-10-22" style="width:120px"></label>
+      <label>予算（クレジット）<input type="text" id="bud" value="${ep.budget_credits || ""}" style="width:90px"></label>
+      <button id="saveEp">保存</button>
+      <div style="flex:1;min-width:220px"><div class="small muted">使用 ${spent.toFixed(0)} / ${ep.budget_credits || "未設定"}　${use.by_kind.map((k) => `${h(k.provider)}/${h(k.kind)} ${k.n}回`).join("・")}</div>
+        <div class="meter"><i style="width:${pct}%;background:${pct > 85 ? "var(--red)" : "var(--amber)"}"></i></div></div>
+    </div>
+    <h2>尺の配分　<span class="small">上＝設計の目標 ${planned.toFixed(1)}秒 / 下＝今の字コンテ ${actual.toFixed(1)}秒 / 線＝話数の目標 ${ep.target_seconds}秒</span></h2>
+    <div class="alloc">${["target_seconds", "actual_seconds"].map((f) => `<div class="strip" style="position:relative">${scenes.map((x, i) =>
+      `<a style="width:${(100 * (x[f] || 0)) / max}%;background:hsl(${(i * 47) % 360} 30% 40%)" title="${h(x.code)} ${x[f]}秒">${h(x.code)}</a>`).join("")}
+      <span class="goal" style="left:${(100 * ep.target_seconds) / max}%"></span></div>`).join("")}</div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(420px,1fr))">${scenes.map((x) => `<div class="card">
+      <div class="row"><h3 style="margin:0">${h(x.code)}</h3><span class="badge ${x.status === "approved" ? "sel" : x.status === "review" ? "proposed" : ""}">${h(x.status)}</span>
+        <span class="small muted">${h(x.place)} ${h(x.time)} ルック${h(x.look)} カメラ ${h(x.cameras)}</span></div>
+      <div class="small muted">目標 ${x.target_seconds}秒 / 今 ${x.actual_seconds}秒 ${x.actual_seconds > x.target_seconds * 1.15 ? `<span style="color:var(--red)">長い</span>` : ""}</div>
+      <dl class="spec"><dt>見せたいもの</dt><dd>${h(x.purpose)}</dd><dt>感情の流れ</dt><dd>${h(x.emotion)}</dd>
+        <dt>立ち位置と動線</dt><dd>${h(x.blocking)}</dd><dt>小物</dt><dd>${h(x.props)}</dd></dl>
+      <textarea data-sc="${h(x.code)}" placeholder="この設計へのレビュー（エージェントが次に読みます）"></textarea>
+      <div class="row" style="margin-top:6px"><button class="primary" data-ok="${h(x.code)}">この設計でいく</button><button data-fix="${h(x.code)}">直してほしい</button></div>
+    </div>`).join("") || `<p class="muted">まだ設計がありません。エージェントが脚本を読んで <code>scene-set</code> で作ります。</p>`}</div>`;
+  document.getElementById("saveEp").onclick = async () => {
+    await api(`/api/episodes/${code}`, { method: "PATCH", body: { target_seconds: +document.getElementById("tgt").value, deadline: document.getElementById("dl").value, budget_credits: +document.getElementById("bud").value || 0 } });
+    route();
+  };
+  const sceneReview = async (sc, ok) => {
+    const text = document.querySelector(`[data-sc="${sc}"]`).value;
+    await api(`/api/episodes/${code}/scenes/${sc}`, { method: "PATCH", body: { status: ok ? "approved" : "review" } });
+    if (text) await api("/api/reviews", { method: "POST", body: { target_type: "episode", target_id: ep.id, verdict: ok ? "良い" : "修正", tags: ["意図"], comment: `[設計 ${sc}] ${text}` } });
+    route();
+  };
+  document.querySelectorAll("[data-ok]").forEach((b) => (b.onclick = () => sceneReview(b.dataset.ok, true)));
+  document.querySelectorAll("[data-fix]").forEach((b) => (b.onclick = () => sceneReview(b.dataset.fix, false)));
+}
+
+// ---------- AI が通したもの：監督が上から流し見する ----------
+async function viewAwaiting(code) {
+  const list = await api(`/api/episodes/${code}/awaiting`);
+  $view.innerHTML = `${epTabs(code, "awaiting")}<h1>AIが通したもの <span class="muted small">${list.length}件。良ければ「良い」で流し、気になるものだけ開いて直しを書く</span></h1>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${list.map((t) => `<div class="card">
+      <a class="stage" style="display:block" href="#/cut/${t.cut_id}?take=${t.id}&ep=${code}">${media(t)}</a>
+      <div class="row"><b>${h(t.cut)}${h(t.panel)}</b><span class="small muted">#${t.id} ${h(t.provider)}</span></div>
+      <div class="small agent">AI：${h(t.ai_comment) || "観点すべて合格"}</div>
+      <div class="row" style="margin-top:6px"><button data-good="${t.id}">良い</button><button data-sel="${t.id}">採用</button>
+        <a class="btn" href="#/cut/${t.cut_id}?take=${t.id}&ep=${code}">直しを書く</a></div></div>`).join("") || `<p class="muted">確認待ちはありません。</p>`}</div>`;
+  const quick = (id, verdict) => api("/api/reviews", { method: "POST", body: { target_type: "take", target_id: +id, verdict } }).then(route);
+  document.querySelectorAll("[data-good]").forEach((b) => (b.onclick = () => quick(b.dataset.good, "良い")));
+  document.querySelectorAll("[data-sel]").forEach((b) => (b.onclick = () => quick(b.dataset.sel, "採用")));
+}
+
+// ---------- 編集（ライブ）：採用テイクを通しで再生し、エージェントの操作を見ながら手直しする ----------
+async function viewEdit(code, params) {
+  const { cuts } = await api(`/api/episodes/${code}/cuts`);
+  const pick = (c) => c.takes.find((t) => t.selected) || [...c.takes].reverse().find((t) => t.file_path);
+  const total = cuts.reduce((s, c) => s + (c.seconds || 0), 0) || 1;
+  let i = Math.max(0, cuts.findIndex((c) => c.id == params.get("cut"))), playing = false, timer = null;
+  const fmt = (sec) => `${Math.floor(sec / 60)}:${(sec % 60).toFixed(1).padStart(4, "0")}`;
+  const startOf = (k) => cuts.slice(0, k).reduce((s, c) => s + (c.seconds || 0), 0);
+  $view.innerHTML = `${epTabs(code, "edit")}
+    <div class="editor">
+      <div><div class="stage" id="mon"></div><div class="sub" id="sub"></div>
+        <div class="row" style="margin:8px 0"><button id="prev">◀</button><button class="primary" id="play">再生</button><button id="next">▶</button>
+          <span id="tc" class="muted"></span><span style="flex:1"></span>
+          <button id="export">Premiere 用 XML</button></div>
+        <div class="strip tl" id="tl">${cuts.map((c, k) => `<a data-k="${k}" class="${pick(c) ? (c.takes.some((t) => t.selected) ? "sel" : "has") : ""}" style="width:${(100 * (c.seconds || 0.5)) / total}%"></a>`).join("")}</div>
+        <div class="card" id="cutpanel"></div></div>
+      <div class="card live"><h2 style="margin-top:0">エージェントの操作</h2><div id="feed" class="small"></div></div>
+    </div>`;
+  const show = () => {
+    const c = cuts[i], t = pick(c);
+    document.getElementById("mon").innerHTML = t ? media(t) : `<div class="placeholder">${h(c.picture)}</div>`;
+    document.getElementById("sub").textContent = c.dialogue || "";
+    document.getElementById("tc").textContent = `${c.cut}${c.panel}　${fmt(startOf(i))} / ${fmt(total)}`;
+    document.querySelectorAll("#tl a").forEach((a) => a.classList.toggle("now", +a.dataset.k === i));
+    document.getElementById("cutpanel").innerHTML = `<div class="row"><b>${h(c.cut)}${h(c.panel)}</b><span class="small muted">${h(c.camerawork)}</span>
+        <span style="flex:1"></span><a href="#/cut/${c.id}?ep=${code}">このコマを開く</a></div>
+      <div class="row small"><label>尺（秒）<input type="text" id="sec" value="${c.seconds ?? ""}" style="width:70px"></label>
+        <label style="flex:1">台詞<input type="text" id="dia" value="${h(c.dialogue)}"></label>
+        <label style="flex:1">編集メモ<input type="text" id="memo" value="${h(c.edit_memo)}"></label><button id="saveCut">手直しを保存</button></div>`;
+    document.getElementById("saveCut").onclick = async () => {
+      const body = { seconds: +document.getElementById("sec").value, dialogue: document.getElementById("dia").value, edit_memo: document.getElementById("memo").value };
+      await api(`/api/cuts/${c.id}`, { method: "PATCH", body }); Object.assign(c, body); show();
+    };
+  };
+  const step = () => { if (i < cuts.length - 1) { i++; show(); timer = setTimeout(step, (cuts[i].seconds || 1) * 1000); } else stop(); };
+  const stop = () => { playing = false; clearTimeout(timer); document.getElementById("play").textContent = "再生"; };
+  document.getElementById("play").onclick = () => { if (playing) return stop(); playing = true; document.getElementById("play").textContent = "停止"; timer = setTimeout(step, (cuts[i].seconds || 1) * 1000); };
+  document.getElementById("prev").onclick = () => { stop(); i = Math.max(0, i - 1); show(); };
+  document.getElementById("next").onclick = () => { stop(); i = Math.min(cuts.length - 1, i + 1); show(); };
+  document.querySelectorAll("#tl a").forEach((a) => (a.onclick = () => { stop(); i = +a.dataset.k; show(); }));
+  document.getElementById("export").onclick = async () => { const r = await api(`/api/episodes/${code}/export`, { method: "POST" }); alert(`書き出しました\n${r.xml}\n未採用 ${r.missing.length}コマ`); };
+  const feed = document.getElementById("feed");
+  const events = await api("/api/events?limit=30");
+  feed.innerHTML = events.map(eventLine).join("");
+  liveHandlers.edit = (e) => {
+    feed.insertAdjacentHTML("afterbegin", eventLine(e));
+    const cutId = e.payload?.cut; const k = cuts.findIndex((c) => c.id === cutId);
+    if (k >= 0) document.querySelector(`#tl a[data-k="${k}"]`)?.classList.add("flash");
+  };
+  show();
+}
+
+// ---------- ライブ：エージェントの操作を全画面で受け取る ----------
+const ACTIONS = { add_take: "テイクを作成", self_review: "セルフレビュー", respond_review: "レビューに返答", propose_learning: "ルールを提案",
+  set_scene: "設計を更新", update_cut: "コマを手直し", import_jikonte: "字コンテを取り込み", add_review: "レビュー", select_take: "採用",
+  compare: "比較", update_episode: "話数を更新", review_status: "レビューの状態", decide_learning: "ルールを判断" };
+const eventLine = (e) => `<div class="ev ${e.actor}"><span class="muted">${h((e.ts || "").slice(11, 19))}</span> <b>${e.actor === "agent" ? "AI" : "自分"}</b> ${h(ACTIONS[e.action] || e.action)}
+  <span class="muted">${h(JSON.stringify(e.payload || {}).slice(0, 80))}</span></div>`;
+const liveHandlers = {};
+try {
+  const es = new EventSource("/api/stream");
+  es.onmessage = (m) => {
+    const e = JSON.parse(m.data); e.payload = JSON.parse(e.payload_json || "{}");
+    Object.values(liveHandlers).forEach((f) => f(e));
+    if (e.actor === "agent") { const d = document.getElementById("toast"); d.innerHTML = eventLine(e); d.className = "show"; clearTimeout(d._t); d._t = setTimeout(() => (d.className = ""), 4000); }
+  };
+} catch (e) { /* SSE が使えない環境では通知なしで動く */ }
+
 // ---------- ルーター ----------
 async function route() {
+  delete liveHandlers.edit;
   const [path, qs] = location.hash.slice(1).split("?");
   const params = new URLSearchParams(qs || "");
   const parts = (path || "/").split("/").filter(Boolean);
   try {
-    if (parts[0] === "ep") await viewEpisode(parts[1]);
+    if (parts[0] === "ep" && parts[2] === "design") await viewDesign(parts[1]);
+    else if (parts[0] === "ep" && parts[2] === "awaiting") await viewAwaiting(parts[1]);
+    else if (parts[0] === "ep" && parts[2] === "edit") await viewEdit(parts[1], params);
+    else if (parts[0] === "ep") await viewEpisode(parts[1]);
     else if (parts[0] === "cut") await viewCut(parts[1], params);
     else if (parts[0] === "compare") await viewCompare(params);
     else if (parts[0] === "reviews") await viewReviews(params);

@@ -75,3 +75,25 @@ pre.prompt { white-space: pre-wrap; background: #0f0c12; padding: 8px; border-ra
 .axes td { padding: 4px 8px; } .axes td:first-child { color: var(--muted); }
 pre.brief { white-space: pre-wrap; background: var(--panel); padding: 16px; border-radius: 8px; }
 .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* 話数のタブ・設計・編集 */
+.tabs { margin-bottom: 12px; }
+.meter { height: 8px; background: var(--panel2); border-radius: 4px; overflow: hidden; margin-top: 4px; }
+.meter i { display: block; height: 100%; }
+.alloc .strip a { color: #fff; font-size: 11px; padding-left: 4px; overflow: hidden; white-space: nowrap; }
+.alloc .goal { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--amber); }
+.editor { display: grid; grid-template-columns: 1fr 340px; gap: 16px; }
+.editor .stage { max-height: 62vh; }
+.sub { text-align: center; min-height: 1.6em; margin-top: 6px; font-size: 16px; }
+.strip.tl { height: 36px; cursor: pointer; }
+.strip.tl a.now { outline: 2px solid var(--amber); outline-offset: -2px; background: var(--amber) !important; }
+.strip a.flash { animation: flash 1.5s ease 2; }
+@keyframes flash { 50% { background: var(--violet); } }
+.live { max-height: 80vh; overflow: auto; }
+.ev { padding: 4px 0; border-bottom: 1px solid var(--line); } .ev.agent b { color: var(--violet); }
+#toast { position: fixed; right: 16px; bottom: 16px; max-width: 420px; background: var(--panel); border: 1px solid var(--violet);
+  border-radius: 8px; padding: 8px 12px; opacity: 0; transition: opacity .3s; pointer-events: none; font-size: 12px; }
+#toast.show { opacity: 1; }
+label { color: var(--muted); font-size: 12px; } label input { margin-top: 2px; }
+.btn.on { background: var(--amber-dim); border-color: var(--amber); }
+.ev span { word-break: break-all; }

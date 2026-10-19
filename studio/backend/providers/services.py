@@ -1,8 +1,9 @@
 """各サービスのアダプター。
 
 - manual   : 画面（Seedance・ComfyUI・HAMSTERのWeb画面など）で作ったものを、あとからアップロードして登録する。
-- hamster  : 自社 API。仕様が届いたら submit/poll を埋める（下の TODO と、e001/EP01_fix_v5 のエラー記録を参照）。
-- runway   : Runway API（画像・動画）。エンドポイントと版は公式ドキュメントで要確認。
+- hamster  : 自社 API。【保留】接続は後で。仕様が届いたら submit/poll を埋める（e001/EP01_fix_v5 のエラー記録を参照）。
+- runway   : Runway API。仮の音声（台詞）・効果音・劇伴を中心に、画像・動画も。後で有料の音源や声優の収録に差し替える前提。
+             エンドポイントとモデル名は公式ドキュメントで要確認。
 - elevenlabs: 音声。EP09 では HAMSTER 経由の elevenlabs_v4 を使っているので、直接呼ぶのは予備。
 """
 import json
@@ -56,7 +57,7 @@ class HamsterProvider(Provider):
 
 class RunwayProvider(Provider):
     name = "runway"
-    kinds = {"image", "video"}
+    kinds = {"image", "video", "audio"}
     base = "https://api.dev.runwayml.com/v1"
 
     def available(self) -> bool:
@@ -69,6 +70,18 @@ class RunwayProvider(Provider):
 
     def submit(self, req: GenerationRequest) -> str:
         # 要確認：モデル名・ratio の書式・参照画像の渡し方は Runway の最新ドキュメントに合わせる
+        if req.kind == "audio":
+            # params.audio = voice（仮の台詞）/ sfx（効果音）/ music（劇伴：Runway で作れるか要確認）
+            sort = req.params.get("audio", "voice")
+            if sort == "voice":
+                body = {"model": req.model or "eleven_multilingual_v2", "promptText": req.prompt,
+                        "voice": {"type": "runway-preset", "presetId": req.params.get("voice", "")}}
+                res = _http("POST", f"{self.base}/text_to_speech", self._headers(), body)
+            else:
+                body = {"model": req.model or "eleven_text_to_sound_v2", "promptText": req.prompt,
+                        "duration": req.params.get("duration", 4 if sort == "sfx" else 30)}
+                res = _http("POST", f"{self.base}/sound_effect", self._headers(), body)
+            return res["id"]
         if req.kind == "video":
             body = {"model": req.model or "gen4_turbo", "promptText": req.prompt,
                     "promptImage": req.refs[0] if req.refs else None,

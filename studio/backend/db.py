@@ -116,12 +116,43 @@ CREATE TABLE IF NOT EXISTS learnings (
   created_at TEXT, decided_at TEXT
 );
 
+-- 各話の設計：シーンごとの狙い・尺の配分・動線と立ち位置。字コンテより先にここで合意する。
+CREATE TABLE IF NOT EXISTS scenes (
+  id INTEGER PRIMARY KEY,
+  episode_id INTEGER REFERENCES episodes(id),
+  seq INTEGER,
+  code TEXT,                           -- S1
+  place TEXT DEFAULT '', time TEXT DEFAULT '', look TEXT DEFAULT '',
+  target_seconds REAL DEFAULT 0,
+  purpose TEXT DEFAULT '',             -- このシーンで見せたいもの
+  emotion TEXT DEFAULT '',             -- 感情の流れ（誰がどこからどこへ）
+  blocking TEXT DEFAULT '',            -- 頭の立ち位置と動線（配置図の席・カメラ位置で書く）
+  cameras TEXT DEFAULT '',             -- 使うカメラ位置 A〜F
+  props TEXT DEFAULT '',               -- 小物の状態
+  status TEXT DEFAULT 'draft',         -- draft/review/approved
+  UNIQUE(episode_id, code)
+);
+
+-- 使用量。生成1回ごとに、サービス・単位・クレジットを記録して、話数ごとの予算と比べる。
+CREATE TABLE IF NOT EXISTS usage (
+  id INTEGER PRIMARY KEY,
+  ts TEXT, episode_id INTEGER REFERENCES episodes(id), take_id INTEGER REFERENCES takes(id),
+  provider TEXT, kind TEXT, units REAL DEFAULT 1, credits REAL DEFAULT 0, note TEXT DEFAULT ''
+);
+
 -- 誰が何をしたかの記録。エージェントが前回の続きから作業できるようにする。
 CREATE TABLE IF NOT EXISTS events (
   id INTEGER PRIMARY KEY,
   ts TEXT, actor TEXT, action TEXT, payload_json TEXT
 );
 """
+
+
+# 既存の DB に後から足した列。init() で無ければ足す。
+MIGRATIONS = {
+    "episodes": {"budget_credits": "REAL DEFAULT 0", "deadline": "TEXT DEFAULT ''"},
+    "reviews": {"checks_json": "TEXT DEFAULT ''"},   # AI セルフレビューの観点ごとの合否
+}
 
 
 def now() -> str:
@@ -149,6 +180,11 @@ def session():
 def init() -> None:
     with session() as conn:
         conn.executescript(SCHEMA)
+        for table, cols in MIGRATIONS.items():
+            have = {r["name"] for r in conn.execute(f"PRAGMA table_info({table})")}
+            for col, decl in cols.items():
+                if col not in have:
+                    conn.execute(f"ALTER TABLE {table} ADD COLUMN {col} {decl}")
 
 
 def rows(cur) -> list[dict]:

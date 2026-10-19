@@ -10,6 +10,15 @@
   respond 5 "左右の配置を直した。#31 を見てください" --take 31
   propose-rule "あかねの手は常にトレーを両手で" --scope character:あかね --from 5,8
   export EP09                        Premiere 用 XML と ffconcat を書き出す
+  bible                              キャラ・舞台の設定を vault の 06_設定 に書き出す（シート更新後に再実行）
+  episode-set EP09 --target 180 --budget 600 --deadline 2026-10-22 --stage 設計
+  scene-set EP09 S1 --place 店内 --look B --target 35 --purpose "…" --blocking "…" --cameras A,C
+  scenes EP09
+  self-review 31 --checks '{"意図":true,"芝居":"まひるがシェイカーを振っている"}' --comment "…"
+  awaiting EP09                      AI が通して、監督がまだ見ていないテイク
+  usage EP09
+  cut-edit 12 --seconds 1.5          尺・台詞の手直し
+  bg-render EP09 --blend 月灯り店内.blend --camera CAM_A [--cut 12] [-- --lens 28]
 """
 import argparse
 import json
@@ -19,7 +28,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from studio.backend import context, core, db  # noqa: E402
-from studio.backend.importers import jikonte  # noqa: E402
+from studio.backend.importers import bible, jikonte  # noqa: E402
 
 
 def _ids(s: str | None) -> list[int]:
@@ -51,6 +60,24 @@ def main(argv=None):
     p = sub.add_parser("propose-rule"); p.add_argument("text"); p.add_argument("--scope", default="series")
     p.add_argument("--from", dest="src", default=""); p.add_argument("--vault-target", default="")
     p = sub.add_parser("export"); p.add_argument("episode")
+    sub.add_parser("bible")
+    p = sub.add_parser("episode-set"); p.add_argument("episode"); p.add_argument("--title")
+    p.add_argument("--target", type=float); p.add_argument("--budget", type=float)
+    p.add_argument("--deadline"); p.add_argument("--stage")
+    p = sub.add_parser("scene-set"); p.add_argument("episode"); p.add_argument("scene")
+    for f in ("place", "time", "look", "purpose", "emotion", "blocking", "cameras", "props", "status"):
+        p.add_argument(f"--{f}")
+    p.add_argument("--target", type=float)
+    p = sub.add_parser("scenes"); p.add_argument("episode")
+    p = sub.add_parser("self-review"); p.add_argument("take", type=int); p.add_argument("--checks", required=True)
+    p.add_argument("--comment", default="")
+    p = sub.add_parser("awaiting"); p.add_argument("episode")
+    p = sub.add_parser("usage"); p.add_argument("episode")
+    p = sub.add_parser("cut-edit"); p.add_argument("cut", type=int); p.add_argument("--seconds", type=float)
+    p.add_argument("--dialogue"); p.add_argument("--edit-memo")
+    p = sub.add_parser("bg-render"); p.add_argument("episode"); p.add_argument("--blend", required=True)
+    p.add_argument("--camera", required=True); p.add_argument("--cut", type=int); p.add_argument("--note", default="")
+    p.add_argument("extra", nargs="*")
 
     a = ap.parse_args(argv)
     db.init()
@@ -79,7 +106,11 @@ def main(argv=None):
                       prompt=prompt, refs=[r for r in a.refs.split(",") if r], params=json.loads(a.params),
                       parent_take_id=a.parent, fixes_review_ids=_ids(a.fixes), agent_note=a.note)
             if a.cmd == "generate":
-                tid = core.generate(conn, **kw)
+                try:
+                    tid = core.generate(conn, **kw)
+                except core.Blocked as e:
+                    print(f"止めました：{e}")
+                    return 2
             else:
                 tid = core.add_take(conn, **kw)
                 if a.file:
@@ -93,7 +124,47 @@ def main(argv=None):
             print(core.propose_learning(conn, a.text, a.scope, _ids(a.src), a.vault_target))
         elif a.cmd == "export":
             print(json.dumps(core.export_timeline(conn, a.episode), ensure_ascii=False, indent=1))
+        elif a.cmd == "bible":
+            print("\n".join(bible.write_all()))
+        elif a.cmd == "episode-set":
+            ep = db.get_or_create_episode(conn, a.episode)
+            data = {k: v for k, v in {"title": a.title, "target_seconds": a.target, "budget_credits": a.budget,
+                                      "deadline": a.deadline, "stage": a.stage}.items() if v is not None}
+            db.update(conn, "episodes", ep["id"], data)
+            db.log(conn, "agent", "update_episode", {"episode": a.episode, **data})
+            print(json.dumps(db.episode_by_code(conn, a.episode), ensure_ascii=False))
+        elif a.cmd == "scene-set":
+            fields = {f: getattr(a, f) for f in ("place", "time", "look", "purpose", "emotion", "blocking",
+                                                 "cameras", "props", "status")}
+            print(core.set_scene(conn, a.episode, a.scene, target_seconds=a.target, **fields))
+        elif a.cmd == "scenes":
+            sc = core.scenes(conn, a.episode)
+            total = sum(s["target_seconds"] or 0 for s in sc["scenes"])
+            print(f"{a.episode} 目標 {sc['episode']['target_seconds']}秒 / シーン合計 {total}秒 / 使用 {sc['spent']:.0f}")
+            for s in sc["scenes"]:
+                print(f"{s['code']} [{s['status']}] {s['target_seconds']}秒（今 {s['actual_seconds']}） {s['place']} "
+                      f"{s['look']} {s['cameras']} | {s['purpose']}\n    動線：{s['blocking']}")
+        elif a.cmd == "self-review":
+            print(core.self_review(conn, a.take, json.loads(a.checks), a.comment))
+        elif a.cmd == "awaiting":
+            for t in core.awaiting_human(conn, a.episode):
+                print(f"#{t['id']} {t['cut']}{t['panel']} {t['kind']} {t['file_path']} | AI：{t['ai_comment']}")
+        elif a.cmd == "usage":
+            ep = db.episode_by_code(conn, a.episode)
+            print(f"使用 {core.spent(conn, ep['id']):.0f} / 予算 {ep['budget_credits'] or '未設定'}")
+            for r in db.rows(conn.execute("SELECT provider, kind, COUNT(*) n, SUM(credits) c FROM usage "
+                                          "WHERE episode_id=? GROUP BY provider, kind", (ep["id"],))):
+                print(f"  {r['provider']}/{r['kind']} {r['n']}回 {r['c']:.0f}")
+        elif a.cmd == "cut-edit":
+            core.update_cut(conn, a.cut, "agent", **{k: v for k, v in {"seconds": a.seconds, "dialogue": a.dialogue,
+                                                                         "edit_memo": a.edit_memo}.items() if v is not None})
+            print("ok")
+        elif a.cmd == "bg-render":
+            tid = core.render_bg(conn, episode=a.episode, blend=a.blend, camera=a.camera, cut_id=a.cut,
+                                 note=a.note, extra_args=a.extra)
+            print(json.dumps(db.one(conn.execute("SELECT id,status,error,file_path FROM takes WHERE id=?", (tid,))),
+                             ensure_ascii=False))
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

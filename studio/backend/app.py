@@ -6,7 +6,7 @@ import time
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import FileResponse, PlainTextResponse
+from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -121,9 +121,9 @@ def add_review(r: ReviewIn):
 
 
 @app.get("/api/reviews")
-def reviews(episode: str | None = None, status: str | None = None):
+def reviews(episode: str | None = None, status: str | None = None, by: str | None = None):
     with db.session() as conn:
-        return core.list_reviews(conn, episode, status)
+        return core.list_reviews(conn, episode, status, by)
 
 
 class StatusIn(BaseModel):
@@ -197,3 +197,90 @@ def events(limit: int = 50):
     for r in rows:
         r["payload"] = json.loads(r.pop("payload_json") or "{}")
     return rows
+
+
+# ---- 設計・予算・手直し・ライブ ----
+
+class EpisodeIn(BaseModel):
+    title: str | None = None
+    target_seconds: float | None = None
+    budget_credits: float | None = None
+    deadline: str | None = None
+    stage: str | None = None
+
+
+@app.patch("/api/episodes/{code}")
+def patch_episode(code: str, e: EpisodeIn):
+    with db.session() as conn:
+        ep = db.episode_by_code(conn, code)
+        db.update(conn, "episodes", ep["id"], e.model_dump(exclude_none=True))
+        db.log(conn, "human", "update_episode", {"episode": code, **e.model_dump(exclude_none=True)})
+    return {"ok": True}
+
+
+@app.get("/api/episodes/{code}/scenes")
+def scenes(code: str):
+    with db.session() as conn:
+        return core.scenes(conn, code)
+
+
+class SceneIn(BaseModel):
+    status: str | None = None
+    target_seconds: float | None = None
+    blocking: str | None = None
+    purpose: str | None = None
+
+
+@app.patch("/api/episodes/{code}/scenes/{scode}")
+def patch_scene(code: str, scode: str, s_: SceneIn):
+    with db.session() as conn:
+        core.set_scene(conn, code, scode, **s_.model_dump(exclude_none=True))
+    return {"ok": True}
+
+
+@app.get("/api/episodes/{code}/awaiting")
+def awaiting(code: str):
+    with db.session() as conn:
+        return core.awaiting_human(conn, code)
+
+
+@app.get("/api/episodes/{code}/usage")
+def usage(code: str):
+    with db.session() as conn:
+        ep = db.episode_by_code(conn, code)
+        return {"spent": core.spent(conn, ep["id"]), "budget": ep["budget_credits"],
+                "by_kind": db.rows(conn.execute(
+                    "SELECT provider, kind, COUNT(*) n, SUM(credits) credits FROM usage WHERE episode_id=? "
+                    "GROUP BY provider, kind", (ep["id"],)))}
+
+
+class CutIn(BaseModel):
+    seconds: float | None = None
+    dialogue: str | None = None
+    edit_memo: str | None = None
+
+
+@app.patch("/api/cuts/{cut_id}")
+def patch_cut(cut_id: int, c: CutIn):
+    with db.session() as conn:
+        core.update_cut(conn, cut_id, "human", **c.model_dump(exclude_none=True))
+    return {"ok": True}
+
+
+@app.get("/api/stream")
+async def stream():
+    """events を Server-Sent Events で流す。画面はこれで、エージェントがいま何をしているかを表示する。"""
+    import asyncio
+
+    async def gen():
+        with db.session() as conn:
+            last = conn.execute("SELECT COALESCE(MAX(id),0) FROM events").fetchone()[0]
+        while True:
+            with db.session() as conn:
+                rows = db.rows(conn.execute("SELECT * FROM events WHERE id>? ORDER BY id", (last,)))
+            for r in rows:
+                last = r["id"]
+                yield f"data: {json.dumps(r, ensure_ascii=False)}\n\n"
+            await asyncio.sleep(1)
+
+    return StreamingResponse(gen(), media_type="text/event-stream")
