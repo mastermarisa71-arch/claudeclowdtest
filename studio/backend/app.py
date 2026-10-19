@@ -1,0 +1,199 @@
+"""レビュー画面の API。起動：  python -m uvicorn studio.backend.app:app --reload  （リポジトリ直下で）"""
+import json
+import tempfile
+import threading
+import time
+from pathlib import Path
+
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi.responses import FileResponse, PlainTextResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+
+from . import config, context, core, db
+
+db.init()
+app = FastAPI(title="月灯スタジオ")
+app.mount("/media", StaticFiles(directory=config.MEDIA_DIR), name="media")
+FRONTEND = config.STUDIO_DIR / "frontend"
+
+
+def _poll_loop():
+    while True:
+        try:
+            with db.session() as conn:
+                core.poll_running(conn)
+        except Exception as e:  # 外部サービスの一時的な失敗でループを止めない
+            print("poll error:", e)
+        time.sleep(15)
+
+
+threading.Thread(target=_poll_loop, daemon=True).start()
+
+
+@app.get("/")
+def index():
+    return FileResponse(FRONTEND / "index.html")
+
+
+app.mount("/static", StaticFiles(directory=FRONTEND), name="static")
+
+
+@app.get("/api/meta")
+def meta():
+    from .providers.services import REGISTRY
+    return {"tags": core.REVIEW_TAGS, "verdicts": core.VERDICTS,
+            "providers": {k: p.available() for k, p in REGISTRY.items()}}
+
+
+@app.get("/api/episodes")
+def episodes():
+    with db.session() as conn:
+        return core.episodes(conn)
+
+
+@app.get("/api/episodes/{code}/cuts")
+def episode_cuts(code: str):
+    with db.session() as conn:
+        try:
+            return core.episode_cuts(conn, code)
+        except KeyError:
+            raise HTTPException(404, f"{code} がありません")
+
+
+@app.get("/api/cuts/{cut_id}")
+def cut_detail(cut_id: int):
+    with db.session() as conn:
+        return core.cut_detail(conn, cut_id)
+
+
+@app.get("/api/takes/{take_id}/lineage")
+def lineage(take_id: int):
+    with db.session() as conn:
+        return core.take_lineage(conn, take_id)
+
+
+@app.post("/api/takes/{take_id}/upload")
+async def upload(take_id: int, file: UploadFile = File(...)):
+    with tempfile.NamedTemporaryFile(delete=False) as tmp:
+        tmp.write(await file.read())
+    with db.session() as conn:
+        return {"file_path": core.attach_file(conn, take_id, Path(tmp.name), file.filename)}
+
+
+@app.post("/api/cuts/{cut_id}/takes")
+async def human_take(cut_id: int, file: UploadFile = File(...), note: str = Form("")):
+    """人が外で作ったもの（Seedance の動画など）をそのコマのテイクとして足す。"""
+    with db.session() as conn:
+        cut = db.one(conn.execute("SELECT c.*, e.code FROM cuts c JOIN episodes e ON e.id=c.episode_id WHERE c.id=?",
+                                  (cut_id,)))
+        kind = "video" if (file.content_type or "").startswith("video") else \
+            "audio" if (file.content_type or "").startswith("audio") else "image"
+        tid = core.add_take(conn, episode=cut["code"], cut_id=cut_id, kind=kind, agent_note=note,
+                            created_by="human")
+        with tempfile.NamedTemporaryFile(delete=False) as tmp:
+            tmp.write(await file.read())
+        core.attach_file(conn, tid, Path(tmp.name), file.filename)
+        return {"take_id": tid}
+
+
+@app.post("/api/takes/{take_id}/select")
+def select(take_id: int):
+    with db.session() as conn:
+        core.select_take(conn, take_id)
+    return {"ok": True}
+
+
+class ReviewIn(BaseModel):
+    target_type: str
+    target_id: int
+    verdict: str = "修正"
+    comment: str = ""
+    tags: list[str] = []
+    score: int | None = None
+    region: dict | None = None
+
+
+@app.post("/api/reviews")
+def add_review(r: ReviewIn):
+    with db.session() as conn:
+        return {"id": core.add_review(conn, **r.model_dump())}
+
+
+@app.get("/api/reviews")
+def reviews(episode: str | None = None, status: str | None = None):
+    with db.session() as conn:
+        return core.list_reviews(conn, episode, status)
+
+
+class StatusIn(BaseModel):
+    status: str
+
+
+@app.patch("/api/reviews/{rid}")
+def review_status(rid: int, s: StatusIn):
+    with db.session() as conn:
+        core.set_review_status(conn, rid, s.status)
+    return {"ok": True}
+
+
+class CompareIn(BaseModel):
+    take_ids: list[int]
+    winner_take_id: int | None = None
+    reason: str = ""
+    axes: dict = {}
+
+
+@app.post("/api/comparisons")
+def compare(c: CompareIn):
+    with db.session() as conn:
+        return {"id": core.add_comparison(conn, **c.model_dump())}
+
+
+@app.get("/api/takes")
+def takes(ids: str):
+    id_list = [int(i) for i in ids.split(",") if i]
+    with db.session() as conn:
+        rows = db.rows(conn.execute(
+            f"SELECT t.*, c.cut, c.panel FROM takes t LEFT JOIN cuts c ON c.id=t.cut_id "
+            f"WHERE t.id IN ({','.join('?' * len(id_list))})", id_list))
+    return sorted(rows, key=lambda t: id_list.index(t["id"]))
+
+
+@app.get("/api/learnings")
+def learnings():
+    with db.session() as conn:
+        return db.rows(conn.execute("SELECT * FROM learnings ORDER BY status='proposed' DESC, id DESC"))
+
+
+class DecideIn(BaseModel):
+    approve: bool
+    rule_text: str | None = None
+
+
+@app.post("/api/learnings/{lid}")
+def decide(lid: int, d: DecideIn):
+    with db.session() as conn:
+        core.decide_learning(conn, lid, d.approve, d.rule_text)
+    return {"ok": True}
+
+
+@app.get("/api/brief", response_class=PlainTextResponse)
+def brief(episode: str | None = None):
+    with db.session() as conn:
+        return context.build(conn, episode)
+
+
+@app.post("/api/episodes/{code}/export")
+def export(code: str):
+    with db.session() as conn:
+        return core.export_timeline(conn, code)
+
+
+@app.get("/api/events")
+def events(limit: int = 50):
+    with db.session() as conn:
+        rows = db.rows(conn.execute("SELECT * FROM events ORDER BY id DESC LIMIT ?", (limit,)))
+    for r in rows:
+        r["payload"] = json.loads(r.pop("payload_json") or "{}")
+    return rows
