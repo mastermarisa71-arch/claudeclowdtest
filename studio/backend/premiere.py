@@ -7,19 +7,22 @@ XML を書き出して読み込み直す往復をなくすため、Premiere の�
   ツールはコマの尺に反映し、差分を記録する。エージェントは `pr-state` でそれを読んで続きを作る。
 """
 import json
+from pathlib import Path
 
 from . import config, core, db
 
 
-def enqueue(conn, episode: str, command: str, args: dict) -> int:
-    qid = db.insert(conn, "premiere_queue", {"ts": db.now(), "episode": episode, "command": command,
+def enqueue(conn, episode: str, command: str, args: dict, host: str = "premiere") -> int:
+    """host：premiere / aftereffects。それぞれのアプリの中のパネルが自分宛ての命令だけ取り出す。"""
+    qid = db.insert(conn, "premiere_queue", {"ts": db.now(), "episode": episode, "command": command, "host": host,
                                               "args_json": json.dumps(args, ensure_ascii=False)})
     db.log(conn, "agent", "premiere_command", {"episode": episode, "command": command, "queue": qid})
     return qid
 
 
-def pending(conn) -> list[dict]:
-    rows = db.rows(conn.execute("SELECT * FROM premiere_queue WHERE status='pending' ORDER BY id"))
+def pending(conn, host: str = "premiere") -> list[dict]:
+    rows = db.rows(conn.execute("SELECT * FROM premiere_queue WHERE status='pending' AND COALESCE(host,'premiere')=? "
+                                "ORDER BY id", (host,)))
     for r in rows:
         conn.execute("UPDATE premiere_queue SET status='running' WHERE id=?", (r["id"],))
         r["args"] = json.loads(r.pop("args_json"))
@@ -83,3 +86,25 @@ def last_state(conn, code: str) -> dict | None:
         r["state"] = json.loads(r.pop("state_json"))
         r["diff"] = json.loads(r.pop("diff_json"))
     return r
+
+
+def ae_comp_args(conn, take_id: int, texts: list[dict] | None = None, zoom: dict | None = None,
+                 render: bool = False) -> dict:
+    """After Effects：テイク1本からコンポを作る。黒板・メモの文字（texts）、編集での小さな寄り引き（zoom）、
+    書き出し（render）。書き出したものは、そのテイクの子（kind=video, tier=comp）として戻す。"""
+    t = db.one(conn.execute("SELECT t.*, e.code FROM takes t JOIN episodes e ON e.id=t.episode_id WHERE t.id=?", (take_id,)))
+    params = json.loads(t["params_json"] or "{}")
+    out = config.MEDIA_DIR / t["code"] / f"take{take_id:05d}_comp.mov"
+    return {"name": f"{t['code']}_take{take_id}", "path": str((config.MEDIA_DIR / t["file_path"]).resolve()),
+            "duration": params.get("duration") or 5, "fps": config.FPS, "texts": texts or [], "zoom": zoom or {},
+            "render": render, "out": str(out.resolve()), "take": take_id}
+
+
+def ae_rendered(conn, take_id: int, path: str) -> int:
+    """AE の書き出しをテイクとして登録する（パネルの render 結果から呼ぶ）。"""
+    t = db.one(conn.execute("SELECT t.*, e.code FROM takes t JOIN episodes e ON e.id=t.episode_id WHERE t.id=?", (take_id,)))
+    rel = Path(path).resolve().relative_to(config.MEDIA_DIR.resolve()).as_posix()
+    nid = core.add_take(conn, episode=t["code"], cut_id=t["cut_id"], kind="video", provider="aftereffects",
+                        prompt="After Effects で合成", parent_take_id=take_id, file_path=rel, agent_note="AE 合成")
+    db.update(conn, "takes", nid, {"tier": "comp", "shot_id": t.get("shot_id")})
+    return nid

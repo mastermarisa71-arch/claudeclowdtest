@@ -129,9 +129,71 @@ function tsukiMarker(args) {
   return tsukiStringify({ marker: m.name });
 }
 
+// ---------- After Effects ----------
+// コンポを作る：args = {name, path, duration, fps, texts:[{text,x,y,size,t_in,t_out}], zoom:{from,to,t0,t1}, render, out, take}
+// 黒板・メモの文字合成、編集での小さな寄り引き、書き出しをエージェントが下ごしらえし、監督が AE の画面で仕上げる。
+function aeComp(args) {
+  app.beginUndoGroup("月灯スタジオ");
+  var item = app.project.importFile(new ImportOptions(new File(args.path)));
+  var comp = app.project.items.addComp(args.name, 1920, 1080, 1, args.duration, args.fps);
+  var L = comp.layers.add(item);
+  var base = 100 * 1920 / item.width;
+  L.property("Scale").setValue([base, base]);
+  if (args.zoom && args.zoom.to) {
+    var sc = L.property("Scale"), z0 = base * (args.zoom.from || 1), z1 = base * args.zoom.to;
+    sc.setValueAtTime(args.zoom.t0 || 0, [z0, z0]);
+    sc.setValueAtTime(args.zoom.t1 || args.duration, [z1, z1]);
+  }
+  for (var i = 0; i < (args.texts || []).length; i++) {
+    var tx = args.texts[i], T = comp.layers.addText(tx.text);
+    var src = T.property("Source Text"), doc = src.value;
+    doc.fontSize = tx.size || 48; doc.fillColor = tx.color || [1, 1, 1];
+    src.setValue(doc);
+    T.property("Position").setValue([(tx.x || 0.5) * 1920, (tx.y || 0.5) * 1080]);
+    T.inPoint = tx.t_in || 0; T.outPoint = tx.t_out || args.duration;
+    T.name = "AI文字: " + tx.text;
+  }
+  app.endUndoGroup();
+  comp.openInViewer();
+  var res = { comp: comp.name, layers: comp.numLayers };
+  if (args.render) {
+    var rq = app.project.renderQueue.items.add(comp);
+    rq.outputModule(1).file = new File(args.out);
+    app.project.renderQueue.render();
+    res.rendered = args.out; res.take = args.take;
+  }
+  return tsukiStringify(res);
+}
+
+// 今のコンポ（監督の手直しを含む）を読む
+function aeRead() {
+  var comp = app.project.activeItem;
+  if (!comp || !(comp instanceof CompItem)) return tsukiStringify({ error: "コンポを開いてください" });
+  var out = { comp: comp.name, duration: comp.duration, video: [] };
+  for (var i = 1; i <= comp.numLayers; i++) {
+    var l = comp.layer(i), o = { name: l.name, start: l.inPoint, end: l.outPoint };
+    try { if (l.property("Source Text")) o.text = String(l.property("Source Text").value.text); } catch (e) {}
+    out.video.push(o);
+  }
+  return tsukiStringify(out);
+}
+
+// 動作確認：アプリと版、開いているプロジェクト
+function tsukiHello() {
+  var proj = "";
+  try { proj = BridgeTalk.appName === "aftereffects" ? (app.project.file ? app.project.file.name : "（未保存）") : app.project.name; } catch (e) {}
+  return tsukiStringify({ app: BridgeTalk.appName, version: String(app.version), project: proj });
+}
+
 function tsukiRun(cmdJson) {
   try {
     var cmd = tsukiParse(cmdJson);
+    if (cmd.command === "hello") return tsukiHello();
+    if (BridgeTalk.appName === "aftereffects") {
+      if (cmd.command === "comp") return aeComp(cmd.args);
+      if (cmd.command === "read") return aeRead();
+      return tsukiStringify({ error: "After Effects では使えない命令: " + cmd.command });
+    }
     if (cmd.command === "build") return tsukiBuild(cmd.args);
     if (cmd.command === "read") return tsukiRead();
     if (cmd.command === "replace") return tsukiReplace(cmd.args);

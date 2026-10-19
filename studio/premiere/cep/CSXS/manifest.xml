@@ -7,6 +7,7 @@
   <ExecutionEnvironment>
     <HostList>
       <Host Name="PPRO" Version="[15.0,99.9]"/>
+      <Host Name="AEFT" Version="[18.0,99.9]"/>
     </HostList>
     <LocaleList><Locale Code="All"/></LocaleList>
     <RequiredRuntimeList><RequiredRuntime Name="CSXS" Version="11.0"/></RequiredRuntimeList>

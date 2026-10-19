@@ -316,10 +316,10 @@ def shot_status(code: str, scode: str, s_: StatusIn):
 # ---- Premiere の中のパネルとのやりとり ----
 
 @app.get("/api/premiere/commands")
-def pr_pending():
+def pr_pending(host: str = "premiere"):
     from . import premiere
     with db.session() as conn:
-        return premiere.pending(conn)
+        return premiere.pending(conn, host)
 
 
 class PrResult(BaseModel):
@@ -332,6 +332,8 @@ def pr_result(qid: int, r: PrResult):
     from . import premiere
     with db.session() as conn:
         premiere.finish(conn, qid, r.ok, r.result)
+        if r.ok and r.result.get("rendered") and r.result.get("take"):   # AE の書き出しをテイクに
+            premiere.ae_rendered(conn, int(r.result["take"]), r.result["rendered"])
     return {"ok": True}
 
 
@@ -346,3 +348,74 @@ def pr_state(code: str, state: dict):
 def ep_stats(code: str):
     with db.session() as conn:
         return core.stats(conn, code)
+
+
+# ---- 依頼 ----
+
+class RequestIn(BaseModel):
+    text: str
+    episode: str = ""
+
+
+@app.get("/api/requests")
+def requests_list(status: str = "open,claimed,done"):
+    with db.session() as conn:
+        return list(reversed(core.list_requests(conn, status)))
+
+
+@app.post("/api/requests")
+def requests_add(r: RequestIn):
+    with db.session() as conn:
+        return {"id": core.add_request(conn, r.text, r.episode)}
+
+
+@app.patch("/api/requests/{rid}")
+def requests_cancel(rid: int, s_: StatusIn):
+    with db.session() as conn:
+        db.update(conn, "requests", rid, {"status": s_.status})
+    return {"ok": True}
+
+
+# ---- 外から使うときの鍵（TSUKI_TOKEN を設定したときだけ。自分の PC の中からは不要） ----
+
+@app.middleware("http")
+async def token_guard(request, call_next):
+    import os
+    from fastapi.responses import JSONResponse
+    token = os.environ.get("TSUKI_TOKEN", "")
+    local = request.client and request.client.host in ("127.0.0.1", "::1", "localhost")
+    if token and not local:
+        given = request.headers.get("authorization", "").removeprefix("Bearer ") or request.query_params.get("token", "")
+        if given != token:
+            return JSONResponse({"detail": "token が必要です"}, status_code=401)
+    return await call_next(request)
+
+
+@app.post("/api/adobe/hello")
+def adobe_hello(info: dict):
+    """Premiere / After Effects のパネルが起動したときの知らせ（アプリと版）。"""
+    with db.session() as conn:
+        db.log(conn, "human", "adobe_hello", info)
+    return {"ok": True}
+
+
+@app.get("/api/handoff", response_class=PlainTextResponse)
+def handoff(request_id: int = 0, mode: str = "local"):
+    """別の Claude に渡す依頼文。mode=local（この PC の Claude Code / Desktop）/ remote（クラウドの Claude）。"""
+    import os
+    with db.session() as conn:
+        r = db.one(conn.execute("SELECT * FROM requests WHERE id=?", (request_id,))) if request_id else None
+    what = f"依頼 #{r['id']}（{r['episode']}）：{r['text']}" if r else "月灯スタジオの未着手の依頼"
+    common = ("あなたは『月灯りスピークイージー』の制作エージェントです。作るのはあなた、見るのは監督です。\n"
+              f"{what} を進めてください。\n"
+              "手順：brief を読む → next_request で依頼を取る（agent には自分の名前）→ 作る → 監督に見せる前に self_review → "
+              "テイクとして登録 → finish_request に結果（テイク番号・残っていること）を書く。\n"
+              "予算（1話5万円）と作り直しの上限で止まったら、迷っている点を書いて監督に回してください。\n")
+    if mode == "remote":
+        url = os.environ.get("TSUKI_PUBLIC_URL", "https://<トンネルの URL>") .rstrip("/") + "/mcp"
+        return (common + f"\n接続：MCP サーバー {url} （ヘッダー Authorization: Bearer <監督から受け取った鍵>）。\n"
+                "作品の資料（vault）と手順はリポジトリ mastermarisa71-arch/claudeclowdtest の CLAUDE.md と "
+                ".claude/skills/tsukiakari-studio/SKILL.md にあります。")
+    return (common + "\n場所：このリポジトリ（月灯スタジオが起動していること）。CLAUDE.md と "
+            ".claude/skills/tsukiakari-studio/SKILL.md に従い、MCP の tsukiakari-studio の道具か "
+            "python studio/cli.py を使ってください。")

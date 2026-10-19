@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "tsukiakari-studio": {
+      "command": "studio/.venv/Scripts/python.exe",
+      "args": ["studio/mcp_server.py"]
+    }
+  }
+}

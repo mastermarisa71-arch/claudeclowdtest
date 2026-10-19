@@ -573,3 +573,36 @@ def add_audio(conn, *, episode: str, cut_id: int, src: Path, role: str = "voice"
     attach_file(conn, tid, src)
     db.update(conn, "takes", tid, {"role": role})
     return tid
+
+
+# ---- 依頼：監督 → どのエージェントでも ----
+
+def add_request(conn, text: str, episode: str = "") -> int:
+    rid = db.insert(conn, "requests", {"ts": db.now(), "episode": episode, "text": text})
+    db.log(conn, "human", "add_request", {"request": rid, "episode": episode})
+    return rid
+
+
+def list_requests(conn, status: str = "open,claimed") -> list[dict]:
+    sts = status.split(",")
+    return db.rows(conn.execute(f"SELECT * FROM requests WHERE status IN ({','.join('?' * len(sts))}) ORDER BY id",
+                                sts))
+
+
+def claim_request(conn, agent: str, request_id: int | None = None) -> dict | None:
+    """依頼を1つ取る。id を指定しなければ、いちばん古い open を取る。取られていたら None。"""
+    q = "SELECT * FROM requests WHERE status='open'" + (" AND id=?" if request_id else "") + " ORDER BY id LIMIT 1"
+    r = db.one(conn.execute(q, (request_id,) if request_id else ()))
+    if not r:
+        return None
+    cur = conn.execute("UPDATE requests SET status='claimed', claimed_by=?, claimed_at=? WHERE id=? AND status='open'",
+                       (agent, db.now(), r["id"]))
+    if cur.rowcount != 1:
+        return None
+    db.log(conn, "agent", "claim_request", {"request": r["id"], "by": agent})
+    return {**r, "status": "claimed", "claimed_by": agent}
+
+
+def finish_request(conn, request_id: int, result: str, status: str = "done") -> None:
+    db.update(conn, "requests", request_id, {"status": status, "result": result, "done_at": db.now()})
+    db.log(conn, "agent", "finish_request", {"request": request_id, "status": status})

@@ -42,6 +42,13 @@
   pr-state EP09                                  監督が Premiere で直した差分（最後に届いた状態）
   pr-replace EP09 SH03 --take 52                 同じ位置・長さのまま新しいテイクに差し替える
   pr-marker EP09 --at 12.5 --comment "ここの溜めはどうしますか"
+  adobe-status                                   Premiere / After Effects のパネルがつながっているか、版と命令の結果
+  adobe-test [--host premiere|aftereffects]      パネルに動作確認の命令を送る
+  ae-comp EP09 --take 52 [--text "チョコパン@0.5,0.4"] [--zoom 1.0:1.08] [--render]
+                                                After Effects にコンポを作らせる（文字合成・寄り引き・書き出し）
+  ae-read EP09                                   After Effects の今のコンポを読み取らせる
+  requests [--all] / request-add "…" [--episode EP09] / request-claim [--id 3] --agent 名前 / request-done 3 "結果"
+                                                監督の依頼（どの Claude が取っても同じ形で進める）
 """
 import argparse
 import json
@@ -144,6 +151,17 @@ def main(argv=None):
     p = sub.add_parser("pr-read"); p.add_argument("episode")
     p = sub.add_parser("pr-state"); p.add_argument("episode")
     p = sub.add_parser("pr-replace"); p.add_argument("episode"); p.add_argument("clip"); p.add_argument("--take", type=int, required=True)
+    sub.add_parser("adobe-status")
+    p = sub.add_parser("adobe-test"); p.add_argument("--host", default="premiere", choices=["premiere", "aftereffects"])
+    p = sub.add_parser("ae-comp"); p.add_argument("episode"); p.add_argument("--take", type=int, required=True)
+    p.add_argument("--text", action="append", default=[], help="文字@x,y（0〜1）。複数可")
+    p.add_argument("--zoom", default="", help="from:to 例 1.0:1.08"); p.add_argument("--render", action="store_true")
+    p = sub.add_parser("ae-read"); p.add_argument("episode")
+    p = sub.add_parser("requests"); p.add_argument("--all", action="store_true")
+    p = sub.add_parser("request-add"); p.add_argument("text"); p.add_argument("--episode", default="")
+    p = sub.add_parser("request-claim"); p.add_argument("--id", type=int); p.add_argument("--agent", required=True)
+    p = sub.add_parser("request-done"); p.add_argument("id", type=int); p.add_argument("result")
+    p.add_argument("--status", default="done", choices=["done", "cancelled", "open"])
     p = sub.add_parser("pr-marker"); p.add_argument("episode"); p.add_argument("--at", type=float, required=True)
     p.add_argument("--comment", default=""); p.add_argument("--name", default="AI")
 
@@ -353,6 +371,39 @@ def main(argv=None):
             t = db.one(conn.execute("SELECT file_path FROM takes WHERE id=?", (a.take,)))
             print(premiere.enqueue(conn, a.episode, "replace", {"name": a.clip,
                                                                 "path": str((config.MEDIA_DIR / t["file_path"]).resolve())}))
+        elif a.cmd == "adobe-status":
+            for e in db.rows(conn.execute("SELECT * FROM events WHERE action='adobe_hello' ORDER BY id DESC LIMIT 4")):
+                print(f"{e['ts']} つながった：{e['payload_json']}")
+            for q in db.rows(conn.execute("SELECT * FROM premiere_queue ORDER BY id DESC LIMIT 8")):
+                print(f"  #{q['id']} {q['host']} {q['command']} [{q['status']}] {q['result_json'][:120]}")
+        elif a.cmd == "adobe-test":
+            print(f"キュー #{premiere.enqueue(conn, '', 'hello', {}, a.host)}（パネルが取ると adobe-status に結果が出る）")
+        elif a.cmd == "ae-comp":
+            texts = []
+            for tx in a.text:
+                body, _, pos = tx.partition("@")
+                x, _, y = pos.partition(",")
+                texts.append({"text": body, "x": float(x or 0.5), "y": float(y or 0.5)})
+            zoom = {}
+            if a.zoom:
+                f, _, t = a.zoom.partition(":")
+                zoom = {"from": float(f), "to": float(t)}
+            args = premiere.ae_comp_args(conn, a.take, texts, zoom, a.render)
+            print(f"キュー #{premiere.enqueue(conn, a.episode, 'comp', args, 'aftereffects')}")
+        elif a.cmd == "ae-read":
+            print(f"キュー #{premiere.enqueue(conn, a.episode, 'read', {}, 'aftereffects')}")
+        elif a.cmd == "requests":
+            for r in core.list_requests(conn, "open,claimed,done,cancelled" if a.all else "open,claimed"):
+                print(f"#{r['id']} [{r['status']}{'：' + r['claimed_by'] if r['claimed_by'] else ''}] {r['episode']} {r['text']}"
+                      + (f"\n    → {r['result']}" if r["result"] else ""))
+        elif a.cmd == "request-add":
+            print(core.add_request(conn, a.text, a.episode))
+        elif a.cmd == "request-claim":
+            r = core.claim_request(conn, a.agent, a.id)
+            print(json.dumps(r, ensure_ascii=False) if r else "取れる依頼はありません（ほかのエージェントが取った可能性）")
+        elif a.cmd == "request-done":
+            core.finish_request(conn, a.id, a.result, a.status)
+            print("ok")
         elif a.cmd == "pr-marker":
             print(premiere.enqueue(conn, a.episode, "marker", {"at": a.at, "name": a.name, "comment": a.comment}))
         elif a.cmd == "budget-plan":

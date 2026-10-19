@@ -6,7 +6,11 @@
 - エージェント用 CLI：ブリーフを読む、テイクを登録・生成する、レビューに返答する、ルールを提案する、Premiere 用 XML を書き出す。
 - 両方とも同じ SQLite（`studio/data/studio.db`）を読み書きする。
 
-## 起動
+## 起動（Windows）
+
+`studio\setup.bat`（最初に1回）→ `studio\start.bat`（毎回）。エージェントへの頼み方（この PC の Claude Code / Claude Desktop / クラウドの Claude）は [使い方](docs/使い方_起動とエージェントへの頼み方.md)。
+
+## 起動（手で）
 
 ```bash
 pip install -r studio/requirements.txt

@@ -1,4 +1,4 @@
-# Premiere の中で、エージェントと一緒に編集する
+# Premiere / After Effects の中で、エージェントと一緒に編集する
 
 XML を書き出して読み込み直す往復をやめ、**Premiere の中に月灯スタジオのパネルを置いて**、同じタイムラインをエージェントと監督が交互に触る。
 
@@ -18,6 +18,29 @@ XML を書き出して読み込み直す往復をやめ、**Premiere の中に�
 - 監督が手で直したら「AIに渡す」。コマの名前のクリップは尺がそのまま字コンテに反映され、ショットのクリップは長さの変化が記録される。ひとことは監督のレビューとして残り、エージェントの次のブリーフに入る。
 - XML の書き出し（`export`）は予備として残す。
 
+## After Effects
+
+同じパネルが After Effects でも開く（「ウィンドウ → エクステンション → 月灯スタジオ」）。パネルは自分のアプリ宛ての命令だけを取り出す。
+
+- エージェントがやる下ごしらえ：テイクからコンポを作る、黒板・メモ・手帳の文字を文字レイヤーで置く、編集での小さな寄り引き（スケールのキーフレーム）、書き出し。書き出したものはテイク（段階 comp）としてツールに戻る。
+- 監督がやる仕上げ：文字のデザイン、撮影処理、色。手直しのあと「AIに渡す」で、レイヤーの状態とひとことが戻る。
+
+```
+python studio/cli.py ae-comp EP09 --take 52 --text "チョコパン@0.5,0.42" --zoom 1.0:1.06
+python studio/cli.py ae-comp EP09 --take 52 --render        # 書き出してテイクに戻す
+python studio/cli.py ae-read EP09
+```
+
+## 動作確認
+
+```
+python studio/cli.py adobe-test                       # Premiere のパネルへ
+python studio/cli.py adobe-test --host aftereffects   # After Effects のパネルへ
+python studio/cli.py adobe-status                     # つながった版と、命令の結果
+```
+
+パネルを開いた時点で「（アプリ）（版）とつながりました」と出て、`adobe-status` にも記録される。
+
 ## 画面操作（computer use）との使い分け
 
 | やること | 方法 | 理由 |
@@ -33,7 +56,7 @@ XML を書き出して読み込み直す往復をやめ、**Premiere の中に�
 1. `studio/premiere/cep` フォルダを `C:\Users\<ユーザー>\AppData\Roaming\Adobe\CEP\extensions\com.tsukiakari.studio` にコピーする。
 2. 署名なしの拡張を読み込めるよう、レジストリ `HKEY_CURRENT_USER\Software\Adobe\CSXS.11` に文字列値 `PlayerDebugMode` = `1` を足す（CSXS の番号は Premiere の版に合わせる）。
 3. 月灯スタジオを起動（`python -m uvicorn studio.backend.app:app --port 8765`）。
-4. Premiere の「ウィンドウ → エクステンション → 月灯スタジオ」。
+4. Premiere（または After Effects）の「ウィンドウ → エクステンション → 月灯スタジオ」。
 
 注意：CEP は Adobe が UXP へ移行中の仕組み。今の Premiere で動くことを最初に確認し、使えなくなったら同じ命令（build / read / replace / marker）を UXP のプラグインに移す。ExtendScript の部分（`host/tsuki.jsx`）は**まだ実機で試していない**。初回は小さいシーケンスで確かめる。
 

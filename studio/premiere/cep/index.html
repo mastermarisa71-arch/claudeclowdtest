@@ -29,10 +29,14 @@
   <script>
     // CEP の evalScript（CSInterface.js なしで使える低レベルの口）
     const evalScript = (code) => new Promise((ok) => window.__adobe_cep__.evalScript(code, ok));
+    // Premiere か After Effects か。それぞれ自分宛ての命令だけ取り出す
+    const APP = (() => { try { return JSON.parse(window.__adobe_cep__.getHostEnvironment()).appName; } catch (e) { return "PPRO"; } })();
+    const HOST = APP === "AEFT" ? "aftereffects" : "premiere";
     const $ = (id) => document.getElementById(id);
     const server = () => $("server").value.replace(/\/$/, "");
     const log = (s) => { $("log").insertAdjacentHTML("afterbegin", `<div>${new Date().toLocaleTimeString()} ${s}</div>`); };
-    const load = () => { $("studio").src = `${server()}/#/ep/${$("ep").value}/edit`; };
+    const load = () => { $("studio").src = `${server()}/#/ep/${$("ep").value}/${HOST === "aftereffects" ? "shots" : "edit"}`; };
+    document.title = `月灯スタジオ（${HOST === "aftereffects" ? "After Effects" : "Premiere"}）`;
     $("server").onchange = $("ep").onchange = load;
     load();
 
@@ -40,7 +44,7 @@
     async function poll() {
       if (!$("auto").checked) return;
       try {
-        const cmds = await (await fetch(`${server()}/api/premiere/commands`)).json();
+        const cmds = await (await fetch(`${server()}/api/premiere/commands?host=${HOST}`)).json();
         for (const c of cmds) {
           log(`AI：${c.command}`);
           const raw = await evalScript(`tsukiRun(${JSON.stringify(JSON.stringify({ command: c.command, args: c.args }))})`);
@@ -53,6 +57,13 @@
       } catch (e) { /* サーバーが止まっているときは静かに待つ */ }
     }
     setInterval(poll, 3000);
+    // つながったことと、アプリの版をツールに知らせる（動作確認用）
+    evalScript("tsukiHello()").then((raw) => {
+      let r; try { r = JSON.parse(raw); } catch (e) { r = { error: raw }; }
+      log(r.error ? `ExtendScript が読み込めません：${r.error}` : `${r.app} ${r.version} とつながりました`);
+      fetch(`${server()}/api/adobe/hello`, { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ host: HOST, ...r }) }).catch(() => log("月灯スタジオのサーバーに届きません。起動しているか確認してください"));
+    });
 
     async function sendState(state, note) {
       state.note = note;

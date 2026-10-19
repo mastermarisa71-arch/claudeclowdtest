@@ -15,9 +15,14 @@ description: 月灯りスピークイージーの制作を進める手順。脚�
 1080p 本番は、監督が「良い／採用」をつけたドラフトにだけ回す（`promote` / `promote-all` が止める）。
 予算は1話5万円（テストの回は `episode-set --test` で超えてよい）。ショット分けの直後に `budget-plan` で見積もる。予算（`usage`）を超えそう、または作り直しの上限で止まったら、迷っている点を書いて監督に回す。
 
-## 1. 読む
+## 1. 依頼を取って、読む
+
+監督の依頼は月灯スタジオの「依頼」に積まれている。ほかの Claude と二重に進めないよう、必ず取ってから始め、終わったら結果を書く。
+MCP（`tsukiakari-studio`）が使えるときは同じ名前の道具（`next_request` / `brief` / `finish_request` …）を、使えないときは CLI を使う。
 
 ```
+python studio/cli.py requests
+python studio/cli.py request-claim --agent claude-local      # いちばん古い依頼を取る（--id で指定も）
 python studio/cli.py brief EP09
 python studio/cli.py reviews --episode EP09 --status open,working
 ```
@@ -132,7 +137,15 @@ python studio/cli.py pr-marker EP09 --at 12.5 --comment "ここの溜めはど�
 
 使った額と待ち時間は `stats EP09` で確かめ、予算の残りが2割を切ったら監督に伝える。
 
-## 7. 書き出す（予備）
+After Effects の下ごしらえ（文字合成・寄り引き・書き出し）は `ae-comp`。パネルの接続は `adobe-status` で確かめる。
+
+## 7. 依頼を終える
+
+```
+python studio/cli.py request-done 3 "SH01〜SH05 のドラフト #31〜#35。SH03 は芝居で迷っているので監督の判断待ち"
+```
+
+## 8. 書き出す（予備）
 
 
 ```

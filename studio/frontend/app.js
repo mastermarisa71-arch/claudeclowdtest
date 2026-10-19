@@ -463,6 +463,32 @@ async function viewStats(code) {
     <p class="small muted">生成の待ちは「送ってから出来上がるまで」、レビューまでは「出来上がってから監督が最初に見るまで」。テストの回の数字で、段取りと予算の目安を直していく。</p>`;
 }
 
+// ---------- 依頼：監督 → エージェント（この PC でも、クラウドの Claude でも） ----------
+async function viewRequests() {
+  const [list, eps] = await Promise.all([api("/api/requests"), api("/api/episodes")]);
+  $view.innerHTML = `<h1>依頼 <span class="muted small">話して積んでおけば、どの Claude が取っても同じ形で進めます（二重には進めない）</span></h1>
+    <div class="card"><div class="row"><select id="rqEp" style="width:auto"><option value="">話数なし</option>${eps.map((e) => `<option>${h(e.code)}</option>`).join("")}</select></div>
+      <textarea id="rqText" placeholder="例：EP09 の S1 の設計を、あかねが最初から落ち着かない方向で直して"></textarea>
+      <div class="row" style="margin-top:6px"><button class="primary" id="rqAdd">依頼する</button></div></div>
+    ${list.map((r) => `<div class="review ${r.status === "done" ? "resolved" : r.status === "claimed" ? "proposed" : "open"}">
+      <div class="row"><b>#${r.id}</b><span class="badge">${h(r.status)}${r.claimed_by ? "：" + h(r.claimed_by) : ""}</span><span class="small muted">${h(r.episode)} ${h(r.ts)}</span>
+        <span style="flex:1"></span>
+        ${r.status === "open" ? `<button data-hand="${r.id}" data-mode="local">この PC の Claude へ</button><button data-hand="${r.id}" data-mode="remote">クラウドの Claude へ</button><button data-cancel="${r.id}">取り消す</button>` : ""}</div>
+      <div>${h(r.text)}</div>${r.result ? `<div class="agent small">結果：${h(r.result)}</div>` : ""}</div>`).join("") || `<p class="muted">依頼はまだありません。</p>`}
+    <div id="handBox" class="card" style="display:none;margin-top:10px"><div class="row"><b>依頼文</b><span class="muted small">コピーして、渡したい Claude に貼る</span><span style="flex:1"></span><button id="copy">コピー</button></div><pre class="brief" id="handText"></pre></div>`;
+  document.getElementById("rqAdd").onclick = async () => {
+    const text = document.getElementById("rqText").value.trim();
+    if (!text) return;
+    await api("/api/requests", { method: "POST", body: { text, episode: document.getElementById("rqEp").value } }); route();
+  };
+  document.querySelectorAll("[data-cancel]").forEach((b) => (b.onclick = () => api(`/api/requests/${b.dataset.cancel}`, { method: "PATCH", body: { status: "cancelled" } }).then(route)));
+  document.querySelectorAll("[data-hand]").forEach((b) => (b.onclick = async () => {
+    document.getElementById("handText").textContent = await api(`/api/handoff?request_id=${b.dataset.hand}&mode=${b.dataset.mode}`);
+    document.getElementById("handBox").style.display = "block";
+  }));
+  document.getElementById("copy").onclick = () => navigator.clipboard.writeText(document.getElementById("handText").textContent);
+}
+
 // ---------- ルーター ----------
 async function route() {
   delete liveHandlers.edit;
@@ -479,6 +505,7 @@ async function route() {
     else if (parts[0] === "cut") await viewCut(parts[1], params);
     else if (parts[0] === "compare") await viewCompare(params);
     else if (parts[0] === "reviews") await viewReviews(params);
+    else if (parts[0] === "requests") await viewRequests();
     else if (parts[0] === "rules") await viewRules();
     else if (parts[0] === "brief") await viewBrief(params);
     else await viewHome();

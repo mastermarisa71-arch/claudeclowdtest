@@ -181,6 +181,14 @@ CREATE TABLE IF NOT EXISTS premiere_states (
   id INTEGER PRIMARY KEY, ts TEXT, episode TEXT, actor TEXT, state_json TEXT, diff_json TEXT
 );
 
+-- 監督からの依頼。画面や音声で積み、どの Claude（自分の PC・クラウド・Desktop）が取っても同じ形で進める。
+-- 取ったエージェントの名前を残し、同じ依頼を二重に進めないようにする。
+CREATE TABLE IF NOT EXISTS requests (
+  id INTEGER PRIMARY KEY, ts TEXT, episode TEXT DEFAULT '', text TEXT NOT NULL,
+  status TEXT DEFAULT 'open',          -- open/claimed/done/cancelled
+  claimed_by TEXT DEFAULT '', claimed_at TEXT, result TEXT DEFAULT '', done_at TEXT
+);
+
 -- 使用量。生成1回ごとに、サービス・単位・クレジットを記録して、話数ごとの予算と比べる。
 CREATE TABLE IF NOT EXISTS usage (
   id INTEGER PRIMARY KEY,
@@ -200,7 +208,8 @@ CREATE TABLE IF NOT EXISTS events (
 MIGRATIONS = {
     "episodes": {"budget_credits": "REAL DEFAULT 0", "deadline": "TEXT DEFAULT ''",
                  "is_test": "INTEGER DEFAULT 0"},   # テストの回：予算を超えても止めずに警告だけ
-    "reviews": {"checks_json": "TEXT DEFAULT ''"},   # AI セルフレビューの観点ごとの合否
+    "reviews": {"checks_json": "TEXT DEFAULT ''"},
+    "premiere_queue": {"host": "TEXT DEFAULT 'premiere'"},   # premiere / aftereffects   # AI セルフレビューの観点ごとの合否
     # draft（480p）→ upscale（ドラフトをそのまま拡大）→ final（拡大版を入力に 1080p で生成）
     "takes": {"tier": "TEXT DEFAULT ''", "source_take_id": "INTEGER", "shot_id": "INTEGER", "board_id": "INTEGER",
               "submitted_at": "TEXT", "finished_at": "TEXT",
