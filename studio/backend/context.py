@@ -60,13 +60,17 @@ def build(conn, episode_code: str | None = None) -> str:
         out += [f"## 話数の状態：{ep['code']}", f"- 目標尺 {ep['target_seconds']}秒 / 締切 {ep.get('deadline') or '未設定'}"
                 f" / 使用 {sc['spent']:,.0f}円 / 予算 {budget:,.0f}円（残り {budget - sc['spent']:,.0f}円）"
                 + ("（テストの回：超えても止めない）" if ep.get("is_test") else "")]
-        out += ["", "### 設計（シーン）"]
+        out += ["", "### シーン整理と設計（字コンテのカットの意図は、ここから引く）"]
         for s_ in sc["scenes"]:
             out.append(f"- {s_['code']} [{s_['status']}] {s_['place']} {s_['time']} ルック{s_['look']} "
                        f"目標{s_['target_seconds']}秒/今{s_['actual_seconds']}秒：{s_['purpose']}"
+                       + (f"\n  変化：{s_['change_before']} → {s_['change_after']}（きっかけ：{s_['turn'] or '―'}）"
+                          if s_["change_before"] or s_["change_after"] else "\n  変化：（未整理）")
+                       + "".join(f"\n  {c.get('name')}：したい＝{c.get('want', '')}／する＝{c.get('does', '')}"
+                                 f"／内心＝{c.get('inner', '')}／温度{c.get('tension', '')}" for c in s_["characters"])
                        + (f"\n  動線：{s_['blocking']}" if s_["blocking"] else ""))
         if not sc["scenes"]:
-            out.append("- （まだ設計がない。字コンテより先に scene-set で作り、監督の承認をもらう）")
+            out.append("- （まだシーン整理がない。脚本を読んだら字コンテより先に scene-set / scene-sheet で作り、監督の承認をもらう）")
         cast = sorted({c for r in conn.execute("SELECT picture, dialogue, layout, acting FROM cuts WHERE episode_id=?",
                                                 (ep["id"],)) for c in bible.characters_in(" ".join(map(str, r)))})
         out += ["", "### この話に出るキャラ（生成とセルフレビューの前に読む）"]

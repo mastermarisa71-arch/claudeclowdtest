@@ -14,6 +14,8 @@
   episode-set EP09 --target 180 --budget 600 --deadline 2026-10-22 --stage 設計
   scene-set EP09 S1 --place 店内 --look B --target 35 --purpose "…" --blocking "…" --cameras A,C
   scenes EP09
+  scene-set EP09 S1 --before "…" --after "…" --turn "…" --char "あかね|したいこと|すること|内心|4" --beat "6|あかね|…|…"
+  scene-sheet EP09 [--file sheet.json] [--md]    シーン整理（脚本と字コンテの間）を取り込む／vault に書き出す
   self-review 31 --checks '{"意図":true,"芝居":"まひるがシェイカーを振っている"}' --comment "…"
   awaiting EP09                      AI が通して、監督がまだ見ていないテイク
   usage EP09
@@ -97,9 +99,16 @@ def main(argv=None):
     p.add_argument("--target", type=float); p.add_argument("--budget", type=float)
     p.add_argument("--deadline"); p.add_argument("--stage")
     p = sub.add_parser("scene-set"); p.add_argument("episode"); p.add_argument("scene")
-    for f in ("place", "time", "look", "purpose", "emotion", "blocking", "cameras", "props", "status"):
+    for f in ("place", "time", "look", "purpose", "emotion", "blocking", "cameras", "props", "status",
+              "before", "after", "turn", "from", "to"):
         p.add_argument(f"--{f}")
     p.add_argument("--target", type=float)
+    p.add_argument("--char", action="append", default=[],
+                   help="名前|したいこと|すること|内心|温度1-5（キャラごとに繰り返す）")
+    p.add_argument("--beat", action="append", default=[], help="秒|誰|すること|なぜ（区切りごとに繰り返す）")
+    p = sub.add_parser("scene-sheet"); p.add_argument("episode")
+    p.add_argument("--file", help="シーン整理の JSON（[{scene, purpose, change_before, …, characters, beats}]）を取り込む")
+    p.add_argument("--md", action="store_true", help="vault の 02_各話/EPxx/EPxx_シーン整理.md に書き出す")
     p = sub.add_parser("scenes"); p.add_argument("episode")
     p = sub.add_parser("self-review"); p.add_argument("take", type=int); p.add_argument("--checks", required=True)
     p.add_argument("--comment", default="")
@@ -223,8 +232,30 @@ def main(argv=None):
             print(json.dumps(db.episode_by_code(conn, a.episode), ensure_ascii=False))
         elif a.cmd == "scene-set":
             fields = {f: getattr(a, f) for f in ("place", "time", "look", "purpose", "emotion", "blocking",
-                                                 "cameras", "props", "status")}
+                                                 "cameras", "props", "status", "turn")}
+            fields.update(change_before=a.before, change_after=a.after, script_from=getattr(a, "from"), script_to=a.to)
+            if a.char:
+                keys = ("name", "want", "does", "inner", "tension")
+                fields["characters"] = [dict(zip(keys, x.split("|"))) for x in a.char]
+            if a.beat:
+                fields["beats"] = [dict(zip(("seconds", "who", "does", "why"), x.split("|"))) for x in a.beat]
             print(core.set_scene(conn, a.episode, a.scene, target_seconds=a.target, **fields))
+        elif a.cmd == "scene-sheet":
+            if a.file:
+                for i, x in enumerate(json.loads(Path(a.file).read_text(encoding="utf-8")), 1):
+                    x = dict(x)
+                    code = x.pop("scene")
+                    if "target" in x:
+                        x["target_seconds"] = x.pop("target")
+                    core.set_scene(conn, a.episode, code, **x)
+                print(f"{i} シーンを取り込みました")
+            if a.md:
+                out = config.VAULT_DIR / "02_各話" / a.episode / f"{a.episode}_シーン整理.md"
+                out.parent.mkdir(parents=True, exist_ok=True)
+                out.write_text(core.scene_sheet_md(conn, a.episode) + "\n", encoding="utf-8")
+                print(out)
+            if not a.file and not a.md:
+                print(core.scene_sheet_md(conn, a.episode))
         elif a.cmd == "scenes":
             sc = core.scenes(conn, a.episode)
             total = sum(s["target_seconds"] or 0 for s in sc["scenes"])

@@ -316,12 +316,18 @@ def awaiting_human(conn, code: str) -> list[dict]:
 # ---- 設計（シーン） ----
 
 SCENE_FIELDS = ("place", "time", "look", "target_seconds", "purpose", "emotion", "blocking", "cameras",
-                "props", "status", "seq")
+                "props", "status", "seq",
+                # シーン整理：変化（前→後）とそのきっかけ、キャラごとの欲求・芝居・内心、小さな区切り、脚本の範囲
+                "change_before", "change_after", "turn", "characters", "beats", "script_from", "script_to")
 
 
 def set_scene(conn, episode: str, code: str, **fields) -> int:
     ep = db.get_or_create_episode(conn, episode)
     data = {k: v for k, v in fields.items() if k in SCENE_FIELDS and v is not None}
+    for k in ("characters", "beats"):   # [{name, want, does, inner, tension}] / [{seconds, who, does, why}]
+        if k in data:
+            v = data.pop(k)
+            data[f"{k}_json"] = v if isinstance(v, str) else json.dumps(v, ensure_ascii=False)
     row = db.one(conn.execute("SELECT id FROM scenes WHERE episode_id=? AND code=?", (ep["id"], code)))
     if row:
         db.update(conn, "scenes", row["id"], data)
@@ -341,7 +347,55 @@ def scenes(conn, code: str) -> dict:
         "SELECT scene, ROUND(SUM(seconds),1) s, COUNT(*) n FROM cuts WHERE episode_id=? GROUP BY scene", (ep["id"],)))}
     for r in rows:
         r["actual_seconds"] = actual.get(r["code"], 0)
+        for k in ("characters", "beats"):
+            try:
+                r[k] = json.loads(r.pop(f"{k}_json") or "[]")
+            except ValueError:
+                r[k] = []
     return {"episode": ep, "scenes": rows, "spent": spent(conn, ep["id"])}
+
+
+def scene_script(conn, code: str, scene: str) -> dict:
+    """シーンの脚本の範囲（script_from の行から script_to の行まで）。どちらも脚本の一節で指す（行番号は変わるので）。"""
+    ep = db.episode_by_code(conn, code)
+    sc = db.one(conn.execute("SELECT * FROM scenes WHERE episode_id=? AND code=?", (ep["id"], scene)))
+    path = config.VAULT_DIR / "03_脚本" / "いまの版" / f"{code}_脚本_いまの版.md"
+    if not sc or not path.exists() or not sc.get("script_from"):
+        return {"found": False, "lines": []}
+    lines = [l.rstrip() for l in path.read_text(encoding="utf-8").splitlines()]
+    plain = [l.replace("**", "") for l in lines]
+    a = next((i for i, l in enumerate(plain) if sc["script_from"] in l), None)
+    if a is None:
+        return {"found": False, "lines": []}
+    b = next((i for i in range(a, len(plain)) if sc.get("script_to") and sc["script_to"] in plain[i]), a + 30)
+    heading = next((plain[i].lstrip("# ") for i in range(a, -1, -1) if plain[i].startswith("###")), "")
+    return {"found": True, "heading": heading, "lines": [l for l in plain[a:b + 1] if l.strip() and l.strip() != "× × ×"]}
+
+
+def scene_sheet_md(conn, code: str) -> str:
+    """シーン整理を vault に置く形（02_各話/EPxx/EPxx_シーン整理.md）。監督が Obsidian でも読めるように。"""
+    sc = scenes(conn, code)
+    out = ["---", f'title: "{code} シーン整理"', f"date: {db.now()[:10]}", f"tags: [シーン整理, {code}]", "---",
+           f"# {code} シーン整理", "",
+           "脚本と字コンテの間の段。シーンごとに「何が変わるか」「誰が何をしたくて、何をするか」を先に決め、"
+           "字コンテのカットごとの意図はここから引く。月灯スタジオの「シーン整理」で監督が確認する。", ""]
+    for s_ in sc["scenes"]:
+        out += [f"## {s_['code']}　{s_['place']}・{s_['time']}　{s_['target_seconds']:g}秒　[{s_['status']}]", "",
+                f"- **見せたいもの**：{s_['purpose']}",
+                f"- **変化**：{s_['change_before'] or '―'} → {s_['change_after'] or '―'}",
+                f"- **きっかけ**：{s_['turn'] or '―'}"]
+        if s_["characters"]:
+            out += ["", "| キャラ | したいこと | すること（見える芝居） | 内心 | 温度 |", "| --- | --- | --- | --- | --- |"]
+            out += [f"| {c.get('name','')} | {c.get('want','')} | {c.get('does','')} | {c.get('inner','')} | "
+                    f"{'●' * int(c.get('tension') or 0)}{'○' * (5 - int(c.get('tension') or 0))} |" for c in s_["characters"]]
+        if s_["beats"]:
+            out += ["", "区切り："]
+            out += [f"{i}. （{b.get('seconds', '')}秒）{b.get('who', '')}：{b.get('does', '')}"
+                    + (f" ― {b['why']}" if b.get("why") else "") for i, b in enumerate(s_["beats"], 1)]
+        if s_["blocking"]:
+            out += ["", f"立ち位置と動線：{s_['blocking']}"]
+        out.append("")
+    return "\n".join(out)
 
 
 def update_cut(conn, cut_id: int, actor: str = "human", **fields) -> None:

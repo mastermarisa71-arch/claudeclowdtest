@@ -215,6 +215,10 @@ MIGRATIONS = {
     "takes": {"tier": "TEXT DEFAULT ''", "source_take_id": "INTEGER", "shot_id": "INTEGER", "board_id": "INTEGER",
               "submitted_at": "TEXT", "finished_at": "TEXT",
               "role": "TEXT DEFAULT ''"},   # 音声：voice（仮の声）/ actor（声優）/ sfx / music
+    # シーン整理（脚本と字コンテの間）：このシーンで何が変わるか、キャラが何をしたくて何をするか、小さな区切り
+    "scenes": {"change_before": "TEXT DEFAULT ''", "change_after": "TEXT DEFAULT ''", "turn": "TEXT DEFAULT ''",
+               "characters_json": "TEXT DEFAULT ''", "beats_json": "TEXT DEFAULT ''",
+               "script_from": "TEXT DEFAULT ''", "script_to": "TEXT DEFAULT ''"},
 }
 
 

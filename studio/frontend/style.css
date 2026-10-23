@@ -132,3 +132,27 @@ select.more { width: auto; }
 .q .qitem input { flex: 1; min-width: 160px; }
 .q button.on { background: var(--amber-dim); border-color: var(--amber); }
 .qmic.on { background: var(--red); color: #000; }
+
+/* シーン整理 */
+.sheetbar { display:flex; height:28px; border-radius:6px; overflow:hidden; margin:6px 0; }
+.sheetbar a { color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center; cursor:pointer; opacity:.65; text-decoration:none; }
+.sheetbar a.ok { opacity:1; box-shadow: inset 0 -4px 0 var(--green); }
+.scene { margin-bottom:14px; }
+.scene .pick { cursor:pointer; border-radius:6px; padding:4px 6px; margin:4px 0; border:1px solid transparent; }
+.scene .pick:hover { border-color:#5a5060; }
+.scene .pick.picked { border-color:var(--amber); background:rgba(230,170,60,.12); }
+.scene .change { display:flex; align-items:center; gap:10px; font-size:15px; }
+.scene .change .before, .scene .change .after { flex:1; padding:8px; border-radius:6px; background:rgba(255,255,255,.04); }
+.scene .change .after { background:rgba(120,170,255,.10); }
+.scene .change .arrow { font-size:22px; color:var(--amber); }
+.scene .chars { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:6px; }
+.scene .char { background:rgba(255,255,255,.03); }
+.scene .lbl { display:inline-block; min-width:2.6em; color:var(--amber); font-size:11px; }
+.dots { margin-left:8px; } .dots i { display:inline-block; width:8px; height:8px; border-radius:50%; background:#444; margin-right:2px; }
+.dots i.on { background:var(--amber); }
+.scene .beats { display:flex; gap:3px; margin:6px 0; }
+.scene .beat { background:rgba(255,255,255,.05); font-size:12px; min-width:60px; }
+.scene .beat .sec { color:var(--amber); margin-right:4px; } .scene .beat .why { color:#9a90a0; font-size:11px; margin-top:2px; }
+.scene .reply { margin-top:8px; border-top:1px solid #3a3340; padding-top:8px; }
+.scene .script { white-space:normal; line-height:1.7; max-height:300px; overflow:auto; padding:6px; }
+@media (max-width: 640px) { .scene .change { flex-direction:column; } .scene .beats { flex-direction:column; } }

@@ -221,6 +221,7 @@ def build_brief(conn, shot_id: int, tier: str = "draft") -> dict:
         dict_rows = bible.acting_dictionary()
     except (OSError, IndexError):
         pass
+    intent_done = set()
     for n, (a, b, g) in enumerate(_segments(cs), 1):
         c0 = g[0]
         who = [x for x in cast if any(x in f"{c.get('picture')}{c.get('acting')}{c.get('layout')}" for c in g)]
@@ -244,6 +245,12 @@ def build_brief(conn, shot_id: int, tier: str = "draft") -> dict:
             if c.get("sound"):
                 lines.append(f"  SFX: {c['sound']}")
         for x in who:
+            # シーン整理の「内心・したいこと」。英語の見える芝居（視線・手・間）に訳してから消す（点検で日本語が残ると止まる）
+            ch = next((c for c in (json.loads(scene.get("characters_json") or "[]") if scene else []) if c.get("name") == x), None)
+            if ch and x not in intent_done:
+                intent_done.add(x)
+                lines.append(f"  [translate to visible acting, then delete] {en(x)}: want={ch.get('want', '')} / "
+                             f"inner={ch.get('inner', '')} / tension {ch.get('tension', '')}/5")
             row = dict_rows.get(x)
             if row:
                 lines.append(f"  {en(x)} habits: {row['歩き方・立ち方']} / {row['物の持ち方']}")
@@ -295,6 +302,8 @@ def lint(prompt: str, n_refs: int) -> list[str]:
             t = b
         if t > config.SHOT_MAX_SECONDS:
             issues.append(f"合計 {t}秒。1本は {config.SHOT_MAX_SECONDS}秒まで")
+    if "[translate to visible acting" in prompt:
+        issues.append("シーン整理の意図（[translate to visible acting…]）が残っている。見える芝居に訳して消す")
     if "No subtitles" not in prompt:
         issues.append("「No subtitles.」がない")
     if re.search(r"Dialogue \((?![^)]*Japanese)", prompt):

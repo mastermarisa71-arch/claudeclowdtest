@@ -231,6 +231,15 @@ class SceneIn(BaseModel):
     target_seconds: float | None = None
     blocking: str | None = None
     purpose: str | None = None
+    change_before: str | None = None
+    change_after: str | None = None
+    turn: str | None = None
+
+
+@app.get("/api/episodes/{code}/scenes/{scode}/script")
+def scene_script(code: str, scode: str):
+    with db.session() as conn:
+        return core.scene_script(conn, code, scode)
 
 
 @app.patch("/api/episodes/{code}/scenes/{scode}")

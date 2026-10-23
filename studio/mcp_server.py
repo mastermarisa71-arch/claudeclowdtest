@@ -101,10 +101,19 @@ def finish_request(request_id: int, result: str, status: str = "done") -> str:
 
 @mcp.tool()
 def set_scene(episode: str, scene: str, place: str = "", time: str = "", look: str = "", target_seconds: float = 0,
-              purpose: str = "", emotion: str = "", blocking: str = "", cameras: str = "", props: str = "") -> int:
-    """シーンの設計（狙い・目標尺・感情の流れ・立ち位置と動線・カメラ位置・小物）。字コンテより先に作る。"""
+              purpose: str = "", emotion: str = "", blocking: str = "", cameras: str = "", props: str = "",
+              change_before: str = "", change_after: str = "", turn: str = "",
+              characters: list[dict] | None = None, beats: list[dict] | None = None,
+              script_from: str = "", script_to: str = "") -> int:
+    """シーン整理と設計。脚本を読んだら、字コンテより先にシーンごとに作り、監督の「シーン整理」で承認をもらう。
+    change_before→change_after：このシーンで何が変わるか（状況・関係・気持ち）。turn：変わるきっかけ。
+    characters：[{name, want（したいこと）, does（見える芝居）, inner（内心）, tension（1〜5）}]。
+    beats：[{seconds, who, does, why}] シーンの中の小さな区切り。script_from/script_to：脚本の範囲を一節で指す。
+    ほかに狙い・目標尺・感情の流れ・立ち位置と動線・カメラ位置・小物。"""
     fields = {k: v for k, v in dict(place=place, time=time, look=look, purpose=purpose, emotion=emotion,
-                                     blocking=blocking, cameras=cameras, props=props).items() if v}
+                                     blocking=blocking, cameras=cameras, props=props, change_before=change_before,
+                                     change_after=change_after, turn=turn, characters=characters, beats=beats,
+                                     script_from=script_from, script_to=script_to).items() if v}
     with _s() as conn:
         return core.set_scene(conn, episode, scene, target_seconds=target_seconds or None, **fields)
 
