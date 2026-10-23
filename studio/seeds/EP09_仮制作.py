@@ -5,6 +5,7 @@ r"""9話を「制作中」として月灯スタジオに載せる（動作確認
 
   python studio/seeds/EP09_仮制作.py            # 空の DB に 9話を載せる（すでにあれば止まる）
   python studio/seeds/EP09_仮制作.py --reset    # 9話を消してから載せ直す
+  python studio/seeds/EP09_仮制作.py --sheet    # 載せてある9話に、シーン整理だけ足す（レビューは消さない）
   python studio/seeds/EP09_仮制作.py --reset --refs "C:\Users\kaka\Desktop\e002素材\参照"
                                                   # 参照画像のフォルダがあれば、参照素材の棚にも入れる
 
@@ -223,12 +224,17 @@ RESULT = ("G1 設計（3分版、12シーン・目標180秒）を「確認待ち
           "正本と4分版の食い違い3点を設計ノートの「確認したいこと」に。")
 
 
-def main(reset: bool, refs: str | None) -> None:
+def main(reset: bool, refs: str | None, sheet_only: bool = False) -> None:
     db.init()
     with db.session() as conn:
         ep = db.episode_by_code(conn, EP)
+        if ep and sheet_only:
+            for code, f in SHEET.items():
+                core.set_scene(conn, EP, code, **f)
+            print(f"{EP} にシーン整理（{len(SHEET)}シーン）を足しました。レビューやテイクはそのまま")
+            return
         if ep and not reset:
-            print(f"{EP} はもうあります。載せ直すなら --reset")
+            print(f"{EP} はもうあります。シーン整理だけ足すなら --sheet、全部載せ直すなら --reset")
             return
         if ep:
             for t in ("cuts", "takes", "reviews", "scenes", "shots", "boards", "documents", "usage", "comparisons"):
@@ -290,5 +296,6 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--reset", action="store_true")
     ap.add_argument("--refs", help="参照画像のフォルダ（キャラの設定資料・背景・配置図）")
+    ap.add_argument("--sheet", action="store_true", help="載せてある9話に、シーン整理だけ足す")
     a = ap.parse_args()
-    main(a.reset, a.refs)
+    main(a.reset, a.refs, a.sheet)
