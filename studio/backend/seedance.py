@@ -13,7 +13,7 @@ Seedance はプロンプトに忠実に動くので、動きは秒単位で細�
 import json
 import re
 
-from . import config, db
+from . import config, db, direction
 from .importers import bible
 from . import shots as shotlib
 
@@ -263,6 +263,8 @@ def build_brief(conn, shot_id: int, tier: str = "draft") -> dict:
               "Stella is an all-black cat including paws and tail tip."]
     if scene and scene.get("blocking"):
         lines.append(f"Blocking at scene start: {scene['blocking']}")
+    for t in direction.blocking_text(json.loads((scene or {}).get("blocking_json") or "{}")):
+        lines.append(f"[translate to visible acting, then delete] Blocking (floor plan) {t}")
     if scene and scene.get("props"):
         lines.append(f"Props state: {scene['props']}")
     lines += ["", "AUDIO", "Dialogue lip-sync only. No background music. No subtitles.", "",

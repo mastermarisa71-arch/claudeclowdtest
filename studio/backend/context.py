@@ -9,7 +9,7 @@
 """
 import json
 
-from . import config, core, db
+from . import config, core, db, direction
 from .importers import bible
 
 CANON_FILES = [
@@ -68,9 +68,14 @@ def build(conn, episode_code: str | None = None) -> str:
                           if s_["change_before"] or s_["change_after"] else "\n  変化：（未整理）")
                        + "".join(f"\n  {c.get('name')}：したい＝{c.get('want', '')}／する＝{c.get('does', '')}"
                                  f"／内心＝{c.get('inner', '')}／温度{c.get('tension', '')}" for c in s_["characters"])
-                       + (f"\n  動線：{s_['blocking']}" if s_["blocking"] else ""))
+                       + (f"\n  動線：{s_['blocking']}" if s_["blocking"] else "")
+                       + "".join(f"\n  配置図 {t}" for t in s_["blocking_text"]))
         if not sc["scenes"]:
             out.append("- （まだシーン整理がない。脚本を読んだら字コンテより先に scene-set / scene-sheet で作り、監督の承認をもらう）")
+        open_c = direction.list_choices(conn, ep["code"], "open")
+        out += ["", f"### 監督に聞いている2択（{len(open_c)}件、答えを待つ間はほかを進める）"]
+        out += [f"- #{c['id']} {c['scene']} {c['about']}：{c['question']}　"
+                + " ／ ".join(f"{o['label']} {o['text']}" for o in c["options"]) for c in open_c] or ["- （なし）"]
         cast = sorted({c for r in conn.execute("SELECT picture, dialogue, layout, acting FROM cuts WHERE episode_id=?",
                                                 (ep["id"],)) for c in bible.characters_in(" ".join(map(str, r)))})
         out += ["", "### この話に出るキャラ（生成とセルフレビューの前に読む）"]

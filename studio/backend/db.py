@@ -116,6 +116,24 @@ CREATE TABLE IF NOT EXISTS learnings (
   created_at TEXT, decided_at TEXT
 );
 
+-- AI からの2択：迷ったところを A／B で聞き、選んだものを好み（learnings）として残す
+CREATE TABLE IF NOT EXISTS choices (
+  id INTEGER PRIMARY KEY,
+  episode_id INTEGER REFERENCES episodes(id),
+  scene TEXT DEFAULT '',               -- S1（なければ話数全体）
+  about TEXT DEFAULT '',               -- キャラ名（キャラの決まりにするときの行き先）または「演出」
+  question TEXT NOT NULL,
+  why TEXT DEFAULT '',                 -- なぜ迷っているか（脚本・設定のどこが割れているか）
+  options_json TEXT DEFAULT '[]',      -- [{"label": "A", "text": "…"}]
+  answer TEXT DEFAULT '',              -- A/B/…/other
+  note TEXT DEFAULT '',                -- 監督の一言（other のときは監督の案）
+  keep INTEGER DEFAULT 0,              -- 1＝キャラの決まりにする（ノートの「## 追記」に書く）
+  learning_id INTEGER,
+  status TEXT DEFAULT 'open',          -- open/answered
+  created_by TEXT DEFAULT 'agent',
+  created_at TEXT, answered_at TEXT
+);
+
 -- 各話の設計：シーンごとの狙い・尺の配分・動線と立ち位置。字コンテより先にここで合意する。
 CREATE TABLE IF NOT EXISTS scenes (
   id INTEGER PRIMARY KEY,
@@ -218,7 +236,8 @@ MIGRATIONS = {
     # シーン整理（脚本と字コンテの間）：このシーンで何が変わるか、キャラが何をしたくて何をするか、小さな区切り
     "scenes": {"change_before": "TEXT DEFAULT ''", "change_after": "TEXT DEFAULT ''", "turn": "TEXT DEFAULT ''",
                "characters_json": "TEXT DEFAULT ''", "beats_json": "TEXT DEFAULT ''",
-               "script_from": "TEXT DEFAULT ''", "script_to": "TEXT DEFAULT ''"},
+               "script_from": "TEXT DEFAULT ''", "script_to": "TEXT DEFAULT ''",
+               "blocking_json": "TEXT DEFAULT ''"},   # 配置図：区切りごとの立ち位置（direction.py）
 }
 
 

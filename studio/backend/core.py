@@ -4,7 +4,7 @@ import shutil
 import urllib.request
 from pathlib import Path
 
-from . import config, db
+from . import config, db, direction
 from .exporters import fcpxml
 from .providers.base import GenerationRequest
 from .providers.services import REGISTRY
@@ -321,7 +321,7 @@ SCENE_FIELDS = ("place", "time", "look", "target_seconds", "purpose", "emotion",
                 "change_before", "change_after", "turn", "characters", "beats", "script_from", "script_to")
 
 
-def set_scene(conn, episode: str, code: str, **fields) -> int:
+def set_scene(conn, episode: str, code: str, actor: str = "agent", **fields) -> int:
     ep = db.get_or_create_episode(conn, episode)
     data = {k: v for k, v in fields.items() if k in SCENE_FIELDS and v is not None}
     for k in ("characters", "beats"):   # [{name, want, does, inner, tension}] / [{seconds, who, does, why}]
@@ -336,7 +336,7 @@ def set_scene(conn, episode: str, code: str, **fields) -> int:
         data.setdefault("seq", conn.execute("SELECT COUNT(*)+1 FROM scenes WHERE episode_id=?",
                                             (ep["id"],)).fetchone()[0])
         sid = db.insert(conn, "scenes", {"episode_id": ep["id"], "code": code, **data})
-    db.log(conn, "agent", "set_scene", {"episode": episode, "scene": code, "fields": list(data)})
+    db.log(conn, actor, "set_scene", {"episode": episode, "scene": code, "fields": list(data)})
     return sid
 
 
@@ -352,6 +352,8 @@ def scenes(conn, code: str) -> dict:
                 r[k] = json.loads(r.pop(f"{k}_json") or "[]")
             except ValueError:
                 r[k] = []
+        r["blocking_plan"] = json.loads(r.pop("blocking_json", "") or "{}")
+        r["blocking_text"] = direction.blocking_text(r["blocking_plan"])
     return {"episode": ep, "scenes": rows, "spent": spent(conn, ep["id"])}
 
 
@@ -390,10 +392,13 @@ def scene_sheet_md(conn, code: str) -> str:
                     f"{'●' * int(c.get('tension') or 0)}{'○' * (5 - int(c.get('tension') or 0))} |" for c in s_["characters"]]
         if s_["beats"]:
             out += ["", "区切り："]
-            out += [f"{i}. （{b.get('seconds', '')}秒）{b.get('who', '')}：{b.get('does', '')}"
+            out += [f"{i}. （{b.get('seconds', '')}秒{'・高さ' + str(b['level']) if b.get('level') else ''}）"
+                    f"{'★' + b['peak'] + '　' if b.get('peak') else ''}{b.get('who', '')}：{b.get('does', '')}"
                     + (f" ― {b['why']}" if b.get("why") else "") for i, b in enumerate(s_["beats"], 1)]
         if s_["blocking"]:
             out += ["", f"立ち位置と動線：{s_['blocking']}"]
+        if s_["blocking_text"]:
+            out += ["", "配置図："] + [f"- {t}" for t in s_["blocking_text"]]
         out.append("")
     return "\n".join(out)
 

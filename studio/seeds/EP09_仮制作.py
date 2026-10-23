@@ -5,7 +5,7 @@ r"""9話を「制作中」として月灯スタジオに載せる（動作確認
 
   python studio/seeds/EP09_仮制作.py            # 空の DB に 9話を載せる（すでにあれば止まる）
   python studio/seeds/EP09_仮制作.py --reset    # 9話を消してから載せ直す
-  python studio/seeds/EP09_仮制作.py --sheet    # 載せてある9話に、シーン整理だけ足す（レビューは消さない）
+  python studio/seeds/EP09_仮制作.py --sheet    # 載せてある9話に、シーン整理・配置図・2択だけ足す（レビューは消さない）
   python studio/seeds/EP09_仮制作.py --reset --refs "C:\Users\kaka\Desktop\e002素材\参照"
                                                   # 参照画像のフォルダがあれば、参照素材の棚にも入れる
 
@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from studio.backend import core, db, seedance, storyboard  # noqa: E402
+from studio.backend import core, db, direction, seedance, storyboard  # noqa: E402
 from studio.backend.importers import jikonte  # noqa: E402
 
 EP = "EP09"
@@ -175,6 +175,54 @@ SHEET = {
                        B(9, "あかね・暁", "ベランダで本音→「少し休もう」", "10話の「閉めよう」の芽")]),
 }
 
+# ---- 展開のカーブ：区切りごとの高さ（1〜5）と山場 ----
+LEVELS = {"S1": [1, 2, 3, 3], "S2": [3, 4, 5, 4], "S3": [3, 2, 2, 4], "S4": [2, 3], "S5": [3, 3], "S6": [3, 3, 3],
+          "S7": [4, 5, 5], "S8": [2, 3, 4, 3], "S9": [2, 1], "S10": [1, 2, 2], "S11": [2, 3, 4, 4, 3]}
+PEAKS = {("S2", 2): "今日、ここに来る", ("S7", 2): "見つかる寸前", ("S8", 2): "ノートを読む先輩", ("S11", 2): "せいじゃない"}
+for _sc, _lv in LEVELS.items():
+    for _k, _b in enumerate(SHEET[_sc]["beats"]):
+        _b["level"] = _lv[_k]
+        if (_sc, _k) in PEAKS:
+            _b["peak"] = PEAKS[(_sc, _k)]
+
+# ---- 配置図：区切りごとの立ち位置（座標は 月灯_vault/06_設定/舞台/配置図.json の見取り図、0〜1） ----
+F = lambda beat, **pos: {"beat": beat, "pos": {k: list(v) for k, v in pos.items()}}
+BLOCKING = {
+    "S1": [F(0, 朔奈=(0.40, 0.14), まひる=(0.60, 0.14), 海凪=(0.12, 0.60), あかね=(0.50, 0.46)),
+           F(1, あかね=(0.12, 0.40)),
+           F(3, あかね=(0.07, 0.44), 朔奈=(0.42, 0.17))],
+    "S2": [F(0, あかね=(0.07, 0.44), 朔奈=(0.45, 0.40), まひる=(0.56, 0.42), 海凪=(0.34, 0.45)),
+           F(1, 暁=(0.06, 0.43), あかね=(0.13, 0.53)),
+           F(3, 朔奈=(0.36, 0.46))],
+    "S3": [F(0, 朔奈=(0.60, 0.14), あかね=(0.40, 0.62), まひる=(0.62, 0.74), 海凪=(0.12, 0.60), 暁=(0.07, 0.38)),
+           F(2, まひる=(0.20, 0.46), あかね=(0.08, 0.31), ステラ=(0.15, 0.40)),
+           F(3, まひる=(0.18, 0.44))],
+    "S4": [F(0, おばあ=(0.79, 0.34), 先輩=(0.45, 0.62), 後輩=(0.30, 0.70))],
+    "S6": [F(0, おばあ=(0.79, 0.34), 先輩=(0.45, 0.62), 後輩=(0.30, 0.70)),
+           F(2, おばあ=(0.88, 0.22), 先輩=(0.70, 0.40))],
+    "S7": [F(0, あかね=(0.30, 0.55), 朔奈=(0.42, 0.57), まひる=(0.54, 0.55), ステラ=(0.56, 0.60), 海凪=(0.66, 0.55), 暁=(0.78, 0.52))],
+    "S8": [F(0, 先輩=(0.92, 0.13), 後輩=(0.90, 0.17)),
+           F(1, 先輩=(0.14, 0.58), 後輩=(0.55, 0.40)),
+           F(2, 先輩=(0.08, 0.31)),
+           F(3, 先輩=(0.90, 0.14), 後輩=(0.90, 0.17))],
+}
+
+# ---- AI からの2択（迷っているところ。監督が選ぶと好みとして残る） ----
+CHOICES = [
+    dict(scene="S1", about="演出", question="あかねが打ち明ける位置",
+         why="脚本は「あかね、扉へ近づく」、正本の門番の位置は席6の左の床。S3・S8 のお客様ノート（入口の横の棚）につなげるなら入口の横",
+         options=["入口の横（ノートの棚の前）。物音のあと、そのまま扉へ向き直れる", "門番の位置（席6の左の床）。いつもの立ち位置で、3人がカウンター越しに見る"]),
+    dict(scene="S1", about="あかね", question="打ち明けるときのしぐさ",
+         why="辞書の『不安』は裾を握る・唇を噛む、『決意』は両手を握って一歩前に出る。どちらで言わせるか",
+         options=["裾を握ったまま床を見て、一気に言う（不安のまま）", "裾から手を離し、両手を胸の前で握って一歩前に出てから言う（決意に切り替わる）"]),
+    dict(scene="S8", about="先輩", question="ノートを読むときの顔",
+         why="正本は「いい店だと確信。誰にも言わない」。後輩に気づかせないので、大きく変えられない",
+         options=["表情は変えず、ページをめくる指だけが止まる", "一瞬だけ口元がゆるみ、咳払いで戻す（辞書の『ごまかし』）"]),
+    dict(scene="S11", about="暁", question="ベランダでの、あかねとの距離",
+         why="本音を受け止める場面。夜の暁は肩の力が抜けている",
+         options=["並んで手すりにもたれ、同じ方向（町）を見たまま聞く", "少し後ろに立ち、あかねの背中に「少し休もう」と言う"]),
+]
+
 # ---- ショット分け（Seedance 2.5：1本30秒まで。字コンテと仮Vコンを並べて、つながりで分けた） ----
 SHOTS = [
     ("SH01", ["S1-01", "S1-02", "S1-03"], "営業前の繰り返し（同じグラス）を引き→寄りで1本"),
@@ -224,6 +272,17 @@ RESULT = ("G1 設計（3分版、12シーン・目標180秒）を「確認待ち
           "正本と4分版の食い違い3点を設計ノートの「確認したいこと」に。")
 
 
+def add_direction(conn) -> None:
+    """配置図の案と、AI からの2択を載せる（2択は、同じ質問がまだなければ）。"""
+    for code, frames in BLOCKING.items():
+        # S8 は控室から入るが、芝居は店内。見取り図は店内を使う
+        direction.set_blocking(conn, EP, code, frames, plan="月灯り店内" if code == "S8" else "", by="agent")
+    have = {(c["scene"], c["question"]) for c in direction.list_choices(conn, EP)}
+    for c in CHOICES:
+        if (c["scene"], c["question"]) not in have:
+            direction.ask(conn, EP, c["question"], c["options"], c["scene"], c["about"], c["why"])
+
+
 def main(reset: bool, refs: str | None, sheet_only: bool = False) -> None:
     db.init()
     with db.session() as conn:
@@ -231,13 +290,14 @@ def main(reset: bool, refs: str | None, sheet_only: bool = False) -> None:
         if ep and sheet_only:
             for code, f in SHEET.items():
                 core.set_scene(conn, EP, code, **f)
-            print(f"{EP} にシーン整理（{len(SHEET)}シーン）を足しました。レビューやテイクはそのまま")
+            add_direction(conn)
+            print(f"{EP} にシーン整理（{len(SHEET)}シーン）・展開のカーブ・配置図・2択を足しました。レビューやテイクはそのまま")
             return
         if ep and not reset:
             print(f"{EP} はもうあります。シーン整理だけ足すなら --sheet、全部載せ直すなら --reset")
             return
         if ep:
-            for t in ("cuts", "takes", "reviews", "scenes", "shots", "boards", "documents", "usage", "comparisons"):
+            for t in ("cuts", "takes", "reviews", "scenes", "shots", "boards", "documents", "usage", "comparisons", "choices"):
                 conn.execute(f"DELETE FROM {t} WHERE episode_id=?", (ep["id"],))
             conn.execute("DELETE FROM requests WHERE episode=?", (EP,))
             conn.execute("DELETE FROM episodes WHERE id=?", (ep["id"],))
@@ -267,6 +327,8 @@ def main(reset: bool, refs: str | None, sheet_only: bool = False) -> None:
         for i, (code, f) in enumerate(SCENES, 1):
             target = f.pop("target")
             core.set_scene(conn, EP, code, seq=i, target_seconds=target, status="review", **f, **SHEET.get(code, {}))
+
+        add_direction(conn)
 
         # 仮Vコンのシート分けとショット分け
         storyboard.plan_boards(conn, EP)

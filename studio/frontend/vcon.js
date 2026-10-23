@@ -198,6 +198,7 @@ async function viewVcon(code, params) {
 // ---------- AIからの質問：項目ごとに「それでいい／ちがう」で答える ----------
 async function viewQuestions(code) {
   const list = (await api(`/api/reviews?episode=${code}&status=proposed,open,working&by=agent`)).filter((r) => r.agent_response || r.comment);
+  const choices = await api(`/api/choices?episode=${code}&status=open`);
   const items = (text) => {
     const parts = String(text || "").split(/(?=[①②③④⑤⑥⑦⑧⑨⑩])/).map((s) => s.trim()).filter(Boolean);
     const head = parts.length > 1 && !/^[①-⑩]/.test(parts[0]) ? parts.shift() : "";
@@ -205,6 +206,7 @@ async function viewQuestions(code) {
   };
   const sceneLinks = (t) => h(t).replace(/\b(S\d{1,2})\b/g, `<a href="#/ep/${code}?scene=$1">$1</a>`);
   $view.innerHTML = `${epTabs(code, "questions")}<h1>AIからの質問 <span class="muted small">項目ごとに答えて、最後に「返事を送る」。シーン名を押すと、そこから Vコンが開きます</span></h1>
+    ${choices.length ? `<div class="card">${choices.map(choiceHTML).join("")}</div>` : ""}
     ${list.map((r) => { const it = items(r.agent_response || r.comment); return `<div class="card q" data-q="${r.id}">
       <div class="row"><b>${h(r.comment)}</b><span class="muted small">#${r.id}</span></div>
       ${it.head ? `<p class="small muted">${sceneLinks(it.head)}</p>` : ""}
@@ -213,7 +215,8 @@ async function viewQuestions(code) {
         <div class="row"><button data-ans="ok">それでいい</button><button data-ans="ng">ちがう</button>
           <input type="text" placeholder="どうしたいか（任意）"><button class="qmic" title="話して入力">🎤</button></div></div>`).join("")}
       <div class="row" style="margin-top:8px"><button class="primary" data-send="${r.id}">返事を送る</button><span class="small muted" data-done="${r.id}"></span></div>
-    </div>`; }).join("") || `<p class="muted">いま AI からの質問はありません。</p>`}`;
+    </div>`; }).join("") || (choices.length ? "" : `<p class="muted">いま AI からの質問はありません。</p>`)}`;
+  bindChoices(document);
   document.querySelectorAll(".qitem [data-ans]").forEach((b) => (b.onclick = () => {
     b.parentElement.querySelectorAll("[data-ans]").forEach((x) => x.classList.toggle("on", x === b));
     b.closest(".qitem").dataset.ans = b.dataset.ans;

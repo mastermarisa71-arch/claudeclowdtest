@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import config, context, core, db
+from . import config, context, core, db, direction
 
 db.init()
 app = FastAPI(title="月灯スタジオ")
@@ -234,6 +234,72 @@ class SceneIn(BaseModel):
     change_before: str | None = None
     change_after: str | None = None
     turn: str | None = None
+    beats: list[dict] | None = None        # 展開カーブで監督が高さ（level）や山場（peak）を動かしたとき
+
+
+class BlockingIn(BaseModel):
+    frames: list[dict]
+    plan: str = ""
+    by: str = "human"
+    note: str = ""
+
+
+class ChoiceIn(BaseModel):
+    episode: str
+    question: str
+    options: list[str]
+    scene: str = ""
+    about: str = ""
+    why: str = ""
+    created_by: str = "agent"
+
+
+class AnswerIn(BaseModel):
+    pick: str
+    note: str = ""
+    keep: bool = False
+
+
+@app.get("/api/plans")
+def plans_list():
+    return direction.plans()
+
+
+@app.get("/api/episodes/{code}/scenes/{scode}/blocking")
+def blocking_get(code: str, scode: str):
+    with db.session() as conn:
+        return direction.get_blocking(conn, code, scode)
+
+
+@app.put("/api/episodes/{code}/scenes/{scode}/blocking")
+def blocking_put(code: str, scode: str, b: BlockingIn):
+    """配置図。監督が動かしたら、何が変わったかをレビューとしても積む（エージェントが次に読む）。"""
+    with db.session() as conn:
+        r = direction.set_blocking(conn, code, scode, b.frames, b.plan, b.by, b.note)
+        if b.by == "human" and (r["diff"] or b.note):
+            ep = db.episode_by_code(conn, code)
+            core.add_review(conn, target_type="episode", target_id=ep["id"], verdict="修正", tags=["配置"],
+                            comment=f"[配置図 {scode}] 監督が動かした：{' ／ '.join(r['diff']) or '―'}"
+                                    + (f"　ひとこと：{b.note}" if b.note else ""))
+        return r
+
+
+@app.get("/api/choices")
+def choices_list(episode: str | None = None, status: str = "open,answered"):
+    with db.session() as conn:
+        return direction.list_choices(conn, episode, status)
+
+
+@app.post("/api/choices")
+def choices_add(c: ChoiceIn):
+    with db.session() as conn:
+        return {"id": direction.ask(conn, c.episode, c.question, c.options, c.scene, c.about, c.why, c.created_by)}
+
+
+@app.post("/api/choices/{cid}/answer")
+def choices_answer(cid: int, a: AnswerIn):
+    with db.session() as conn:
+        return direction.answer(conn, cid, a.pick, a.note, a.keep)
 
 
 @app.get("/api/episodes/{code}/scenes/{scode}/script")
@@ -245,7 +311,7 @@ def scene_script(code: str, scode: str):
 @app.patch("/api/episodes/{code}/scenes/{scode}")
 def patch_scene(code: str, scode: str, s_: SceneIn):
     with db.session() as conn:
-        core.set_scene(conn, code, scode, **s_.model_dump(exclude_none=True))
+        core.set_scene(conn, code, scode, actor="human", **s_.model_dump(exclude_none=True))
     return {"ok": True}
 
 

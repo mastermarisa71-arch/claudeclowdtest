@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from mcp.server.fastmcp import FastMCP, Image  # noqa: E402
 
-from studio.backend import context, core, db, premiere, seedance, shots, storyboard  # noqa: E402
+from studio.backend import context, core, db, direction, premiere, seedance, shots, storyboard  # noqa: E402
 
 mcp = FastMCP("tsukiakari-studio", instructions=(
     "『月灯りスピークイージー』の制作ツール。作るのはエージェント、見るのは監督。"
@@ -108,7 +108,7 @@ def set_scene(episode: str, scene: str, place: str = "", time: str = "", look: s
     """シーン整理と設計。脚本を読んだら、字コンテより先にシーンごとに作り、監督の「シーン整理」で承認をもらう。
     change_before→change_after：このシーンで何が変わるか（状況・関係・気持ち）。turn：変わるきっかけ。
     characters：[{name, want（したいこと）, does（見える芝居）, inner（内心）, tension（1〜5）}]。
-    beats：[{seconds, who, does, why}] シーンの中の小さな区切り。script_from/script_to：脚本の範囲を一節で指す。
+    beats：[{seconds, who, does, why, level（展開の高さ1〜5）, peak（山場なら名前）}] シーンの中の小さな区切り。script_from/script_to：脚本の範囲を一節で指す。
     ほかに狙い・目標尺・感情の流れ・立ち位置と動線・カメラ位置・小物。"""
     fields = {k: v for k, v in dict(place=place, time=time, look=look, purpose=purpose, emotion=emotion,
                                      blocking=blocking, cameras=cameras, props=props, change_before=change_before,
@@ -116,6 +116,36 @@ def set_scene(episode: str, scene: str, place: str = "", time: str = "", look: s
                                      script_from=script_from, script_to=script_to).items() if v}
     with _s() as conn:
         return core.set_scene(conn, episode, scene, target_seconds=target_seconds or None, **fields)
+
+
+@mcp.tool()
+def get_blocking(episode: str, scene: str) -> dict:
+    """配置図：シーンの見取り図（名前のついた位置 spots と座標）と、区切りごとの立ち位置。text は言葉にしたもの。"""
+    with _s() as conn:
+        return direction.get_blocking(conn, episode, scene)
+
+
+@mcp.tool()
+def set_blocking(episode: str, scene: str, frames: list[dict], note: str = "") -> dict:
+    """配置図の案を置く。frames=[{"beat": 0, "pos": {"あかね": [0.30, 0.34], …}}, …]（区切りごと、座標 0〜1）。
+    監督は画面でコマを動かして直す。監督が動かした結果は「[配置図 S1] …」のレビューで届く。"""
+    with _s() as conn:
+        return direction.set_blocking(conn, episode, scene, frames, by="agent", note=note)
+
+
+@mcp.tool()
+def ask_director(episode: str, question: str, options: list[str], scene: str = "", about: str = "", why: str = "") -> int:
+    """迷ったら、決めつけずに2択（3つまで）で監督に聞く。芝居・しぐさ・間・動線など。about はキャラ名。
+    監督が選んだものは承認済みの好みとしてブリーフに載り、「キャラの決まり」にされたものはキャラのノートに書かれる。"""
+    with _s() as conn:
+        return direction.ask(conn, episode, question, options, scene, about, why)
+
+
+@mcp.tool()
+def list_choices(episode: str = "", status: str = "open,answered") -> list[dict]:
+    """2択の一覧と監督の答え（answer, note, keep）。"""
+    with _s() as conn:
+        return direction.list_choices(conn, episode or None, status)
 
 
 @mcp.tool()

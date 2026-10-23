@@ -15,6 +15,9 @@
   scene-set EP09 S1 --place 店内 --look B --target 35 --purpose "…" --blocking "…" --cameras A,C
   scenes EP09
   scene-set EP09 S1 --before "…" --after "…" --turn "…" --char "あかね|したいこと|すること|内心|4" --beat "6|あかね|…|…"
+  blocking EP09 S1 [--file frames.json]          配置図（区切りごとの立ち位置）を見る／案を置く
+  ask EP09 "あかねの打ち明け方" --opt "目を合わせない" --opt "正面から" --scene S1 --about あかね   監督に2択で聞く
+  choices [EP09] [--status open]                 2択の一覧と答え
   scene-sheet EP09 [--file sheet.json] [--md]    シーン整理（脚本と字コンテの間）を取り込む／vault に書き出す
   self-review 31 --checks '{"意図":true,"芝居":"まひるがシェイカーを振っている"}' --comment "…"
   awaiting EP09                      AI が通して、監督がまだ見ていないテイク
@@ -106,6 +109,14 @@ def main(argv=None):
     p.add_argument("--char", action="append", default=[],
                    help="名前|したいこと|すること|内心|温度1-5（キャラごとに繰り返す）")
     p.add_argument("--beat", action="append", default=[], help="秒|誰|すること|なぜ（区切りごとに繰り返す）")
+    p = sub.add_parser("blocking"); p.add_argument("episode"); p.add_argument("scene")
+    p.add_argument("--file", help='区切りごとの位置の JSON：[{"beat":0,"pos":{"あかね":[0.3,0.34]}}]（座標 0〜1、配置図.json の見取り図）')
+    p.add_argument("--note", default="")
+    p = sub.add_parser("ask"); p.add_argument("episode"); p.add_argument("question")
+    p.add_argument("--opt", action="append", required=True, help="選択肢（2つ以上、繰り返す）")
+    p.add_argument("--scene", default=""); p.add_argument("--about", default="", help="キャラ名（決まりにするときの行き先）")
+    p.add_argument("--why", default="")
+    p = sub.add_parser("choices"); p.add_argument("episode", nargs="?"); p.add_argument("--status", default="open,answered")
     p = sub.add_parser("scene-sheet"); p.add_argument("episode")
     p.add_argument("--file", help="シーン整理の JSON（[{scene, purpose, change_before, …, characters, beats}]）を取り込む")
     p.add_argument("--md", action="store_true", help="vault の 02_各話/EPxx/EPxx_シーン整理.md に書き出す")
@@ -240,6 +251,25 @@ def main(argv=None):
             if a.beat:
                 fields["beats"] = [dict(zip(("seconds", "who", "does", "why"), x.split("|"))) for x in a.beat]
             print(core.set_scene(conn, a.episode, a.scene, target_seconds=a.target, **fields))
+        elif a.cmd == "blocking":
+            from studio.backend import direction
+            if a.file:
+                r = direction.set_blocking(conn, a.episode, a.scene, json.loads(Path(a.file).read_text(encoding="utf-8")),
+                                           by="agent", note=a.note)
+                print("\n".join(r["after"]))
+            else:
+                b = direction.get_blocking(conn, a.episode, a.scene)
+                print(f"見取り図：{b['plan'] or '（場所に合う図がない）'}　位置：{', '.join(b['plan_data'].get('spots', {}))}")
+                print("\n".join(b["text"]) or "（まだ配置がない）")
+        elif a.cmd == "ask":
+            from studio.backend import direction
+            print(direction.ask(conn, a.episode, a.question, a.opt, a.scene, a.about, a.why))
+        elif a.cmd == "choices":
+            from studio.backend import direction
+            for c in direction.list_choices(conn, a.episode, a.status):
+                ans = f" → {c['answer']} {c['note']}{'（決まり）' if c['keep'] else ''}" if c["status"] == "answered" else ""
+                print(f"#{c['id']} [{c['status']}] {c['episode']} {c['scene']} {c['about']}：{c['question']}　"
+                      + " ／ ".join(f"{o['label']} {o['text']}" for o in c["options"]) + ans)
         elif a.cmd == "scene-sheet":
             if a.file:
                 for i, x in enumerate(json.loads(Path(a.file).read_text(encoding="utf-8")), 1):
