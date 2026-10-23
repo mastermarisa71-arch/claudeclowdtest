@@ -38,7 +38,16 @@
     const load = () => { $("studio").src = `${server()}/#/ep/${$("ep").value}/${HOST === "aftereffects" ? "shots" : "edit"}`; };
     document.title = `月灯スタジオ（${HOST === "aftereffects" ? "After Effects" : "Premiere"}）`;
     $("server").onchange = $("ep").onchange = load;
-    load();
+    // start.bat は 8765 が使われていると別の番号で起動する。つながらなければ 8765〜8799 から月灯スタジオを探す
+    const isStudio = async (url) => { try { return "verdicts" in await (await fetch(`${url}/api/meta`)).json(); } catch (e) { return false; } };
+    (async () => {
+      if (!(await isStudio(server()))) {
+        for (let p = 8765; p < 8800; p++) {
+          if (await isStudio(`http://localhost:${p}`)) { $("server").value = `http://localhost:${p}`; log(`月灯スタジオを ${p} 番で見つけました`); break; }
+        }
+      }
+      load();
+    })();
 
     // エージェントの操作を取り出して Premiere で実行する
     async function poll() {

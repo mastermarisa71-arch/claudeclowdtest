@@ -192,7 +192,7 @@ def main(reset: bool, refs: str | None) -> None:
         core.respond_review(conn, rv, QUESTIONS, status="proposed")
 
         core.finish_request(conn, rid, RESULT)
-    print("9話を載せました。画面：http://localhost:8765/#/ep/EP09/design")
+    print("9話を載せました。画面：月灯スタジオの「話数 → EP09」（start.bat の黒いウィンドウに出る URL）")
 
 
 if __name__ == "__main__":
