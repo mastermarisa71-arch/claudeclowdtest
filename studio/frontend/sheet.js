@@ -1,4 +1,5 @@
-// ---------- シーン整理：脚本と字コンテの間。シーンごとに「何が変わるか」「誰が何をしたくて、何をするか」 ----------
+// ---------- シーン整理：脚本と字コンテの間で「あらすじを立てる」。この話の芯 → 物語の流れ → シーンごとのブロック ----------
+// シーンのブロック：① 映像で伝えたいこと ② 変化 ③ あらすじ ④ キャラ。AI（演出）が下書きし、監督がその場で直す（直した欄は正）。
 // 基本は AI が案を出し、監督が選ぶ／自分の案を出す。
 // - 展開のカーブ：区切りごとの高さと山場。点を上下にドラッグで直す、ダブルクリックで山場の名前
 // - 配置図：区切りごとのキャラの位置。コマをドラッグで直す、▶ で区切りを順に動かして見る
@@ -8,66 +9,134 @@ const CHAR_COLOR = { "あかね": "#e07a7a", "朔奈": "#b49ae0", "まひる": "
 const ccolor = (n) => CHAR_COLOR[n] || "#aaa";
 const sceneHue = (i) => `hsl(${(i * 47) % 360} 30% 40%)`;
 
+// 監督がその場で直す欄。AI の下書きか、監督が直したか（正）を出す
+function edBlock(field, label, value, human, opts = {}) {
+  return `<div class="ed ${opts.cls || ""}" data-field="${field}">
+    <div class="edl"><b>${label}</b>${opts.hint ? `<span class="small muted">　${opts.hint}</span>` : ""}
+      <span class="who ${human ? "human" : ""}">${human ? "監督が直した" : "AI の下書き"}</span><button class="edbtn" title="直す">✎</button></div>
+    <div class="edv">${value ? h(value).replace(/\n/g, "<br>") : `<span class="muted">（まだ）</span>`}</div></div>`;
+}
+// 欄を押すと、その場で直せる（保存すると「監督が直した」になり、AI は書き換えない）
+function bindEditors(root, save) {
+  root.querySelectorAll(".ed[data-field]").forEach((el) => {
+    const open = () => {
+      if (el.querySelector("textarea")) return;
+      const v = el.querySelector(".edv");
+      const old = v.innerText.trim() === "（まだ）" ? "" : v.innerText.trim();
+      v.innerHTML = `<textarea rows="${Math.max(2, Math.ceil(old.length / 40))}">${h(old)}</textarea>
+        <div class="row"><button class="primary edsave">保存</button><button class="edcancel">やめる</button><span class="small muted">保存すると AI に伝わり、この欄は監督の版が正になります</span></div>`;
+      addMics();
+      const ta = v.querySelector("textarea"); ta.focus();
+      v.querySelector(".edcancel").onclick = (e) => { e.stopPropagation(); v.innerHTML = old ? h(old).replace(/\n/g, "<br>") : `<span class="muted">（まだ）</span>`; };
+      v.querySelector(".edsave").onclick = async (e) => {
+        e.stopPropagation();
+        const val = ta.value.trim();
+        if (val !== old) { await save(el.dataset.field, val, el); el.querySelector(".who").className = "who human"; el.querySelector(".who").textContent = "監督が直した"; }
+        v.innerHTML = val ? h(val).replace(/\n/g, "<br>") : `<span class="muted">（まだ）</span>`;
+      };
+    };
+    el.querySelector(".edbtn").onclick = open;
+    el.querySelector(".edv").onclick = open;
+  });
+}
+
 async function viewSheet(code) {
   const [{ episode: ep, scenes }, choices] = await Promise.all([api(`/api/episodes/${code}/scenes`), api(`/api/choices?episode=${code}`)]);
   const total = scenes.reduce((s, x) => s + (x.target_seconds || 0), 0) || 1;
   const dots = (n) => `<span class="dots">${[1, 2, 3, 4, 5].map((i) => `<i class="${i <= (+n || 0) ? "on" : ""}"></i>`).join("")}</span>`;
   const done = scenes.filter((x) => x.status === "approved").length;
-  const openC = choices.filter((c) => c.status === "open");
-  $view.innerHTML = `${epTabs(code, "sheet")}<h1>シーン整理 <span class="muted small">脚本 → <b>シーン整理</b> → 字コンテ。AI の案を見て、選ぶか、ちがうところを押して一言（🎤）</span></h1>
-    <div class="card curvecard"><div class="row"><b>展開のカーブ</b><span class="small muted">太い線＝展開の高さ（点を上下にドラッグ）　★＝山場（点をダブルクリックで名前）　細い線＝キャラの温度</span>
-      <span style="flex:1"></span><span class="charchips"></span></div><div class="curve"></div></div>
-    <p class="small muted">${done} / ${scenes.length} シーン承認済み　横＝目標尺（合計 ${total}秒 / 話数の目標 ${ep.target_seconds}秒）
-      ${openC.length ? `　<a data-jump-q>AI からの2択が ${openC.length} 件あります</a>` : ""}</p>
+  const epHuman = JSON.parse(ep.human_fields || "[]");
+  const live = scenes.filter((x) => x.target_seconds > 0 || x.synopsis || x.change_after);
+  $view.innerHTML = `${epTabs(code, "sheet")}<h1>シーン整理 <span class="muted small">脚本 → <b>シーン整理（あらすじを立てる）</b> → 字コンテ・Vコン。AI（演出）が下書きし、監督がその場で直します</span></h1>
+    <div class="card story">
+      ${edBlock("theme", "この話の芯", ep.theme, epHuman.includes("theme"), { hint: "映像で伝えたいこと（1〜2文）", cls: "theme" })}
+      ${edBlock("story_flow", "物語の流れ", ep.story_flow, epHuman.includes("story_flow"), { hint: "シーンをまたいで、どう転がっていくか" })}
+      <div class="chain">${live.map((x, i) => `<a class="blk ${x.status === "approved" ? "ok" : ""}" data-jump="${h(x.code)}" style="border-color:${sceneHue(i)};flex:${Math.max(4, x.target_seconds || 4)}">
+        <span class="bc" style="background:${sceneHue(i)}">${h(x.code)}</span><span class="bt">${h(x.change_after || x.purpose || "")}</span></a>`).join("")}</div>
+      <div class="row"><span class="small muted">${done} / ${scenes.length} シーン承認済み　ブロックの幅＝目標尺（合計 ${total}秒 / 目標 ${ep.target_seconds}秒）。押すとそのシーンへ</span><span style="flex:1"></span>
+        <button id="askDraft" title="演出の役の AI に、脚本から下書きを頼む（監督が直した欄は書き換えない）">AI（演出）に下書きを頼む</button><span class="small muted" id="draftMsg"></span></div>
+    </div>
+    <details class="card curvecard"><summary><b>展開のカーブ（山場）</b><span class="small muted">　点を上下にドラッグで高さ、ダブルクリックで山場（★）の名前</span></summary>
+      <div class="row"><span style="flex:1"></span><span class="charchips"></span></div><div class="curve"></div></details>
     ${scenes.map((x, i) => `<div class="card scene" id="sc-${h(x.code)}" data-sc="${h(x.code)}" style="border-left:6px solid ${sceneHue(i)}">
       <div class="row"><h2 style="margin:0">${h(x.code)}</h2>
         <span class="muted">${h(x.place)}・${h(x.time)}　${x.target_seconds}秒</span>
         <span class="badge ${x.status === "approved" ? "sel" : "proposed"}">${x.status === "approved" ? "承認済み" : "確認待ち"}</span>
         <span style="flex:1"></span><a class="small" href="#/ep/${code}/vcon?scene=${h(x.code)}">Vコンで見る</a></div>
+      <div class="sgrid">
+        ${edBlock("purpose", "① 映像で伝えたいこと", x.purpose, x.human_fields.includes("purpose"))}
+        <div class="ed change2" data-field2="change">
+          <div class="edl"><b>② 変化</b><span class="small muted">　このシーンの前 → 後（誰の気持ち・状況がどう変わったか）</span></div>
+          <div class="chg">${edBlock("change_before", "前", x.change_before, x.human_fields.includes("change_before"), { cls: "mini" })}
+            <div class="arrow">➜</div>${edBlock("change_after", "後", x.change_after, x.human_fields.includes("change_after"), { cls: "mini" })}</div>
+          ${edBlock("turn", "きっかけ", x.turn, x.human_fields.includes("turn"), { cls: "mini" })}
+          ${x.characters.some((c) => c.change) ? `<div class="cchg">${x.characters.filter((c) => c.change).map((c) =>
+            `<span class="cc" style="border-color:${ccolor(c.name)}"><b style="color:${ccolor(c.name)}">${h(c.name)}</b> ${h(c.change)}</span>`).join("")}</div>` : ""}
+        </div>
+        ${edBlock("synopsis", "③ あらすじ", x.synopsis, x.human_fields.includes("synopsis"), { hint: "誰がどうして、どうなったか", cls: "wide" })}
+        <div class="ed wide chared">
+          <div class="edl"><b>④ キャラ</b><span class="small muted">　このシーンでの したい／する／内心／変化</span>
+            <span class="who ${x.human_fields.includes("characters") ? "human" : ""}">${x.human_fields.includes("characters") ? "監督が直した" : "AI の下書き"}</span><button class="charbtn" title="直す">✎</button></div>
+          <table class="ctable"><tr><th></th><th>したい</th><th>する（見える芝居）</th><th>内心</th><th>変化</th><th>温度</th></tr>
+            ${x.characters.map((c) => `<tr><th style="color:${ccolor(c.name)}">${h(c.name)}</th><td>${h(c.want)}</td><td>${h(c.does)}</td><td class="muted">${h(c.inner)}</td>
+              <td>${h(c.change || "")}</td><td>${dots(c.tension)}</td></tr>`).join("")}</table>
+        </div>
+      </div>
       ${choices.filter((c) => c.scene === x.code && c.status === "open").map(choiceHTML).join("")}
-      <div class="pick change" data-what="変化">
-        <div class="before">${h(x.change_before) || "<span class='muted'>（前）未整理</span>"}</div>
-        <div class="arrow">➜</div>
-        <div class="after">${h(x.change_after) || "<span class='muted'>（後）未整理</span>"}</div>
+      <details class="detail"><summary>演出の細部（区切り・配置図・脚本）</summary>
+        ${x.beats.length ? `<div class="beats">${x.beats.map((b, k) => `<div class="beat ${b.peak ? "peak" : ""}"
+          style="flex:${+b.seconds || 1}" title="${h(b.why)}"><span class="sec">${k + 1}｜${h(b.seconds)}s</span>${b.peak ? `<span class="star">★${h(b.peak)}</span>` : ""}<b>${h(b.who)}</b> ${h(b.does)}
+          ${b.why ? `<div class="why">${h(b.why)}</div>` : ""}</div>`).join("")}</div>` : ""}
+        <details class="plan" data-plan="${h(x.code)}"><summary class="small"><b>配置図</b>　${x.blocking_text.length ? "区切りごとの立ち位置。コマをドラッグして直せます" : "まだ配置がありません"}</summary>
+          <div class="planbox"></div></details>
+        ${x.blocking ? `<div class="small muted"><b>立ち位置と動線</b>　${h(x.blocking)}</div>` : ""}
+        <details data-script="${h(x.code)}"><summary class="small">脚本を見る</summary><div class="script small muted">読み込み中…</div></details>
+      </details>
+      <div class="reply row">
+        <button class="primary" data-ok>このシーンでいく</button>
+        <input type="text" class="rtext" placeholder="AI へのひとこと（任意）　例：あかねはもっと隠そうとしてほしい">
+        <button class="qmic">🎤</button><button data-ng>直してほしい</button>
+        <button data-idea title="AI に2択の案を出してもらう">案を出して</button>
+        <button data-staff title="芝居・演出・見る の AI がレビューし合い、案を作る">AI 会議にかける</button><span class="small muted" data-msg></span>
       </div>
-      ${x.turn ? `<div class="pick small" data-what="きっかけ"><b>きっかけ</b>　${h(x.turn)}</div>` : ""}
-      <div class="pick small" data-what="見せたいもの"><b>見せたいもの</b>　${h(x.purpose)}</div>
-      ${x.characters.length ? `<div class="chars">${x.characters.map((c) => `<div class="pick char" data-what="${h(c.name)}" style="border-top:3px solid ${ccolor(c.name)}">
-        <div class="row"><b>${h(c.name)}</b>${dots(c.tension)}</div>
-        <div class="small"><span class="lbl">したい</span>${h(c.want)}</div>
-        <div class="small"><span class="lbl">する</span>${h(c.does)}</div>
-        <div class="small muted"><span class="lbl">内心</span>${h(c.inner)}</div></div>`).join("")}</div>` : ""}
-      ${x.beats.length ? `<div class="beats">${x.beats.map((b, k) => `<div class="pick beat ${b.peak ? "peak" : ""}" data-what="区切り${k + 1}"
-        style="flex:${+b.seconds || 1}" title="${h(b.why)}"><span class="sec">${k + 1}｜${h(b.seconds)}s</span>${b.peak ? `<span class="star">★${h(b.peak)}</span>` : ""}<b>${h(b.who)}</b> ${h(b.does)}
-        ${b.why ? `<div class="why">${h(b.why)}</div>` : ""}</div>`).join("")}</div>` : ""}
-      <details class="plan" data-plan="${h(x.code)}" ${x.blocking_text.length ? "open" : ""}><summary class="small"><b>配置図</b>　${x.blocking_text.length ? "AI の案があります。コマをドラッグして直せます" : "まだ配置がありません"}</summary>
-        <div class="planbox"></div></details>
-      ${x.blocking ? `<div class="pick small muted" data-what="動線"><b>立ち位置と動線</b>　${h(x.blocking)}</div>` : ""}
-      <details data-script="${h(x.code)}"><summary class="small">脚本を見る</summary><div class="script small muted">読み込み中…</div></details>
-      <div class="reply">
-        <div class="small muted" data-picked>直したいところを押すと、ここに入ります</div>
-        <textarea placeholder="例：あかねはもっと隠そうとしてほしい。打ち明けるのは最後の一言だけ"></textarea>
-        <div class="row"><button class="primary" data-ok>このシーンでいく</button><button data-ng>直してほしい</button>
-          <button data-idea title="押したところについて、AI に2択の案を出してもらう">案を出して</button>
-          <button data-staff title="芝居・演出・見る の AI がレビューし合い、まとめて返す">AI スタッフで検討して</button><span class="small muted" data-msg></span></div>
-      </div>
-    </div>`).join("") || `<p class="muted">まだシーン整理がありません。エージェントが脚本を読んで作ります（<code>scene-sheet</code>）。</p>`}`;
+    </div>`).join("") || `<p class="muted">まだシーン整理がありません。「AI（演出）に下書きを頼む」を押してください。</p>`}`;
 
   drawCurve(code, ep, scenes);
   bindChoices(document);
-  document.querySelector("[data-jump-q]")?.addEventListener("click", () => document.querySelector(".choice")?.scrollIntoView({ behavior: "smooth", block: "center" }));
+  bindEditors(document.querySelector(".story"), async (field, value) =>
+    api(`/api/episodes/${code}/story`, { method: "PATCH", body: { [field]: value } }));
+  document.querySelectorAll("[data-jump]").forEach((a) => (a.onclick = () => document.getElementById(`sc-${a.dataset.jump}`)?.scrollIntoView({ behavior: "smooth" })));
+  document.getElementById("askDraft").onclick = async () => {
+    await api("/api/requests", { method: "POST", body: { episode: code, text:
+      `[演出の役] ${code} の脚本（いまの版）から、シーン整理の下書きを作る：この話の芯・物語の流れ（story-set）と、シーンごとの ①映像で伝えたいこと ②変化（前→後・きっかけ・キャラごとの変化）③あらすじ ④キャラ（したい／する／内心／変化／温度）（scene-set / scene-sheet）。監督が直した欄は書き換えない` } });
+    document.getElementById("draftMsg").textContent = "頼みました（「いま」の AI が作業中に出ます）";
+  };
+  document.querySelectorAll(".qmic").forEach((b) => (b.onclick = () => { b.classList.add("on");
+    listen((t) => { b.classList.remove("on"); const inp = b.previousElementSibling; inp.value = (inp.value ? inp.value + " " : "") + t; }); }));
 
   document.querySelectorAll(".scene").forEach((card) => {
-    const sc = card.dataset.sc, picked = new Set();
+    const sc = card.dataset.sc, scene = scenes.find((s) => s.code === sc);
     const msg = (t) => (card.querySelector("[data-msg]").textContent = t);
-    const show = () => (card.querySelector("[data-picked]").textContent = picked.size ? `直したいところ：${[...picked].join("・")}` : "直したいところを押すと、ここに入ります");
-    card.querySelectorAll(".pick").forEach((el) => (el.onclick = () => {
-      const w = el.dataset.what;
-      picked.has(w) ? picked.delete(w) : picked.add(w);
-      el.classList.toggle("picked", picked.has(w));
-      show();
-      if (picked.has(w)) card.querySelector("textarea").focus();
-    }));
+    bindEditors(card.querySelector(".sgrid"), async (field, value) =>
+      api(`/api/episodes/${code}/scenes/${sc}/edit`, { method: "POST", body: { field, value } }));
+    // キャラの表は、行ごとにまとめて直す
+    card.querySelector(".charbtn").onclick = () => {
+      const box = card.querySelector(".chared");
+      if (box.querySelector("form")) return;
+      const keys = [["want", "したい"], ["does", "する"], ["inner", "内心"], ["change", "変化"]];
+      box.querySelector("table").outerHTML = `<form class="cform">${scene.characters.map((c, k) => `<div class="crow" data-k="${k}"><b style="color:${ccolor(c.name)}">${h(c.name)}</b>
+        ${keys.map(([f, l]) => `<label>${l}<textarea data-f="${f}" rows="2">${h(c[f] || "")}</textarea></label>`).join("")}
+        <label>温度<select data-f="tension">${[1, 2, 3, 4, 5].map((n) => `<option ${+c.tension === n ? "selected" : ""}>${n}</option>`).join("")}</select></label></div>`).join("")}
+        <div class="row"><button class="primary" type="submit">保存</button><span class="small muted">保存すると AI に伝わり、キャラの欄は監督の版が正になります</span></div></form>`;
+      addMics();
+      box.querySelector("form").onsubmit = async (e) => {
+        e.preventDefault();
+        const chars = scene.characters.map((c, k) => { const row = box.querySelector(`.crow[data-k="${k}"]`); const o = { ...c };
+          row.querySelectorAll("[data-f]").forEach((x) => (o[x.dataset.f] = x.dataset.f === "tension" ? +x.value : x.value.trim())); return o; });
+        await api(`/api/episodes/${code}/scenes/${sc}/edit`, { method: "POST", body: { field: "characters", value: chars } });
+        route();
+      };
+    };
     card.querySelector("[data-script]").ontoggle = async (e) => {
       const box = card.querySelector(".script");
       if (!e.target.open || box.dataset.loaded) return;
@@ -76,32 +145,26 @@ async function viewSheet(code) {
       box.innerHTML = r.found ? `<b>${h(r.heading)}</b><br>${r.lines.map(h).join("<br>")}` : "脚本の範囲がまだ指定されていません";
     };
     const planEl = card.querySelector(".plan");
-    const openPlan = () => { if (!planEl.dataset.loaded) { planEl.dataset.loaded = 1; blockingEditor(code, sc, planEl.querySelector(".planbox"), scenes.find((s) => s.code === sc)); } };
-    planEl.ontoggle = () => planEl.open && openPlan();
-    if (planEl.open) openPlan();
+    planEl.ontoggle = () => { if (planEl.open && !planEl.dataset.loaded) { planEl.dataset.loaded = 1; blockingEditor(code, sc, planEl.querySelector(".planbox"), scene); } };
+    const text = () => card.querySelector(".rtext").value.trim();
     const send = async (ok) => {
-      const text = card.querySelector("textarea").value.trim();
-      if (!ok && !text && !picked.size) { msg("どこを直すか押すか、一言書いてください"); return; }
+      if (!ok && !text()) { msg("どう直してほしいか、一言ください（欄を直接直すなら ✎）"); return; }
       await api(`/api/episodes/${code}/scenes/${sc}`, { method: "PATCH", body: { status: ok ? "approved" : "review" } });
-      if (text || picked.size || !ok)
+      if (text() || !ok)
         await api("/api/reviews", { method: "POST", body: { target_type: "episode", target_id: ep.id, verdict: ok ? "良い" : "修正",
-          tags: ["意図", ...(picked.size ? ["芝居"] : [])], comment: `[シーン整理 ${sc}${picked.size ? "・" + [...picked].join("・") : ""}] ${text || (ok ? "このままでいい" : "")}` } });
+          tags: ["意図"], comment: `[シーン整理 ${sc}] ${text() || "このままでいい"}` } });
       route();
     };
     card.querySelector("[data-ok]").onclick = () => send(true);
     card.querySelector("[data-ng]").onclick = () => send(false);
     card.querySelector("[data-staff]").onclick = async () => {
-      const text = card.querySelector("textarea").value.trim();
-      const what = picked.size ? `${[...picked].join("・")}を中心に。` : "";
-      const r = await api("/api/rounds", { method: "POST", body: { episode: code, target: sc, note: what + text } });
-      msg(`AI スタッフ会議 #${r.id} を開きました（「AI スタッフ会議」で進み具合が見られます）`);
+      const r = await api("/api/rounds", { method: "POST", body: { episode: code, target: sc, note: text() } });
+      msg(`AI 会議 #${r.id} を開きました（「AI 会議」で進み具合が見られます）`);
     };
     card.querySelector("[data-idea]").onclick = async () => {
-      const text = card.querySelector("textarea").value.trim();
-      const what = picked.size ? [...picked].join("・") : "このシーン";
       await api("/api/requests", { method: "POST", body: { episode: code,
-        text: `${code} ${sc} の「${what}」について、案を2つ（3つまで）出して、2択で聞いて（ask / ask_director）。${text ? "監督のひとこと：" + text : ""}` } });
-      msg("頼みました。案がそろうと、ここと「AIからの質問」に2択で出ます");
+        text: `${code} ${sc} について、案を2つ（3つまで）出して、2択で聞いて（ask / ask_director。できれば version-add で版も）。${text() ? "監督のひとこと：" + text() : ""}` } });
+      msg("頼みました。案がそろうと「④ 決める」に出ます");
     };
   });
   addMics();

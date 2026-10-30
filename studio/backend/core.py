@@ -318,12 +318,20 @@ def awaiting_human(conn, code: str) -> list[dict]:
 SCENE_FIELDS = ("place", "time", "look", "target_seconds", "purpose", "emotion", "blocking", "cameras",
                 "props", "status", "seq",
                 # シーン整理：変化（前→後）とそのきっかけ、キャラごとの欲求・芝居・内心、小さな区切り、脚本の範囲
-                "change_before", "change_after", "turn", "characters", "beats", "script_from", "script_to")
+                "change_before", "change_after", "turn", "characters", "beats", "script_from", "script_to", "synopsis")
+# 監督がその場で直せる欄。直した欄は human_fields に入り、エージェントは書き換えない（正）
+HUMAN_EDITABLE = ("purpose", "synopsis", "change_before", "change_after", "turn", "characters")
 
 
 def set_scene(conn, episode: str, code: str, actor: str = "agent", **fields) -> int:
     ep = db.get_or_create_episode(conn, episode)
     data = {k: v for k, v in fields.items() if k in SCENE_FIELDS and v is not None}
+    row0 = db.one(conn.execute("SELECT human_fields FROM scenes WHERE episode_id=? AND code=?", (ep["id"], code)))
+    locked = set(json.loads((row0 or {}).get("human_fields") or "[]"))
+    if actor != "human" and locked & set(data):
+        db.log(conn, actor, "skip_human_fields", {"episode": episode, "scene": code, "fields": sorted(locked & set(data))})
+        for k in locked & set(data):
+            data.pop(k)        # 監督が直した欄は正。変えたいときは2択か案で聞く
     for k in ("characters", "beats"):   # [{name, want, does, inner, tension}] / [{seconds, who, does, why}]
         if k in data:
             v = data.pop(k)
@@ -353,8 +361,53 @@ def scenes(conn, code: str) -> dict:
             except ValueError:
                 r[k] = []
         r["blocking_plan"] = json.loads(r.pop("blocking_json", "") or "{}")
+        r["human_fields"] = json.loads(r.get("human_fields") or "[]")
         r["blocking_text"] = direction.blocking_text(r["blocking_plan"])
     return {"episode": ep, "scenes": rows, "spent": spent(conn, ep["id"])}
+
+
+def edit_by_human(conn, episode: str, scene: str, field: str, value) -> dict:
+    """監督がシーン整理の欄をその場で直す。直した欄は正になり、何を直したかをレビューとして積む（エージェントが次に読む）。"""
+    if field not in HUMAN_EDITABLE:
+        raise ValueError(f"{field} は直せない欄")
+    ep = db.episode_by_code(conn, episode)
+    sc = db.one(conn.execute("SELECT * FROM scenes WHERE episode_id=? AND code=?", (ep["id"], scene)))
+    old = sc["characters_json"] if field == "characters" else sc.get(field, "")
+    set_scene(conn, episode, scene, actor="human", **{field: value})
+    hf = sorted(set(json.loads(sc.get("human_fields") or "[]")) | {field})
+    db.update(conn, "scenes", sc["id"], {"human_fields": json.dumps(hf, ensure_ascii=False)})
+    label = {"purpose": "伝えたいこと", "synopsis": "あらすじ", "change_before": "変化（前）", "change_after": "変化（後）",
+             "turn": "きっかけ", "characters": "キャラ"}[field]
+    if field == "characters":
+        before = {c.get("name"): c for c in json.loads(old or "[]")}
+        diffs = [f"{c.get('name')}：" + "・".join(f"{k}「{before.get(c.get('name'), {}).get(k, '')}」→「{c.get(k)}」"
+                                                   for k in ("want", "does", "inner", "change", "tension")
+                                                   if str(c.get(k, "")) != str(before.get(c.get("name"), {}).get(k, "")))
+                 for c in value if any(str(c.get(k, "")) != str(before.get(c.get("name"), {}).get(k, ""))
+                                       for k in ("want", "does", "inner", "change", "tension"))]
+        what = " ／ ".join(diffs)
+    else:
+        what = f"「{old or ''}」→「{value}」"
+    rid = add_review(conn, target_type="episode", target_id=ep["id"], verdict="修正", tags=["意図"],
+                     comment=f"[シーン整理 {scene}・{label}] 監督が直した（正）：{what}")
+    return {"review": rid, "human_fields": hf}
+
+
+def set_story(conn, episode: str, actor: str = "agent", theme: str | None = None, story_flow: str | None = None) -> None:
+    """シーン整理のいちばん上：この話の芯（映像で伝えたいこと）と物語の流れ。監督が直したものはエージェントは書き換えない。"""
+    ep = db.get_or_create_episode(conn, episode)
+    locked = set(json.loads(ep.get("human_fields") or "[]"))
+    data = {k: v for k, v in {"theme": theme, "story_flow": story_flow}.items() if v is not None}
+    if actor != "human":
+        data = {k: v for k, v in data.items() if k not in locked}
+    else:
+        for k, v in data.items():
+            add_review(conn, target_type="episode", target_id=ep["id"], verdict="修正", tags=["意図"],
+                       comment=f"[シーン整理・{'この話の芯' if k == 'theme' else '物語の流れ'}] 監督が直した（正）：「{ep.get(k) or ''}」→「{v}」")
+        data["human_fields"] = json.dumps(sorted(locked | set(data)), ensure_ascii=False)
+    if data:
+        db.update(conn, "episodes", ep["id"], data)
+    db.log(conn, actor, "set_story", {"episode": episode, "fields": list(data)})
 
 
 def scene_script(conn, code: str, scene: str) -> dict:

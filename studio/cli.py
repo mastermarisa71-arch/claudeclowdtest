@@ -23,6 +23,9 @@
   staff-post 12 --agent codex --file post.json    所見を書く（1周目・2周目）
   staff-summarize 15 --agent claude-a --file s.json   まとめ：依頼と2択に分けて会議を閉じる
   staff-rounds [EP09]                            会議の一覧
+  story-set EP09 --theme "この話で伝えたいこと" --flow "物語の流れ"   シーン整理のいちばん上
+  art-plan EP09                                  字コンテから要る背景（場所×カメラ位置×ルック）を並べる（美術・素材）
+  art EP09                                       素材の発注と、監督が渡した素材・注意書き
   version-base EP09 S1                           今の並び（案を作るときの元）
   version-add EP09 S1 --file v.json --title "30秒に詰めた版"   案（直した並び）を出す → 監督が「決める」で今の版と並べて見る
   versions EP09 / version-show 3                 案の一覧・中身
@@ -111,11 +114,11 @@ def main(argv=None):
     p.add_argument("--deadline"); p.add_argument("--stage")
     p = sub.add_parser("scene-set"); p.add_argument("episode"); p.add_argument("scene")
     for f in ("place", "time", "look", "purpose", "emotion", "blocking", "cameras", "props", "status",
-              "before", "after", "turn", "from", "to"):
+              "before", "after", "turn", "from", "to", "synopsis"):
         p.add_argument(f"--{f}")
     p.add_argument("--target", type=float)
     p.add_argument("--char", action="append", default=[],
-                   help="名前|したいこと|すること|内心|温度1-5（キャラごとに繰り返す）")
+                   help="名前|したいこと|すること|内心|温度1-5|変化（例：上の空→決意）（キャラごとに繰り返す）")
     p.add_argument("--beat", action="append", default=[], help="秒|誰|すること|なぜ（区切りごとに繰り返す）")
     p = sub.add_parser("blocking"); p.add_argument("episode"); p.add_argument("scene")
     p.add_argument("--file", help='区切りごとの位置の JSON：[{"beat":0,"pos":{"あかね":[0.3,0.34]}}]（座標 0〜1、配置図.json の見取り図）')
@@ -135,6 +138,13 @@ def main(argv=None):
     p = sub.add_parser("staff-summarize"); p.add_argument("slot", type=int); p.add_argument("--agent", required=True)
     p.add_argument("--file", required=True)
     p = sub.add_parser("staff-rounds"); p.add_argument("episode", nargs="?"); p.add_argument("--status", default="open,closed")
+    p = sub.add_parser("story-set"); p.add_argument("episode"); p.add_argument("--theme"); p.add_argument("--flow")
+    p = sub.add_parser("art-plan"); p.add_argument("episode")
+    p = sub.add_parser("art"); p.add_argument("episode")
+    p = sub.add_parser("art-deliver"); p.add_argument("episode"); p.add_argument("file")
+    p.add_argument("--order", type=int); p.add_argument("--kind", default="bg"); p.add_argument("--name", default="")
+    p.add_argument("--scenes", default=""); p.add_argument("--use", default="ref", help="ref / mood / comp")
+    p.add_argument("--notes", default="{}", help='注意書き JSON：{"light": "…", "comp": "…", "avoid": "…"}')
     p = sub.add_parser("version-base"); p.add_argument("episode"); p.add_argument("scene")
     p = sub.add_parser("version-add"); p.add_argument("episode"); p.add_argument("scene"); p.add_argument("--file", required=True)
     p.add_argument("--title", default=""); p.add_argument("--note", default=""); p.add_argument("--agent", default="agent")
@@ -266,10 +276,10 @@ def main(argv=None):
             print(json.dumps(db.episode_by_code(conn, a.episode), ensure_ascii=False))
         elif a.cmd == "scene-set":
             fields = {f: getattr(a, f) for f in ("place", "time", "look", "purpose", "emotion", "blocking",
-                                                 "cameras", "props", "status", "turn")}
+                                                 "cameras", "props", "status", "turn", "synopsis")}
             fields.update(change_before=a.before, change_after=a.after, script_from=getattr(a, "from"), script_to=a.to)
             if a.char:
-                keys = ("name", "want", "does", "inner", "tension")
+                keys = ("name", "want", "does", "inner", "tension", "change")
                 fields["characters"] = [dict(zip(keys, x.split("|"))) for x in a.char]
             if a.beat:
                 fields["beats"] = [dict(zip(("seconds", "who", "does", "why"), x.split("|"))) for x in a.beat]
@@ -313,6 +323,25 @@ def main(argv=None):
                           + " ".join(f"{s['role']}{s['pass']}:{s['status']}{'(' + s['agent'] + ')' if s['agent'] else ''}" for s in r["slots"]))
                     for p_ in r["posts"]:
                         print(f"   [{p_['role']}・{p_['agent']}] {p_['summary']}")
+        elif a.cmd == "story-set":
+            core.set_story(conn, a.episode, theme=a.theme, story_flow=a.flow)
+            ep = db.episode_by_code(conn, a.episode)
+            print(f"芯：{ep['theme']}\n流れ：{ep['story_flow']}\n（監督が直した欄：{ep['human_fields']}。そこはエージェントは書き換えない）")
+        elif a.cmd in ("art-plan", "art", "art-deliver"):
+            from studio.backend import art
+            if a.cmd == "art-deliver":
+                print(art.deliver(conn, a.episode, Path(a.file), a.kind, a.name, a.order, [s for s in a.scenes.split(",") if s],
+                                  a.use, json.loads(a.notes), created_by="agent"))
+            else:
+                os_ = art.plan(conn, a.episode) if a.cmd == "art-plan" else art.orders(conn, a.episode)
+                for o in os_:
+                    st = {"open": "まだ", "delivered": "渡し済み", "hold": "使わない"}[o["status"]]
+                    print(f"{o['code']} [{st}] {o['what']}\n    コマ：{' '.join(c['code'] for c in o['cuts'])}")
+                    if o["asset"]:
+                        print(f"    素材：{o['asset']['file_path']}（{art.USES.get(o['asset']['use'])}）　{art.notes_text(o['asset']['notes'])}")
+                for m in art.materials(conn, a.episode):
+                    if not m["order_id"]:
+                        print(f"[{m['kind']}] {m['name']} {m['file_path']}（{'・'.join(m['scenes'])}）　{art.notes_text(m['notes'], m['kind'])}")
         elif a.cmd.startswith("version"):
             from studio.backend import versions
             if a.cmd == "version-base":

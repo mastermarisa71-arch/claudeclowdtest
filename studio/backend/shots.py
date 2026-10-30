@@ -55,6 +55,10 @@ def _find_bg(conn, cut: dict, bg_name: str | None) -> dict | None:
     bgs = assets(conn, "bg")
     if bg_name:
         return next((a for a in bgs if a["name"] == bg_name), None)
+    from . import art
+    given = art.for_cut(conn, cut["id"]) if cut.get("id") else None
+    if given:                   # 0) 監督がこのコマに渡した素材（美術・素材）が最優先。合成用（comp）は生成に使わない
+        return None if given["use"] == "comp" else given
     full = (cut.get("camera_pos") or "").strip()
     if not full:
         return None

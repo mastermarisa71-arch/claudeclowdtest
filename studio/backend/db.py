@@ -116,6 +116,31 @@ CREATE TABLE IF NOT EXISTS learnings (
   created_at TEXT, decided_at TEXT
 );
 
+-- 美術・素材（art.py）：AI が字コンテから「どの場所・カメラ位置・ルックの背景が、どのコマに要るか」を並べ（発注）、
+-- 監督がレンダー・撮処理した素材を渡す。注意書きは asset_uses.notes_json（生成の係が読む）
+CREATE TABLE IF NOT EXISTS art_orders (
+  id INTEGER PRIMARY KEY,
+  episode_id INTEGER REFERENCES episodes(id),
+  code TEXT,                           -- BG01
+  place TEXT DEFAULT '', camera TEXT DEFAULT '', look TEXT DEFAULT '', time TEXT DEFAULT '',
+  cut_ids_json TEXT DEFAULT '[]',
+  what TEXT DEFAULT '',                -- 何が映るか（AI が字コンテから）
+  status TEXT DEFAULT 'open',          -- open（まだ）/ delivered（渡した）/ hold（使わない）
+  asset_id INTEGER,
+  created_at TEXT, delivered_at TEXT,
+  UNIQUE(episode_id, code)
+);
+CREATE TABLE IF NOT EXISTS asset_uses (
+  id INTEGER PRIMARY KEY,
+  asset_id INTEGER REFERENCES assets(id),
+  episode_id INTEGER REFERENCES episodes(id),
+  order_id INTEGER,
+  cut_ids_json TEXT DEFAULT '[]',      -- この素材を使うコマ
+  use TEXT DEFAULT 'ref',              -- ref（生成の背景・参照に使う）/ mood（雰囲気の参考だけ）/ comp（編集で合成。生成には使わない）
+  notes_json TEXT DEFAULT '{}',        -- 注意書き（光・撮処理の予定・レイヤー・気をつけること …）
+  created_by TEXT DEFAULT 'human', created_at TEXT
+);
+
 -- 案（versions.py）：AI が作った「直した版」。今の版と並べて再生し、監督が決める
 CREATE TABLE IF NOT EXISTS versions (
   id INTEGER PRIMARY KEY,
@@ -270,7 +295,9 @@ CREATE TABLE IF NOT EXISTS events (
 # 既存の DB に後から足した列。init() で無ければ足す。
 MIGRATIONS = {
     "episodes": {"budget_credits": "REAL DEFAULT 0", "deadline": "TEXT DEFAULT ''",
-                 "is_test": "INTEGER DEFAULT 0"},   # テストの回：予算を超えても止めずに警告だけ
+                 "is_test": "INTEGER DEFAULT 0",    # テストの回：予算を超えても止めずに警告だけ
+                 # シーン整理のいちばん上：この話の芯（映像で伝えたいこと）と物語の流れ
+                 "theme": "TEXT DEFAULT ''", "story_flow": "TEXT DEFAULT ''", "human_fields": "TEXT DEFAULT '[]'"},
     "reviews": {"checks_json": "TEXT DEFAULT ''",
                 "attachment": "TEXT DEFAULT ''"},   # 監督が印をつけた画面の画像（MEDIA_DIR 相対）
     "premiere_queue": {"host": "TEXT DEFAULT 'premiere'"},   # premiere / aftereffects   # AI セルフレビューの観点ごとの合否
@@ -282,7 +309,9 @@ MIGRATIONS = {
     "scenes": {"change_before": "TEXT DEFAULT ''", "change_after": "TEXT DEFAULT ''", "turn": "TEXT DEFAULT ''",
                "characters_json": "TEXT DEFAULT ''", "beats_json": "TEXT DEFAULT ''",
                "script_from": "TEXT DEFAULT ''", "script_to": "TEXT DEFAULT ''",
-               "blocking_json": "TEXT DEFAULT ''"},   # 配置図：区切りごとの立ち位置（direction.py）
+               "blocking_json": "TEXT DEFAULT ''",   # 配置図：区切りごとの立ち位置（direction.py）
+               "synopsis": "TEXT DEFAULT ''",        # シーンのあらすじ（誰がどうして、どうなったか）
+               "human_fields": "TEXT DEFAULT '[]'"}, # 監督が直した欄（正。エージェントは書き換えない）
 }
 
 

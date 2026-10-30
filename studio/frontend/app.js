@@ -259,8 +259,8 @@ async function viewBrief(params) {
 // 監督がふだん使うのは左の5つ（シーン整理 → Vコン → …）。設計・コマ・ショットなどの細かい画面は「詳しく」に入れる
 // 工程の順：いま → シーン整理 → Vコン → 決める → AI 会議（裏側）→ 実績。決めることの数は「決める」に出す
 const EP_COUNTS = {};
-const epTabs = (code, now) => `<div class="row tabs">${[["home", "いま"], ["sheet", "① シーン整理"], ["vcon", "② Vコン（絵と動画）"],
-    ["decide", `③ 決める${EP_COUNTS[code] ? `<span class="cnt">${EP_COUNTS[code]}</span>` : ""}`], ["staff", "AI 会議"], ["stats", "実績"]]
+const epTabs = (code, now) => `<div class="row tabs">${[["home", "いま"], ["sheet", "① シーン整理"], ["art", "② 美術・素材"], ["vcon", "③ Vコン（絵と動画）"],
+    ["decide", `④ 決める${EP_COUNTS[code] ? `<span class="cnt">${EP_COUNTS[code]}</span>` : ""}`], ["staff", "AI 会議"], ["stats", "実績"]]
   .map(([k, l]) => `<a class="btn ${k === now ? "on" : ""}" href="#/ep/${code}${k === "home" ? "" : "/" + k}">${l}</a>`).join("")}
   <span style="flex:1"></span>
   <select class="more" onchange="if(this.value) location.hash=this.value">
@@ -517,13 +517,14 @@ async function route() {
   const params = new URLSearchParams(qs || "");
   const parts = (path || "/").split("/").filter(Boolean);
   try {
-    // 「③ 決める」の数をタブに出す（話数を開いたときに1回）
+    // 「④ 決める」の数をタブに出す（話数を開いたときに1回）
     if (parts[0] === "ep" && parts[2] && !(parts[1] in EP_COUNTS))
       EP_COUNTS[parts[1]] = (await api(`/api/episodes/${parts[1]}/overview`).catch(() => ({}))).decide_count || 0;
     if (parts[0] === "ep" && parts[2] === "design") await viewDesign(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "sheet") await viewSheet(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "staff") await viewStaff(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "decide") await viewDecide(parts[1]);
+    else if (parts[0] === "ep" && parts[2] === "art") await viewArt(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "vcon") await viewVcon(parts[1], params);
     else if (parts[0] === "ep" && parts[2] === "awaiting") await viewAwaiting(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "shots") await viewShots(parts[1]);

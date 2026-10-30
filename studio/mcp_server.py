@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from mcp.server.fastmcp import FastMCP, Image  # noqa: E402
 
-from studio.backend import context, core, db, direction, premiere, staff, versions, seedance, shots, storyboard  # noqa: E402
+from studio.backend import art, context, core, db, direction, premiere, staff, versions, seedance, shots, storyboard  # noqa: E402
 
 mcp = FastMCP("tsukiakari-studio", instructions=(
     "『月灯りスピークイージー』の制作ツール。作るのはエージェント、見るのは監督。"
@@ -104,18 +104,37 @@ def set_scene(episode: str, scene: str, place: str = "", time: str = "", look: s
               purpose: str = "", emotion: str = "", blocking: str = "", cameras: str = "", props: str = "",
               change_before: str = "", change_after: str = "", turn: str = "",
               characters: list[dict] | None = None, beats: list[dict] | None = None,
-              script_from: str = "", script_to: str = "") -> int:
+              script_from: str = "", script_to: str = "", synopsis: str = "") -> int:
     """シーン整理と設計。脚本を読んだら、字コンテより先にシーンごとに作り、監督の「シーン整理」で承認をもらう。
     change_before→change_after：このシーンで何が変わるか（状況・関係・気持ち）。turn：変わるきっかけ。
-    characters：[{name, want（したいこと）, does（見える芝居）, inner（内心）, tension（1〜5）}]。
+    synopsis：シーンのあらすじ（誰がどうして、どうなったか。2〜4文）。
+    characters：[{name, want（したいこと）, does（見える芝居）, inner（内心）, tension（1〜5）, change（このシーンでの気持ちの変化 例：上の空→決意）}]。
+    監督が直した欄（human_fields）は書き換えられない（送っても飛ばされる）。変えたいときは ask_director か add_version で。
     beats：[{seconds, who, does, why, level（展開の高さ1〜5）, peak（山場なら名前）}] シーンの中の小さな区切り。script_from/script_to：脚本の範囲を一節で指す。
     ほかに狙い・目標尺・感情の流れ・立ち位置と動線・カメラ位置・小物。"""
     fields = {k: v for k, v in dict(place=place, time=time, look=look, purpose=purpose, emotion=emotion,
                                      blocking=blocking, cameras=cameras, props=props, change_before=change_before,
                                      change_after=change_after, turn=turn, characters=characters, beats=beats,
-                                     script_from=script_from, script_to=script_to).items() if v}
+                                     script_from=script_from, script_to=script_to, synopsis=synopsis).items() if v}
     with _s() as conn:
         return core.set_scene(conn, episode, scene, target_seconds=target_seconds or None, **fields)
+
+
+@mcp.tool()
+def set_story(episode: str, theme: str = "", story_flow: str = "") -> str:
+    """シーン整理のいちばん上：この話の芯（映像で伝えたいこと、1〜2文）と物語の流れ（シーンをまたぐ流れ、数文）。
+    脚本を読んだら、シーンごとの整理より先に書く。監督が直した欄は書き換えられない。"""
+    with _s() as conn:
+        core.set_story(conn, episode, theme=theme or None, story_flow=story_flow or None)
+        return "ok"
+
+
+@mcp.tool()
+def art_orders(episode: str, replan: bool = False) -> list[dict]:
+    """美術・素材：要る背景（場所×カメラ位置×ルック）と使うコマ、監督が渡した素材と注意書き（光・撮処理の予定・レイヤー・気をつけること・使い方）。
+    replan=True で字コンテから並べ直す（渡し済みは残る）。生成の前に必ず見る。素材がまだなら、勝手に代用せず監督に伝える。"""
+    with _s() as conn:
+        return art.plan(conn, episode) if replan else art.orders(conn, episode)
 
 
 @mcp.tool()

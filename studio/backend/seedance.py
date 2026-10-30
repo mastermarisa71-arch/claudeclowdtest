@@ -267,6 +267,13 @@ def build_brief(conn, shot_id: int, tier: str = "draft") -> dict:
         lines.append(f"[translate to visible acting, then delete] Blocking (floor plan) {t}")
     if scene and scene.get("props"):
         lines.append(f"Props state: {scene['props']}")
+    from . import art
+    for c in cs:
+        given = art.for_cut(conn, c["id"])
+        if given and given["notes"]:
+            lines.append(f"[translate to visible acting, then delete] Art notes for {c['cut']} (director's material "
+                         f"{given['name']}, {art.USES.get(given['use'], given['use'])}): {art.notes_text(given['notes'])}")
+            break
     lines += ["", "AUDIO", "Dialogue lip-sync only. No background music. No subtitles.", "",
               "CONSTRAINTS", "No on-screen text, no subtitles, no logos. Hands with five fingers, objects stay in "
               "the hands that hold them."]

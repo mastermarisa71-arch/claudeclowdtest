@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import config, context, core, db, direction, overview, staff, versions
+from . import art, config, context, core, db, direction, overview, staff, versions
 
 db.init()
 app = FastAPI(title="月灯スタジオ")
@@ -166,6 +166,71 @@ def takes(ids: str):
 def learnings():
     with db.session() as conn:
         return db.rows(conn.execute("SELECT * FROM learnings ORDER BY status='proposed' DESC, id DESC"))
+
+
+class StoryIn(BaseModel):
+    theme: str | None = None
+    story_flow: str | None = None
+
+
+class EditIn(BaseModel):
+    field: str
+    value: str | list | None = None
+
+
+@app.patch("/api/episodes/{code}/story")
+def story_edit(code: str, s_: StoryIn):
+    """シーン整理のいちばん上（この話の芯・物語の流れ）を監督が直す。"""
+    with db.session() as conn:
+        core.set_story(conn, code, actor="human", **s_.model_dump(exclude_none=True))
+    return {"ok": True}
+
+
+@app.post("/api/episodes/{code}/scenes/{scode}/edit")
+def scene_edit(code: str, scode: str, e: EditIn):
+    """シーン整理の欄を監督がその場で直す（直した欄は正）。"""
+    with db.session() as conn:
+        return core.edit_by_human(conn, code, scode, e.field, e.value)
+
+
+@app.get("/api/episodes/{code}/art")
+def art_view(code: str):
+    with db.session() as conn:
+        return {"orders": art.orders(conn, code), "materials": art.materials(conn, code),
+                "note_fields": art.NOTE_FIELDS, "uses": art.USES}
+
+
+@app.post("/api/episodes/{code}/art/plan")
+def art_plan(code: str):
+    with db.session() as conn:
+        return art.plan(conn, code)
+
+
+@app.post("/api/episodes/{code}/art/deliver")
+async def art_deliver(code: str, file: UploadFile = File(...), kind: str = Form("bg"), name: str = Form(""),
+                      order_id: int | None = Form(None), scenes: str = Form(""), use: str = Form("ref"), notes: str = Form("{}")):
+    """監督がレンダー・撮処理した素材を渡す（どのコマに使うかと注意書きつき）。"""
+    import tempfile
+    suffix = Path(file.filename or "x.png").suffix or ".png"
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(await file.read())
+    try:
+        with db.session() as conn:
+            return art.deliver(conn, code, Path(tmp.name), kind, name, order_id, [s for s in scenes.split(",") if s],
+                               use, json.loads(notes or "{}"))
+    finally:
+        Path(tmp.name).unlink(missing_ok=True)
+
+
+class OrderIn(BaseModel):
+    status: str
+
+
+@app.patch("/api/art/orders/{oid}")
+def art_order_status(oid: int, o: OrderIn):
+    with db.session() as conn:
+        db.update(conn, "art_orders", oid, {"status": o.status})
+    return {"ok": True}
 
 
 class DecideIn(BaseModel):

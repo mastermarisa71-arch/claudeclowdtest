@@ -31,6 +31,8 @@ def overview(conn, code: str) -> dict:
     audio = _n(conn, "SELECT COUNT(*) FROM takes WHERE episode_id=? AND kind='audio' AND file_path!=''", (eid,))
     assets = db.rows(conn.execute("SELECT kind, COUNT(*) n FROM assets WHERE active=1 GROUP BY kind"))
     approved = sum(s["status"] == "approved" for s in sc)
+    n_orders = _n(conn, "SELECT COUNT(*) FROM art_orders WHERE episode_id=? AND status!='hold'", (eid,))
+    n_given = _n(conn, "SELECT COUNT(*) FROM art_orders WHERE episode_id=? AND status='delivered'", (eid,))
     organized = sum(bool(s["change_before"] or s["characters"]) for s in sc)
     blocked = sum(bool(s["blocking_text"]) for s in sc)
     loaded = [
@@ -42,6 +44,8 @@ def overview(conn, code: str) -> dict:
         {"name": "配置図", "value": f"{blocked}シーンに立ち位置", "ok": blocked > 0},
         {"name": "仮Vコン（9コマ）", "value": f"{boards}シート・絵があるコマ {board_imgs}/{ncuts}", "ok": board_imgs > 0},
         {"name": "ショット", "value": f"{shots}本（ドラフト {drafts}・本番 {finals}）", "ok": shots > 0},
+        {"name": "美術・素材", "value": (f"背景 {n_orders}件のうち渡し済み {n_given}" if n_orders else "まだ発注がない（「② 美術・素材」で字コンテから並べる）"),
+         "ok": n_given > 0},
         {"name": "参照素材", "value": "・".join(f"{a['kind']} {a['n']}" for a in assets) or "なし（キャラの設定資料・背景を入れる）",
          "ok": bool(assets)},
         {"name": "音", "value": f"{audio}本", "ok": audio > 0},
@@ -76,6 +80,9 @@ def overview(conn, code: str) -> dict:
     if sc and approved < len(sc):
         todo.append({"what": f"シーン整理を確認して「このシーンでいく」（{len(sc) - approved}シーン）", "link": f"#/ep/{code}/sheet",
                      "n": len(sc) - approved, "kind": "sheet"})
+    if n_orders > n_given:
+        todo.append({"what": f"背景の素材を渡す（{n_orders - n_given}件。レンダー・撮処理したものを、使うコマと注意書きつきで）",
+                     "link": f"#/ep/{code}/art", "n": n_orders - n_given, "kind": "art"})
     if agent_q:
         todo.append({"what": f"AI からの質問（文章）に答える（{agent_q}件）", "link": f"#/ep/{code}/questions", "n": agent_q, "kind": "q"})
     if awaiting:

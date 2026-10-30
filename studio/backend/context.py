@@ -60,14 +60,19 @@ def build(conn, episode_code: str | None = None) -> str:
         out += [f"## 話数の状態：{ep['code']}", f"- 目標尺 {ep['target_seconds']}秒 / 締切 {ep.get('deadline') or '未設定'}"
                 f" / 使用 {sc['spent']:,.0f}円 / 予算 {budget:,.0f}円（残り {budget - sc['spent']:,.0f}円）"
                 + ("（テストの回：超えても止めない）" if ep.get("is_test") else "")]
-        out += ["", "### シーン整理と設計（字コンテのカットの意図は、ここから引く）"]
+        out += ["", "### この話の芯と物語の流れ（シーン整理のいちばん上）",
+                f"- 芯：{ep.get('theme') or '（未）'}" + ("（監督が直した・正）" if "theme" in (ep.get("human_fields") or "") else ""),
+                f"- 流れ：{ep.get('story_flow') or '（未）'}" + ("（監督が直した・正）" if "story_flow" in (ep.get("human_fields") or "") else "")]
+        out += ["", "### シーン整理と設計（字コンテのカットの意図は、ここから引く。【正】は監督が直した欄で、書き換えない）"]
         for s_ in sc["scenes"]:
+            hf = lambda f: "【正】" if f in s_["human_fields"] else ""
             out.append(f"- {s_['code']} [{s_['status']}] {s_['place']} {s_['time']} ルック{s_['look']} "
-                       f"目標{s_['target_seconds']}秒/今{s_['actual_seconds']}秒：{s_['purpose']}"
+                       f"目標{s_['target_seconds']}秒/今{s_['actual_seconds']}秒：伝えたいこと{hf('purpose')}＝{s_['purpose']}"
+                       + (f"\n  あらすじ{hf('synopsis')}：{s_['synopsis']}" if s_.get("synopsis") else "")
                        + (f"\n  変化：{s_['change_before']} → {s_['change_after']}（きっかけ：{s_['turn'] or '―'}）"
                           if s_["change_before"] or s_["change_after"] else "\n  変化：（未整理）")
-                       + "".join(f"\n  {c.get('name')}：したい＝{c.get('want', '')}／する＝{c.get('does', '')}"
-                                 f"／内心＝{c.get('inner', '')}／温度{c.get('tension', '')}" for c in s_["characters"])
+                       + "".join(f"\n  {c.get('name')}{hf('characters')}：したい＝{c.get('want', '')}／する＝{c.get('does', '')}"
+                                 f"／内心＝{c.get('inner', '')}／変化＝{c.get('change', '')}／温度{c.get('tension', '')}" for c in s_["characters"])
                        + (f"\n  動線：{s_['blocking']}" if s_["blocking"] else "")
                        + "".join(f"\n  配置図 {t}" for t in s_["blocking_text"]))
         if not sc["scenes"]:
@@ -76,6 +81,16 @@ def build(conn, episode_code: str | None = None) -> str:
         out += ["", "### AI スタッフ会議（studio/docs/AIスタッフ会議.md）"]
         out += [f"- #{r['id']} [{r['stage']}] {r['target'] or '全体'}：" + (next((p['summary'] for p in r['posts'] if p['kind'] == 'まとめ'), '')
                 or f"{sum(s['status'] == 'done' for s in r['slots'])}/{len(r['slots'])} 枠") for r in rounds[:6]] or ["- （まだなし）"]
+        from . import art
+        ords = art.orders(conn, ep["code"])
+        out += ["", "### 美術・素材（監督がレンダー・撮処理して渡す。生成では渡された素材と注意書きに従う。まだのものは勝手に代用しない）"]
+        out += [f"- {o['code']} [{ {'open': 'まだ', 'delivered': '渡し済み', 'hold': '使わない'}[o['status']] }] {o['place']} カメラ{o['camera'] or '-'} "
+                f"ルック{o['look'] or '-'}：{' '.join(c['code'] for c in o['cuts'][:8])}{' …' if len(o['cuts']) > 8 else ''}"
+                + (f"\n  素材 {o['asset']['file_path']}（{art.USES.get(o['asset']['use'])}）{art.notes_text(o['asset']['notes'])}" if o["asset"] else "")
+                for o in ords] or ["- （まだ発注がない。art-plan で字コンテから並べる）"]
+        for m in art.materials(conn, ep["code"]):
+            if not m["order_id"]:
+                out.append(f"- [{m['kind']}] {m['name']}（{'・'.join(m['scenes'])}、{art.USES.get(m['use'])}）{art.notes_text(m['notes'], m['kind'])}")
         open_c = direction.list_choices(conn, ep["code"], "open")
         out += ["", f"### 監督に聞いている2択（{len(open_c)}件、答えを待つ間はほかを進める）"]
         out += [f"- #{c['id']} {c['scene']} {c['about']}：{c['question']}　"

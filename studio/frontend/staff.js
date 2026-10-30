@@ -34,7 +34,7 @@ async function viewStaff(code) {
     return `<div class="pflow">${passes.map((p) => col(p === 1 ? "1周目（ひとりで）" : "2周目（読み合う）", r.slots.filter((s) => s.pass === p && s.role !== "まとめ"))).join('<span class="sarrow">›</span>')}
       <span class="sarrow">›</span>${col("まとめ", r.slots.filter((s) => s.role === "まとめ").length ? r.slots.filter((s) => s.role === "まとめ") : [{ role: "まとめ", status: "wait" }])}</div>`;
   };
-  $view.innerHTML = `${epTabs(code, "staff")}<h1>AI 会議 <span class="muted small">AI が役を分けて見て、話し合い、案を作ります。結論の案は「③ 決める」で並べて見られます</span></h1>
+  $view.innerHTML = `${epTabs(code, "staff")}<h1>AI 会議 <span class="muted small">AI が役を分けて見て、話し合い、案を作ります。結論の案は「④ 決める」で並べて見られます</span></h1>
     <div class="card"><div class="row" style="gap:14px">${Object.entries(st.assign || {}).map(([r, a]) =>
       `<span class="rolechip" style="border-color:${roles[r]?.color};color:${roles[r]?.color}">${ROLE_ICON[r]} ${h(roles[r]?.name || r)}</span><span class="small">${who(a)}</span>`).join("")}</div>
       <div class="row" style="margin-top:8px"><select id="rtarget"><option value="">話数全体</option>${scenes.map((s) => `<option value="${h(s.code)}">${h(s.code)} ${h(s.change_after || s.purpose).slice(0, 24)}</option>`).join("")}</select>
