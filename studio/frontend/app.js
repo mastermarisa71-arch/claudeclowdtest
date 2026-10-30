@@ -257,12 +257,15 @@ async function viewBrief(params) {
 
 // ---------- 話数のタブ ----------
 // 監督がふだん使うのは左の5つ（シーン整理 → Vコン → …）。設計・コマ・ショットなどの細かい画面は「詳しく」に入れる
-const epTabs = (code, now) => `<div class="row tabs">${[["sheet", "シーン整理"], ["vcon", "Vコン（見て直す）"], ["awaiting", "AIが通したもの"], ["questions", "AIからの質問"], ["staff", "AI スタッフ会議"], ["stats", "実績"]]
-  .map(([k, l]) => `<a class="btn ${k === now ? "on" : ""}" href="#/ep/${code}${k === "vcon" ? "" : "/" + k}">${l}</a>`).join("")}
+// 工程の順：いま → シーン整理 → Vコン → 決める → AI 会議（裏側）→ 実績。決めることの数は「決める」に出す
+const EP_COUNTS = {};
+const epTabs = (code, now) => `<div class="row tabs">${[["home", "いま"], ["sheet", "① シーン整理"], ["vcon", "② Vコン（絵と動画）"],
+    ["decide", `③ 決める${EP_COUNTS[code] ? `<span class="cnt">${EP_COUNTS[code]}</span>` : ""}`], ["staff", "AI 会議"], ["stats", "実績"]]
+  .map(([k, l]) => `<a class="btn ${k === now ? "on" : ""}" href="#/ep/${code}${k === "home" ? "" : "/" + k}">${l}</a>`).join("")}
   <span style="flex:1"></span>
   <select class="more" onchange="if(this.value) location.hash=this.value">
-    <option value="">詳しく（エージェント向け）</option>
-    ${[["design", "設計（シーン）"], ["cuts", "コマの一覧"], ["shots", "ショット分け"], ["edit", "編集（ライブ）"]].map(([k, l]) =>
+    <option value="">そのほか</option>
+    ${[["awaiting", "AI が通した絵・動画"], ["questions", "AI からの質問（文章）"], ["design", "設計（尺の配分）"], ["cuts", "コマの一覧"], ["shots", "ショット分け"], ["edit", "編集（ライブ）"]].map(([k, l]) =>
       `<option value="#/ep/${code}/${k}" ${k === now ? "selected" : ""}>${l}</option>`).join("")}
     <option value="#/brief?ep=${code}">ブリーフ</option>
   </select></div>`;
@@ -514,16 +517,21 @@ async function route() {
   const params = new URLSearchParams(qs || "");
   const parts = (path || "/").split("/").filter(Boolean);
   try {
+    // 「③ 決める」の数をタブに出す（話数を開いたときに1回）
+    if (parts[0] === "ep" && parts[2] && !(parts[1] in EP_COUNTS))
+      EP_COUNTS[parts[1]] = (await api(`/api/episodes/${parts[1]}/overview`).catch(() => ({}))).decide_count || 0;
     if (parts[0] === "ep" && parts[2] === "design") await viewDesign(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "sheet") await viewSheet(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "staff") await viewStaff(parts[1]);
+    else if (parts[0] === "ep" && parts[2] === "decide") await viewDecide(parts[1]);
+    else if (parts[0] === "ep" && parts[2] === "vcon") await viewVcon(parts[1], params);
     else if (parts[0] === "ep" && parts[2] === "awaiting") await viewAwaiting(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "shots") await viewShots(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "stats") await viewStats(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "edit") await viewEdit(parts[1], params);
     else if (parts[0] === "ep" && parts[2] === "cuts") await viewEpisode(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "questions") await viewQuestions(parts[1]);
-    else if (parts[0] === "ep") await viewVcon(parts[1], params);
+    else if (parts[0] === "ep") await viewEpHome(parts[1]);
     else if (parts[0] === "cut") await viewCut(parts[1], params);
     else if (parts[0] === "compare") await viewCompare(params);
     else if (parts[0] === "reviews") await viewReviews(params);

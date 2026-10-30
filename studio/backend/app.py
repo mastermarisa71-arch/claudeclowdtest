@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import config, context, core, db, direction, staff
+from . import config, context, core, db, direction, overview, staff, versions
 
 db.init()
 app = FastAPI(title="月灯スタジオ")
@@ -258,6 +258,35 @@ class AnswerIn(BaseModel):
     pick: str
     note: str = ""
     keep: bool = False
+
+
+class DecideIn(BaseModel):
+    verdict: str            # adopt / keep / other
+    note: str = ""
+
+
+@app.get("/api/episodes/{code}/overview")
+def ep_overview(code: str):
+    with db.session() as conn:
+        return overview.overview(conn, code)
+
+
+@app.get("/api/episodes/{code}/versions")
+def versions_list(code: str, status: str = "open"):
+    with db.session() as conn:
+        return versions.list_versions(conn, code, status)
+
+
+@app.get("/api/versions/{vid}/compare")
+def versions_compare(vid: int):
+    with db.session() as conn:
+        return versions.compare(conn, vid)
+
+
+@app.post("/api/versions/{vid}/decide")
+def versions_decide(vid: int, d: DecideIn):
+    with db.session() as conn:
+        return versions.decide(conn, vid, d.verdict, d.note)
 
 
 class RoundIn(BaseModel):

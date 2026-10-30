@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from mcp.server.fastmcp import FastMCP, Image  # noqa: E402
 
-from studio.backend import context, core, db, direction, premiere, staff, seedance, shots, storyboard  # noqa: E402
+from studio.backend import context, core, db, direction, premiere, staff, versions, seedance, shots, storyboard  # noqa: E402
 
 mcp = FastMCP("tsukiakari-studio", instructions=(
     "『月灯りスピークイージー』の制作ツール。作るのはエージェント、見るのは監督。"
@@ -116,6 +116,25 @@ def set_scene(episode: str, scene: str, place: str = "", time: str = "", look: s
                                      script_from=script_from, script_to=script_to).items() if v}
     with _s() as conn:
         return core.set_scene(conn, episode, scene, target_seconds=target_seconds or None, **fields)
+
+
+@mcp.tool()
+def version_base(episode: str, scene: str) -> list[dict]:
+    """シーンの今のコマの並び（案を作るときの元）。[{"cut": "S1-01", "seconds": 2.5}, …]"""
+    with _s() as conn:
+        return versions.base_entries(conn, episode, scene)
+
+
+@mcp.tool()
+def add_version(episode: str, scene: str, title: str, entries: list[dict], note: str = "", agent: str = "agent") -> dict:
+    """案（直した版）を出す。監督は文章より“やった版”を見たいので、直しを提案するときはこれで版を作る。
+    entries：{"cut": "S1-05③", "seconds": 2.0, "move": "track_in"}（今のコマ・変えるところだけ）／
+    {"new": "黒板（前の日のまま）", "seconds": 0.8}（新しいコマ）／{"cut": "S1-07②", "take": 52}（作り直した動画）。書かなかったコマは削る。
+    move：track_in / track_out / pan_left / pan_right / tilt_up / tilt_down。監督は「決める」で今の版と並べて再生して選ぶ。"""
+    with _s() as conn:
+        vid = versions.add(conn, episode, scene, title, entries, note, made_by=agent)
+        c = versions.compare(conn, vid)
+        return {"id": vid, "seconds": [c["base_seconds"], c["alt_seconds"]], "diff": c["diff"]}
 
 
 @mcp.tool()

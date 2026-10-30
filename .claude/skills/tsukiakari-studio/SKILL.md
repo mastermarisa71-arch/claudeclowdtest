@@ -153,7 +153,14 @@ python studio/cli.py staff-post 12 --agent claude-b --file post.json
 python studio/cli.py staff-summarize 15 --agent claude-a --file summary.json            # まとめ役：do / ask / drop
 ```
 
-- まとめの do は依頼になる（「[AI スタッフ会議 #n] …」）。取ったら、作ったテイクの `--note` に会議の番号を書く。
+- **監督は文章より“やった版”を見たい**。直しを提案するときは、文章だけでなく**案（直した並び）**を作る。監督は「③ 決める」で今の版と並べて再生して選ぶ。
+  まとめの do に `version`、ask に `versions`（A の版・B の版）をつけると案になる。会議の外でも `version-add` で出せる。
+  ```
+  python studio/cli.py version-base EP09 S1 > v.json     # 今の並び → 直す（変えるところだけ書く・書かなかったコマは削る・新しいコマは {"new": …}）
+  python studio/cli.py version-add EP09 S1 --file v.json --title "30秒に詰めた版"
+  ```
+  監督が「案にする」を押すと依頼（「[案 #n を監督が採用] …」）になる。字コンテに反映し、テイクの `--note` に案の番号を書く。
+- 案のない do は、そのまま依頼になる（「[AI スタッフ会議 #n] …」）。取ったら、作ったテイクの `--note` に会議の番号を書く。
 - 割れたもの（ask）は監督への2択になる。勝手に片方に決めない。
 - 同じ対象の会議は、監督が返すまでに2回まで（それ以上は止まる。所見を監督に見せる）。
 

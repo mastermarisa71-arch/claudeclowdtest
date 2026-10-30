@@ -116,6 +116,21 @@ CREATE TABLE IF NOT EXISTS learnings (
   created_at TEXT, decided_at TEXT
 );
 
+-- 案（versions.py）：AI が作った「直した版」。今の版と並べて再生し、監督が決める
+CREATE TABLE IF NOT EXISTS versions (
+  id INTEGER PRIMARY KEY,
+  episode_id INTEGER REFERENCES episodes(id),
+  scene TEXT DEFAULT '',
+  title TEXT DEFAULT '', note TEXT DEFAULT '',
+  entries_json TEXT DEFAULT '[]',      -- コマの並び（書かなかった今のコマは削る）
+  reasons_json TEXT DEFAULT '[]',      -- [{"role": "演出", "text": "なぜ"}]
+  round_id INTEGER, by_role TEXT DEFAULT '', made_by TEXT DEFAULT 'agent',
+  choice_id INTEGER, option TEXT DEFAULT '',   -- 2択の選択肢としての案
+  status TEXT DEFAULT 'open',          -- open/adopted/kept/other
+  decision_note TEXT DEFAULT '',
+  created_at TEXT, decided_at TEXT
+);
+
 -- AI スタッフ会議（staff.py）：役ごとの枠を AI が取り、所見を書き、まとめ役が依頼と2択に分ける
 CREATE TABLE IF NOT EXISTS rounds (
   id INTEGER PRIMARY KEY,

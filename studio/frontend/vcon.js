@@ -204,7 +204,7 @@ async function viewQuestions(code) {
     const head = parts.length > 1 && !/^[①-⑩]/.test(parts[0]) ? parts.shift() : "";
     return { head, parts };
   };
-  const sceneLinks = (t) => h(t).replace(/\b(S\d{1,2})\b/g, `<a href="#/ep/${code}?scene=$1">$1</a>`);
+  const sceneLinks = (t) => h(t).replace(/\b(S\d{1,2})\b/g, `<a href="#/ep/${code}/vcon?scene=$1">$1</a>`);
   $view.innerHTML = `${epTabs(code, "questions")}<h1>AIからの質問 <span class="muted small">項目ごとに答えて、最後に「返事を送る」。シーン名を押すと、そこから Vコンが開きます</span></h1>
     ${choices.length ? `<div class="card">${choices.map(choiceHTML).join("")}</div>` : ""}
     ${list.map((r) => { const it = items(r.agent_response || r.comment); return `<div class="card q" data-q="${r.id}">

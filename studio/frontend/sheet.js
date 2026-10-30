@@ -23,7 +23,7 @@ async function viewSheet(code) {
       <div class="row"><h2 style="margin:0">${h(x.code)}</h2>
         <span class="muted">${h(x.place)}・${h(x.time)}　${x.target_seconds}秒</span>
         <span class="badge ${x.status === "approved" ? "sel" : "proposed"}">${x.status === "approved" ? "承認済み" : "確認待ち"}</span>
-        <span style="flex:1"></span><a class="small" href="#/ep/${code}?scene=${h(x.code)}">Vコンで見る</a></div>
+        <span style="flex:1"></span><a class="small" href="#/ep/${code}/vcon?scene=${h(x.code)}">Vコンで見る</a></div>
       ${choices.filter((c) => c.scene === x.code && c.status === "open").map(choiceHTML).join("")}
       <div class="pick change" data-what="変化">
         <div class="before">${h(x.change_before) || "<span class='muted'>（前）未整理</span>"}</div>

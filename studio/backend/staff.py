@@ -12,7 +12,7 @@
 import json
 import re
 
-from . import config, core, db, direction
+from . import config, core, db, direction, versions
 from .importers import bible
 
 STAFF_FILE = config.VAULT_DIR / "04_制作ルール" / "AIスタッフ.json"
@@ -199,10 +199,17 @@ POST_FORMAT = """### 書き方（これだけ守る）
 - 監督の意図・2択で決まったこと・承認済みのルールに反する提案はしない（変えたいなら「好み」で理由を書く）"""
 
 LEAD_FORMAT = """### まとめの書き方
+**監督は文章より「やった版」を見たい。** 直す（do）には、できるだけ version（直した並び）をつける。割れた（ask）には versions（A の版・B の版）をつける。
+今の並びは `python studio/cli.py version-base <話数> <シーン>` で出る。それを直して version.entries にする：
+  {"cut": "S1-05③", "seconds": 2.0, "move": "track_in"}（今のコマ・変えるところだけ）／ {"new": "黒板（前の日のまま）", "seconds": 0.8}（新しいコマ）／ 書かなかったコマは削る
+  move：track_in（寄る）/ track_out（引く）/ pan_left / pan_right / tilt_up / tilt_down
+
 `python studio/cli.py staff-summarize <枠> --agent <自分の名前> --file summary.json`（MCP なら staff_summarize）。summary.json：
 {"summary": "会議の結論（2〜3行）",
  "items": [{"decision": "do",   "text": "作り直し・直しの内容（そのまま依頼になる）"},
-           {"decision": "ask",  "text": "監督への質問", "options": ["A の案", "B の案"], "about": "キャラ名か演出", "why": "どの役とどの役で割れたか"},
+           {"decision": "do",   "text": "S1 を30秒に詰める", "version": {"title": "30秒に詰めた版", "entries": [ … ]}},
+           {"decision": "ask",  "text": "監督への質問", "options": ["A の案", "B の案"], "about": "キャラ名か演出", "why": "どの役とどの役で割れたか",
+            "versions": [{"title": "A の版", "entries": [ … ]}, {"title": "B の版", "entries": [ … ]}]},
            {"decision": "drop", "text": "見送るもの", "why": "理由"}]}
 - 役どうしで割れたものは、勝手に決めずに ask（2択）。同じことを前にも聞いていないか、ブリーフの「2択で選んだもの」を見る
 - do は安い工程（シーン整理・配置図・字コンテ・9コマ・480p）だけ。1080p は監督の採用なしに進めない
@@ -287,16 +294,31 @@ def summarize(conn, slot_id: int, agent: str, summary: str, items: list[dict]) -
         raise ValueError(f"枠 {slot_id} は {s['agent']} が取っている")
     r = _round(conn, s["round_id"])
     scene = r["target"] if re.fullmatch(r"S\d+", r["target"] or "") else ""
-    made = {"requests": [], "choices": []}
-    todo = [i["text"] for i in items if i.get("decision") == "do"]
+    made = {"requests": [], "choices": [], "versions": []}
+    vscene = scene or next((i.get("scene") for i in items if i.get("scene")), "")
+    reasons = [{"role": p["role"], "text": p["summary"]} for p in _posts(conn, r["id"]) if p["kind"] == "所見"]
+    # 案（直した版）がついた do は、作り直しの前に監督が今の版と並べて見る
+    for i in items:
+        if i.get("decision") == "do" and i.get("version") and vscene:
+            vv = i["version"]
+            made["versions"].append(versions.add(conn, r["episode"], vv.get("scene", vscene), vv.get("title") or i["text"][:30],
+                                                 vv["entries"], i["text"], r["id"], vv.get("by_role", ""), agent, reasons))
+    todo = [i["text"] for i in items if i.get("decision") == "do" and not i.get("version")]
     if todo:
         made["requests"].append(core.add_request(
             conn, f"[AI スタッフ会議 #{r['id']} {r['target'] or '全体'}] 次を直して、テイクの --note に会議の番号を書く：\n"
                   + "\n".join(f"- {t}" for t in todo), r["episode"]))
     for i in items:
         if i.get("decision") == "ask" and len(i.get("options") or []) >= 2:
-            made["choices"].append(direction.ask(conn, r["episode"], i["text"], i["options"], scene, i.get("about", ""),
-                                                 i.get("why", "") + f"（AI スタッフ会議 #{r['id']}）", created_by=agent))
+            cid = direction.ask(conn, r["episode"], i["text"], i["options"], scene, i.get("about", ""),
+                                i.get("why", "") + f"（AI スタッフ会議 #{r['id']}）", created_by=agent)
+            made["choices"].append(cid)
+            # 選択肢ごとの版（versions）があれば、2択を「並べて見て選ぶ」にする
+            for k, vv in enumerate(i.get("versions") or []):
+                if vv and vscene:
+                    made["versions"].append(versions.add(conn, r["episode"], vv.get("scene", vscene), vv.get("title") or i["options"][k][:30],
+                                                         vv["entries"], i["options"][k], r["id"], "", agent, reasons,
+                                                         choice_id=cid, option="ABCDE"[k]))
     db.insert(conn, "round_posts", {"round_id": r["id"], "role": LEAD, "pass": s["pass"], "agent": agent, "kind": "まとめ",
                                     "summary": summary, "items_json": json.dumps(items, ensure_ascii=False), "created_at": db.now()})
     db.update(conn, "round_slots", slot_id, {"status": "done", "agent": agent, "done_at": db.now()})

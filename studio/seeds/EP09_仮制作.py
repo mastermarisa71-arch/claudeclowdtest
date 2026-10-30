@@ -6,6 +6,7 @@ r"""9話を「制作中」として月灯スタジオに載せる（動作確認
   python studio/seeds/EP09_仮制作.py            # 空の DB に 9話を載せる（すでにあれば止まる）
   python studio/seeds/EP09_仮制作.py --reset    # 9話を消してから載せ直す
   python studio/seeds/EP09_仮制作.py --sheet    # 載せてある9話に、シーン整理・配置図・2択だけ足す（レビューは消さない）
+  python studio/seeds/EP09_仮制作.py --staff-sample   # AI 会議の見本（S1）と、そこから作った案を足す
   python studio/seeds/EP09_仮制作.py --reset --refs "C:\Users\kaka\Desktop\e002素材\参照"
                                                   # 参照画像のフォルダがあれば、参照素材の棚にも入れる
 
@@ -18,7 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from studio.backend import core, db, direction, seedance, storyboard  # noqa: E402
+from studio.backend import core, db, direction, seedance, staff, storyboard  # noqa: E402
 from studio.backend.importers import jikonte  # noqa: E402
 
 EP = "EP09"
@@ -272,6 +273,19 @@ RESULT = ("G1 設計（3分版、12シーン・目標180秒）を「確認待ち
           "正本と4分版の食い違い3点を設計ノートの「確認したいこと」に。")
 
 
+def add_staff_sample(conn) -> None:
+    """AI 会議の見本（S1）。Claude 1つが3役を代わりにやったもの。画面では「見本」と出る。"""
+    import json
+    d = json.loads((Path(__file__).parent / "EP09_AI会議の見本.json").read_text(encoding="utf-8"))
+    rid = staff.open_round(conn, EP, d["target"], note=d["note"], created_by="human")
+    for p in ("pass1", "pass2"):
+        for role, post in d[p].items():
+            slot = conn.execute("SELECT id FROM round_slots WHERE round_id=? AND role=? AND status='open'", (rid, role)).fetchone()[0]
+            staff.post(conn, slot, f"見本（{role}）", post["summary"], post["items"])
+    slot = conn.execute("SELECT id FROM round_slots WHERE round_id=? AND role='まとめ'", (rid,)).fetchone()[0]
+    staff.summarize(conn, slot, "見本（まとめ）", d["summary"]["summary"], d["summary"]["items"])
+
+
 def add_direction(conn) -> None:
     """配置図の案と、AI からの2択を載せる（2択は、同じ質問がまだなければ）。"""
     for code, frames in BLOCKING.items():
@@ -283,10 +297,14 @@ def add_direction(conn) -> None:
             direction.ask(conn, EP, c["question"], c["options"], c["scene"], c["about"], c["why"])
 
 
-def main(reset: bool, refs: str | None, sheet_only: bool = False) -> None:
+def main(reset: bool, refs: str | None, sheet_only: bool = False, staff_sample: bool = False) -> None:
     db.init()
     with db.session() as conn:
         ep = db.episode_by_code(conn, EP)
+        if ep and staff_sample:
+            add_staff_sample(conn)
+            print(f"{EP} に AI 会議の見本（S1）を足しました。画面の「AI 会議」と「③ 決める」で見られます")
+            return
         if ep and sheet_only:
             for code, f in SHEET.items():
                 core.set_scene(conn, EP, code, **f)
@@ -359,5 +377,6 @@ if __name__ == "__main__":
     ap.add_argument("--reset", action="store_true")
     ap.add_argument("--refs", help="参照画像のフォルダ（キャラの設定資料・背景・配置図）")
     ap.add_argument("--sheet", action="store_true", help="載せてある9話に、シーン整理だけ足す")
+    ap.add_argument("--staff-sample", action="store_true", help="載せてある9話に、AI 会議の見本（S1）を足す")
     a = ap.parse_args()
-    main(a.reset, a.refs, a.sheet)
+    main(a.reset, a.refs, a.sheet, a.staff_sample)

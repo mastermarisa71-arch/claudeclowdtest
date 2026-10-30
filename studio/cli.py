@@ -23,6 +23,9 @@
   staff-post 12 --agent codex --file post.json    所見を書く（1周目・2周目）
   staff-summarize 15 --agent claude-a --file s.json   まとめ：依頼と2択に分けて会議を閉じる
   staff-rounds [EP09]                            会議の一覧
+  version-base EP09 S1                           今の並び（案を作るときの元）
+  version-add EP09 S1 --file v.json --title "30秒に詰めた版"   案（直した並び）を出す → 監督が「決める」で今の版と並べて見る
+  versions EP09 / version-show 3                 案の一覧・中身
   scene-sheet EP09 [--file sheet.json] [--md]    シーン整理（脚本と字コンテの間）を取り込む／vault に書き出す
   self-review 31 --checks '{"意図":true,"芝居":"まひるがシェイカーを振っている"}' --comment "…"
   awaiting EP09                      AI が通して、監督がまだ見ていないテイク
@@ -132,6 +135,11 @@ def main(argv=None):
     p = sub.add_parser("staff-summarize"); p.add_argument("slot", type=int); p.add_argument("--agent", required=True)
     p.add_argument("--file", required=True)
     p = sub.add_parser("staff-rounds"); p.add_argument("episode", nargs="?"); p.add_argument("--status", default="open,closed")
+    p = sub.add_parser("version-base"); p.add_argument("episode"); p.add_argument("scene")
+    p = sub.add_parser("version-add"); p.add_argument("episode"); p.add_argument("scene"); p.add_argument("--file", required=True)
+    p.add_argument("--title", default=""); p.add_argument("--note", default=""); p.add_argument("--agent", default="agent")
+    p = sub.add_parser("version-show"); p.add_argument("id", type=int)
+    p = sub.add_parser("versions"); p.add_argument("episode"); p.add_argument("--status", default="open,adopted,kept,other")
     p = sub.add_parser("scene-sheet"); p.add_argument("episode")
     p.add_argument("--file", help="シーン整理の JSON（[{scene, purpose, change_before, …, characters, beats}]）を取り込む")
     p.add_argument("--md", action="store_true", help="vault の 02_各話/EPxx/EPxx_シーン整理.md に書き出す")
@@ -305,6 +313,26 @@ def main(argv=None):
                           + " ".join(f"{s['role']}{s['pass']}:{s['status']}{'(' + s['agent'] + ')' if s['agent'] else ''}" for s in r["slots"]))
                     for p_ in r["posts"]:
                         print(f"   [{p_['role']}・{p_['agent']}] {p_['summary']}")
+        elif a.cmd.startswith("version"):
+            from studio.backend import versions
+            if a.cmd == "version-base":
+                print(json.dumps(versions.base_entries(conn, a.episode, a.scene), ensure_ascii=False, indent=1))
+            elif a.cmd == "version-add":
+                d = json.loads(Path(a.file).read_text(encoding="utf-8"))
+                entries = d["entries"] if isinstance(d, dict) else d
+                title = a.title or (d.get("title", "") if isinstance(d, dict) else "")
+                vid = versions.add(conn, a.episode, a.scene, title, entries, a.note, made_by=a.agent)
+                c = versions.compare(conn, vid)
+                print(f"案 #{vid}：{c['base_seconds']}秒 → {c['alt_seconds']}秒\n" + "\n".join(c["diff"]))
+            elif a.cmd == "version-show":
+                c = versions.compare(conn, a.id)
+                v = c["version"]
+                print(f"案 #{v['id']} [{v['status']}] {v['episode']} {v['scene']}「{v['title']}」 {c['base_seconds']}秒 → {c['alt_seconds']}秒")
+                print("\n".join(c["diff"]))
+                print(json.dumps(v["entries"], ensure_ascii=False, indent=1))
+            else:
+                for v in versions.list_versions(conn, a.episode, a.status):
+                    print(f"#{v['id']} [{v['status']}] {v['scene']}「{v['title']}」{('（2択 ' + v['option'] + '）') if v['choice_id'] else ''} {v['decision_note']}")
         elif a.cmd == "scene-sheet":
             if a.file:
                 for i, x in enumerate(json.loads(Path(a.file).read_text(encoding="utf-8")), 1):
