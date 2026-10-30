@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from mcp.server.fastmcp import FastMCP, Image  # noqa: E402
 
-from studio.backend import context, core, db, direction, premiere, seedance, shots, storyboard  # noqa: E402
+from studio.backend import context, core, db, direction, premiere, staff, seedance, shots, storyboard  # noqa: E402
 
 mcp = FastMCP("tsukiakari-studio", instructions=(
     "『月灯りスピークイージー』の制作ツール。作るのはエージェント、見るのは監督。"
@@ -116,6 +116,44 @@ def set_scene(episode: str, scene: str, place: str = "", time: str = "", look: s
                                      script_from=script_from, script_to=script_to).items() if v}
     with _s() as conn:
         return core.set_scene(conn, episode, scene, target_seconds=target_seconds or None, **fields)
+
+
+@mcp.tool()
+def staff_open(episode: str, target: str = "", note: str = "", made_by: str = "") -> int:
+    """AI スタッフ会議を開く。target は S1 / SH03 / #31（テイク）/ 空（話数全体）。made_by は対象を作った AI 名。
+    芝居・演出・見る の枠ができ、各 AI が staff_next で取る。監督が返すまでに同じ対象は2回まで。"""
+    with _s() as conn:
+        return staff.open_round(conn, episode, target, note=note, made_by=made_by)
+
+
+@mcp.tool()
+def staff_next(agent: str, roles: list[str] | None = None) -> str:
+    """自分の役（AIスタッフ.json の assign、または roles）の空いた枠を1つ取り、その役のブリーフを返す。
+    ブリーフの書き方に沿って staff_post（まとめ役は staff_summarize）で出す。取れる枠がなければそう返す。"""
+    with _s() as conn:
+        s = staff.claim(conn, agent, roles)
+        return staff.brief(conn, s["id"]) if s else "いま取れる枠はありません"
+
+
+@mcp.tool()
+def staff_post(slot: int, agent: str, summary: str, items: list[dict]) -> dict:
+    """所見を書く。items=[{severity: 必須|提案|好み, at, what, fix, agree（2周目）}]。"""
+    with _s() as conn:
+        return staff.post(conn, slot, agent, summary, items)
+
+
+@mcp.tool()
+def staff_summarize(slot: int, agent: str, summary: str, items: list[dict]) -> dict:
+    """まとめ。items=[{decision: do|ask|drop, text, options（ask）, about, why}]。do は作り直しの依頼、ask は監督への2択になる。"""
+    with _s() as conn:
+        return staff.summarize(conn, slot, agent, summary, items)
+
+
+@mcp.tool()
+def staff_rounds(episode: str = "", status: str = "open,closed") -> list[dict]:
+    """AI スタッフ会議の一覧（枠・所見・まとめの結果）。"""
+    with _s() as conn:
+        return staff.list_rounds(conn, episode or None, status)
 
 
 @mcp.tool()

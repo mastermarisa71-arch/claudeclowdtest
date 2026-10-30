@@ -18,6 +18,11 @@
   blocking EP09 S1 [--file frames.json]          配置図（区切りごとの立ち位置）を見る／案を置く
   ask EP09 "あかねの打ち明け方" --opt "目を合わせない" --opt "正面から" --scene S1 --about あかね   監督に2択で聞く
   choices [EP09] [--status open]                 2択の一覧と答え
+  staff-open EP09 S1 [--note "見てほしいこと"] [--made-by claude-a]   AI スタッフ会議を開く（S1 / SH03 / #31 / 空＝全体）
+  staff-claim --agent codex [--roles 演出]        自分の役の枠を1つ取り、ブリーフを出す
+  staff-post 12 --agent codex --file post.json    所見を書く（1周目・2周目）
+  staff-summarize 15 --agent claude-a --file s.json   まとめ：依頼と2択に分けて会議を閉じる
+  staff-rounds [EP09]                            会議の一覧
   scene-sheet EP09 [--file sheet.json] [--md]    シーン整理（脚本と字コンテの間）を取り込む／vault に書き出す
   self-review 31 --checks '{"意図":true,"芝居":"まひるがシェイカーを振っている"}' --comment "…"
   awaiting EP09                      AI が通して、監督がまだ見ていないテイク
@@ -117,6 +122,16 @@ def main(argv=None):
     p.add_argument("--scene", default=""); p.add_argument("--about", default="", help="キャラ名（決まりにするときの行き先）")
     p.add_argument("--why", default="")
     p = sub.add_parser("choices"); p.add_argument("episode", nargs="?"); p.add_argument("--status", default="open,answered")
+    p = sub.add_parser("staff-open"); p.add_argument("episode"); p.add_argument("target", nargs="?", default="")
+    p.add_argument("--title", default=""); p.add_argument("--note", default=""); p.add_argument("--roles", default="")
+    p.add_argument("--made-by", default="", help="対象を作った AI（「見る」役から外す）")
+    p = sub.add_parser("staff-claim"); p.add_argument("--agent", required=True); p.add_argument("--roles", default="")
+    p = sub.add_parser("staff-brief"); p.add_argument("slot", type=int)
+    p = sub.add_parser("staff-post"); p.add_argument("slot", type=int); p.add_argument("--agent", required=True)
+    p.add_argument("--file", required=True)
+    p = sub.add_parser("staff-summarize"); p.add_argument("slot", type=int); p.add_argument("--agent", required=True)
+    p.add_argument("--file", required=True)
+    p = sub.add_parser("staff-rounds"); p.add_argument("episode", nargs="?"); p.add_argument("--status", default="open,closed")
     p = sub.add_parser("scene-sheet"); p.add_argument("episode")
     p.add_argument("--file", help="シーン整理の JSON（[{scene, purpose, change_before, …, characters, beats}]）を取り込む")
     p.add_argument("--md", action="store_true", help="vault の 02_各話/EPxx/EPxx_シーン整理.md に書き出す")
@@ -270,6 +285,26 @@ def main(argv=None):
                 ans = f" → {c['answer']} {c['note']}{'（決まり）' if c['keep'] else ''}" if c["status"] == "answered" else ""
                 print(f"#{c['id']} [{c['status']}] {c['episode']} {c['scene']} {c['about']}：{c['question']}　"
                       + " ／ ".join(f"{o['label']} {o['text']}" for o in c["options"]) + ans)
+        elif a.cmd.startswith("staff-"):
+            from studio.backend import staff
+            if a.cmd == "staff-open":
+                print(staff.open_round(conn, a.episode, a.target, a.title, [r for r in a.roles.split(",") if r] or None,
+                                       made_by=a.made_by, note=a.note))
+            elif a.cmd == "staff-claim":
+                s = staff.claim(conn, a.agent, [r for r in a.roles.split(",") if r] or None)
+                print(staff.brief(conn, s["id"]) if s else "いま取れる枠はありません")
+            elif a.cmd == "staff-brief":
+                print(staff.brief(conn, a.slot))
+            elif a.cmd in ("staff-post", "staff-summarize"):
+                d = json.loads(Path(a.file).read_text(encoding="utf-8"))
+                fn = staff.post if a.cmd == "staff-post" else staff.summarize
+                print(json.dumps(fn(conn, a.slot, a.agent, d.get("summary", ""), d.get("items", [])), ensure_ascii=False))
+            elif a.cmd == "staff-rounds":
+                for r in staff.list_rounds(conn, a.episode, a.status):
+                    print(f"#{r['id']} [{r['status']}・{r['stage']}] {r['episode']} {r['target'] or '全体'} {r['title']}　"
+                          + " ".join(f"{s['role']}{s['pass']}:{s['status']}{'(' + s['agent'] + ')' if s['agent'] else ''}" for s in r["slots"]))
+                    for p_ in r["posts"]:
+                        print(f"   [{p_['role']}・{p_['agent']}] {p_['summary']}")
         elif a.cmd == "scene-sheet":
             if a.file:
                 for i, x in enumerate(json.loads(Path(a.file).read_text(encoding="utf-8")), 1):

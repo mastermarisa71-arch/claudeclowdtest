@@ -257,7 +257,7 @@ async function viewBrief(params) {
 
 // ---------- 話数のタブ ----------
 // 監督がふだん使うのは左の5つ（シーン整理 → Vコン → …）。設計・コマ・ショットなどの細かい画面は「詳しく」に入れる
-const epTabs = (code, now) => `<div class="row tabs">${[["sheet", "シーン整理"], ["vcon", "Vコン（見て直す）"], ["awaiting", "AIが通したもの"], ["questions", "AIからの質問"], ["stats", "実績"]]
+const epTabs = (code, now) => `<div class="row tabs">${[["sheet", "シーン整理"], ["vcon", "Vコン（見て直す）"], ["awaiting", "AIが通したもの"], ["questions", "AIからの質問"], ["staff", "AI スタッフ会議"], ["stats", "実績"]]
   .map(([k, l]) => `<a class="btn ${k === now ? "on" : ""}" href="#/ep/${code}${k === "vcon" ? "" : "/" + k}">${l}</a>`).join("")}
   <span style="flex:1"></span>
   <select class="more" onchange="if(this.value) location.hash=this.value">
@@ -516,6 +516,7 @@ async function route() {
   try {
     if (parts[0] === "ep" && parts[2] === "design") await viewDesign(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "sheet") await viewSheet(parts[1]);
+    else if (parts[0] === "ep" && parts[2] === "staff") await viewStaff(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "awaiting") await viewAwaiting(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "shots") await viewShots(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "stats") await viewStats(parts[1]);

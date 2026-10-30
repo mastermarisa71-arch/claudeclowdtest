@@ -48,7 +48,8 @@ async function viewSheet(code) {
         <div class="small muted" data-picked>直したいところを押すと、ここに入ります</div>
         <textarea placeholder="例：あかねはもっと隠そうとしてほしい。打ち明けるのは最後の一言だけ"></textarea>
         <div class="row"><button class="primary" data-ok>このシーンでいく</button><button data-ng>直してほしい</button>
-          <button data-idea title="押したところについて、AI に2択の案を出してもらう">案を出して</button><span class="small muted" data-msg></span></div>
+          <button data-idea title="押したところについて、AI に2択の案を出してもらう">案を出して</button>
+          <button data-staff title="芝居・演出・見る の AI がレビューし合い、まとめて返す">AI スタッフで検討して</button><span class="small muted" data-msg></span></div>
       </div>
     </div>`).join("") || `<p class="muted">まだシーン整理がありません。エージェントが脚本を読んで作ります（<code>scene-sheet</code>）。</p>`}`;
 
@@ -89,6 +90,12 @@ async function viewSheet(code) {
     };
     card.querySelector("[data-ok]").onclick = () => send(true);
     card.querySelector("[data-ng]").onclick = () => send(false);
+    card.querySelector("[data-staff]").onclick = async () => {
+      const text = card.querySelector("textarea").value.trim();
+      const what = picked.size ? `${[...picked].join("・")}を中心に。` : "";
+      const r = await api("/api/rounds", { method: "POST", body: { episode: code, target: sc, note: what + text } });
+      msg(`AI スタッフ会議 #${r.id} を開きました（「AI スタッフ会議」で進み具合が見られます）`);
+    };
     card.querySelector("[data-idea]").onclick = async () => {
       const text = card.querySelector("textarea").value.trim();
       const what = picked.size ? [...picked].join("・") : "このシーン";

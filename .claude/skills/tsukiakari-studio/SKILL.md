@@ -142,6 +142,21 @@ python studio/cli.py promote 31              # 1本だけ
 参照素材（`asset-add` / `bg-render --asset-name 店内:A`）が足りないときは、勝手に代用せず監督に伝える。
 音声や手作業の結果は `generate` / `take-add` / `attach`。プロバイダーが未接続・API エラーのときも、テイクは failed として残る。エラーは隠さず人に伝える。
 
+## 4.5 AI スタッフ会議（ほかの AI とレビューし合う）
+
+作ったら（シーン整理・配置図・字コンテ・9コマ・480p の通し）、監督に見せる前に会議を開ける。手順は `studio/docs/AIスタッフ会議.md`。
+
+```
+python studio/cli.py staff-open EP09 S1 --made-by claude-a --note "打ち明けが長くないか"   # 作った AI は「見る」をやらない
+python studio/cli.py staff-claim --agent claude-b      # 自分の役の枠を取る → ブリーフ
+python studio/cli.py staff-post 12 --agent claude-b --file post.json
+python studio/cli.py staff-summarize 15 --agent claude-a --file summary.json            # まとめ役：do / ask / drop
+```
+
+- まとめの do は依頼になる（「[AI スタッフ会議 #n] …」）。取ったら、作ったテイクの `--note` に会議の番号を書く。
+- 割れたもの（ask）は監督への2択になる。勝手に片方に決めない。
+- 同じ対象の会議は、監督が返すまでに2回まで（それ以上は止まる。所見を監督に見せる）。
+
 ## 5. 監督のレビューを読む
 
 監督はおもに「シーン整理」（シーンのどこかを押して一言。レビューは `[シーン整理 S1・あかね] …` の形で届く）と「Vコン（見て直す）」で、止めた画面に矢印・囲みを描き、話して直しを送ってくる。ブリーフの未対応レビューには

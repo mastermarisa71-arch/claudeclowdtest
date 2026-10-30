@@ -116,6 +116,36 @@ CREATE TABLE IF NOT EXISTS learnings (
   created_at TEXT, decided_at TEXT
 );
 
+-- AI スタッフ会議（staff.py）：役ごとの枠を AI が取り、所見を書き、まとめ役が依頼と2択に分ける
+CREATE TABLE IF NOT EXISTS rounds (
+  id INTEGER PRIMARY KEY,
+  episode_id INTEGER REFERENCES episodes(id),
+  target TEXT DEFAULT '',              -- S1 / SH03 / #31 / ''（話数全体）
+  title TEXT DEFAULT '', note TEXT DEFAULT '',
+  passes INTEGER DEFAULT 2,            -- 1周目（ひとりで）→ 2周目（読み合って）→ まとめ
+  made_by TEXT DEFAULT '',             -- 対象を作った AI（「見る」役をやらない）
+  stage TEXT DEFAULT '1周目',
+  status TEXT DEFAULT 'open',          -- open/closed/cancelled
+  result_json TEXT DEFAULT '',         -- まとめで作った依頼と2択
+  created_by TEXT DEFAULT 'agent', created_at TEXT, closed_at TEXT
+);
+CREATE TABLE IF NOT EXISTS round_slots (
+  id INTEGER PRIMARY KEY,
+  round_id INTEGER REFERENCES rounds(id),
+  role TEXT, pass INTEGER,
+  status TEXT DEFAULT 'open',          -- open/claimed/done
+  agent TEXT DEFAULT '', claimed_at TEXT, done_at TEXT
+);
+CREATE TABLE IF NOT EXISTS round_posts (
+  id INTEGER PRIMARY KEY,
+  round_id INTEGER REFERENCES rounds(id),
+  role TEXT, pass INTEGER, agent TEXT,
+  kind TEXT,                           -- 所見/討議/まとめ
+  summary TEXT DEFAULT '',
+  items_json TEXT DEFAULT '[]',
+  created_at TEXT
+);
+
 -- AI からの2択：迷ったところを A／B で聞き、選んだものを好み（learnings）として残す
 CREATE TABLE IF NOT EXISTS choices (
   id INTEGER PRIMARY KEY,

@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import config, context, core, db, direction
+from . import config, context, core, db, direction, staff
 
 db.init()
 app = FastAPI(title="月灯スタジオ")
@@ -258,6 +258,30 @@ class AnswerIn(BaseModel):
     pick: str
     note: str = ""
     keep: bool = False
+
+
+class RoundIn(BaseModel):
+    episode: str
+    target: str = ""
+    note: str = ""
+
+
+@app.get("/api/rounds")
+def rounds_list(episode: str | None = None, status: str = "open,closed"):
+    with db.session() as conn:
+        return staff.list_rounds(conn, episode, status)
+
+
+@app.post("/api/rounds")
+def rounds_open(r: RoundIn):
+    """監督が「AI スタッフで検討して」を押したとき。監督が開く会議は回数の上限にかからない。"""
+    with db.session() as conn:
+        return {"id": staff.open_round(conn, r.episode, r.target, note=r.note, created_by="human")}
+
+
+@app.get("/api/staff")
+def staff_settings():
+    return staff.settings()
 
 
 @app.get("/api/plans")

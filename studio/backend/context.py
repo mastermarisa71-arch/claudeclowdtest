@@ -9,7 +9,7 @@
 """
 import json
 
-from . import config, core, db, direction
+from . import config, core, db, direction, staff
 from .importers import bible
 
 CANON_FILES = [
@@ -72,6 +72,10 @@ def build(conn, episode_code: str | None = None) -> str:
                        + "".join(f"\n  配置図 {t}" for t in s_["blocking_text"]))
         if not sc["scenes"]:
             out.append("- （まだシーン整理がない。脚本を読んだら字コンテより先に scene-set / scene-sheet で作り、監督の承認をもらう）")
+        rounds = staff.list_rounds(conn, ep["code"])
+        out += ["", "### AI スタッフ会議（studio/docs/AIスタッフ会議.md）"]
+        out += [f"- #{r['id']} [{r['stage']}] {r['target'] or '全体'}：" + (next((p['summary'] for p in r['posts'] if p['kind'] == 'まとめ'), '')
+                or f"{sum(s['status'] == 'done' for s in r['slots'])}/{len(r['slots'])} 枠") for r in rounds[:6]] or ["- （まだなし）"]
         open_c = direction.list_choices(conn, ep["code"], "open")
         out += ["", f"### 監督に聞いている2択（{len(open_c)}件、答えを待つ間はほかを進める）"]
         out += [f"- #{c['id']} {c['scene']} {c['about']}：{c['question']}　"
