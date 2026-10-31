@@ -434,3 +434,5 @@ table.assign select { min-width: 220px; }
 #sendbar .done .sbdot { background: var(--green); } #sendbar .you .sbdot { background: #f0b45a; } #sendbar .ng .sbdot { background: var(--red); }
 #sendbar button { padding: 0 6px; }
 @keyframes sbpulse { to { opacity: .3; } }
+.flowpanel { margin: 10px 0; } .flowrow { border-top: 1px solid var(--line); padding: 8px 0; }
+.flowrow.mine { background: #e07a7a11; } .flowrow .report { background: var(--panel2); padding: 6px 8px; border-radius: 6px; margin: 4px 0; }

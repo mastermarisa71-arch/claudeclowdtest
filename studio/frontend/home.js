@@ -187,3 +187,45 @@ async function sendBar() {
   BAR_TIMER = setTimeout(sendBar, busy ? 3000 : 15000);
 }
 sendBar();
+
+// ===== 字コンテのタブの上：シーンごとの工程と、監督のチェック（仮字コンテ・生成の前） =====
+async function flowPanel(code) {
+  const { flows } = await api(`/api/episodes/${code}/flows`);
+  const box = document.createElement("div");
+  box.className = "card flowpanel";
+  const STEPS = ["仮字コンテ（演出）", "監督チェック", "字コンテ会議", "字コンテ", "プロンプト・素材", "監督の生成チェック", "480p", "映像会議", "監督"];
+  const at = { rough: 0, rough_check: 1, rough_ok: 1, jikonte_meeting: 2, jikonte: 3, prep: 4, gate: 5, making: 6, remaking: 6, video_meeting: 7, director: 8, done: 9 };
+  box.innerHTML = `<h2 style="margin:0 0 4px">シーンの工程 <span class="small muted">監督が「生成する」を押すまで、お金のかかる生成は回りません</span></h2>
+    <div class="small muted">${STEPS.map((s, i) => `${i + 1}. ${s}`).join(" → ")}</div>
+    ${flows.map((f) => {
+      const mine = ["rough_check", "gate", "director"].includes(f.stage);
+      const report = f.request && f.request.result ? `<div class="small report">${h(f.request.result).replace(/\n/g, "<br>")}</div>` : "";
+      const btns = f.stage === "rough_check" || f.stage === "rough_ok"
+        ? `${f.stage === "rough_check" ? `<button class="primary" data-ck="ok">仮字コンテ OK</button>` : ""}<button data-ck="now" title="ほかのシーンを待たずに字コンテ会議を開く">このシーンだけ先に会議へ</button><button data-ck="redo">直して</button>`
+        : f.stage === "gate" ? `<button class="primary" data-ck="go">生成する（480p）</button><button data-ck="redo">直して</button>`
+        : f.stage === "director" ? `<a class="btn primary" href="#/ep/${code}/decide">映像を見て決める ›</a>` : "";
+      return `<div class="flowrow ${mine ? "mine" : ""}" data-sc="${h(f.scene)}"><div class="row"><b>${h(f.scene)}</b>
+        <span class="badge ${mine ? "open" : f.stage === "done" ? "sel" : "proposed"}">${h(f.stage_label)}</span>
+        <span class="small muted">${at[f.stage] ?? "?"}/9${f.request && f.request.status === "claimed" ? `・${h(f.request.claimed_by)} が作業中` : ""}</span></div>
+        ${(f.stage === "rough_check" || f.stage === "gate") ? report : ""}
+        ${btns ? `<div class="row">${btns}${f.stage !== "director" ? `<input type="text" class="cknote" placeholder="ひとこと（直してのときは必須。Enter で「直して」）" style="flex:1">` : ""}<span class="small muted ckmsg"></span></div>` : ""}</div>`;
+    }).join("") || `<p class="small muted">まだ工程に入ったシーンはありません（「② シーン整理」で「このシーンでいく」を押すと始まります）</p>`}`;
+  $view.insertBefore(box, $view.children[2] || null);
+  box.querySelectorAll(".flowrow").forEach((row) => {
+    const sc = row.dataset.sc, note = row.querySelector(".cknote"), msg = (t) => (row.querySelector(".ckmsg").textContent = t);
+    const go = async (action) => {
+      if (action === "redo" && !note.value.trim()) { msg("どう直してほしいか書いてください"); return; }
+      if (action === "go" && !confirm(`${sc} の 480p ドラフトを生成します（お金がかかります）。よろしいですか？`)) return;
+      msg("送信中…");
+      try {
+        const r = await api(`/api/episodes/${code}/flows/${sc}/check`, { method: "POST", body: { action, note: note.value.trim() } });
+        if (r.request) track({ kind: "request", id: r.request, label: `${code} ${sc}：${{ redo: "直して", go: "480p 生成" }[action] || action}` });
+        else track({ kind: "flow", code, sc, label: `${code} ${sc} の工程` });
+        msg(r.opened && r.opened.length ? `全シーンの仮字コンテがそろったので、字コンテ会議を開きました（${r.opened.join("・")}）` : "送りました");
+        setTimeout(route, 900);
+      } catch (e) { msg("送れませんでした：" + e.message); }
+    };
+    row.querySelectorAll("[data-ck]").forEach((b) => (b.onclick = () => go(b.dataset.ck)));
+    if (note) note.onkeydown = (e) => { if (e.key === "Enter" && !e.isComposing) { e.preventDefault(); go("redo"); } };
+  });
+}

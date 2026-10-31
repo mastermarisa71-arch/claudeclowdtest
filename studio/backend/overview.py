@@ -74,6 +74,10 @@ def overview(conn, code: str) -> dict:
     from . import pipeline
     fl = pipeline.flows(conn, code)
     waiting_dir = [f for f in fl if f["stage"] == "director"]
+    for st, what in (("rough_check", "仮字コンテを見て、OK か「直して」を出す"), ("gate", "プロンプトと足りない素材を見て、生成するかを決める")):
+        w = [f for f in fl if f["stage"] == st]
+        if w:
+            todo.append({"what": f"{what}（{'・'.join(f['scene'] for f in w)}）", "link": f"#/ep/{code}/cuts", "n": len(w), "kind": "decide"})
     if waiting_dir:
         todo.append({"what": f"映像と AI 会議の結論を見て、OK か「こうしたい」を出す（{'・'.join(f['scene'] for f in waiting_dir)}）",
                      "link": f"#/ep/{code}/decide", "n": len(waiting_dir), "kind": "decide"})
@@ -94,7 +98,7 @@ def overview(conn, code: str) -> dict:
     if awaiting:
         todo.append({"what": f"AI が通した絵・動画を流し見する（{awaiting}件）", "link": f"#/ep/{code}/awaiting", "n": awaiting, "kind": "vcon"})
     working = [{"what": f"{f['scene']}（{f['cycle']}周目）：{f['stage_label']}", "link": f"#/ep/{code}/staff"}
-               for f in fl if f["stage"] not in ("director", "done")]
+               for f in fl if f["stage"] not in ("director", "rough_check", "gate", "done")]
     for r in [x for x in staff.list_rounds(conn, code, "open") if not any(f["round_id"] == x["id"] for f in fl)]:
         done = sum(s["status"] == "done" for s in r["slots"])
         working.append({"what": f"AI スタッフ会議 #{r['id']} {r['target'] or '全体'}：{r['stage']}（{done}/{len(r['slots'])}）",

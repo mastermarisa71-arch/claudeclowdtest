@@ -773,6 +773,21 @@ def flows_direct(code: str, scene: str, d: DirectIn):
         return pipeline.direct(conn, code, scene, d.verdict, d.note)
 
 
+class CheckIn(BaseModel):
+    action: str        # ok / redo / now（仮字コンテ）・go / redo（生成チェック）
+    note: str = ""
+
+
+@app.post("/api/episodes/{code}/flows/{scene}/check")
+def flows_check(code: str, scene: str, c: CheckIn):
+    """監督のチェック：仮字コンテを見て OK／直して、プロンプトと素材を見て生成する／直して。"""
+    with db.session() as conn:
+        try:
+            return pipeline.check(conn, code, scene, c.action, c.note)
+        except ValueError as e:
+            raise HTTPException(400, str(e))
+
+
 class RoundIn(BaseModel):
     episode: str
     target: str = ""

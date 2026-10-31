@@ -93,7 +93,7 @@ async function viewSheet(code) {
         <details data-script="${h(x.code)}"><summary class="small">脚本を見る</summary><div class="script small muted">読み込み中…</div></details>
       </details>
       <div class="reply row">
-        <button class="primary" data-ok title="承認すると、字コンテ会議（芝居・演出）→ 480p ドラフト → 映像会議 が自動で進みます">このシーンでいく（→ 字コンテ会議へ）</button>
+        <button class="primary" data-ok title="承認すると、演出が仮字コンテを書きます（生成はしません）">このシーンでいく（→ 仮字コンテへ）</button>
         <input type="text" class="rtext" placeholder="直してほしいこと・意向を書いて Enter で送る　例：あかねはもっと隠そうとしてほしい">
         <button class="qmic">🎤</button><button data-ng>送る</button>
       </div>
@@ -155,8 +155,8 @@ async function viewSheet(code) {
         if (ok) {
           if (t) await api("/api/reviews", { method: "POST", body: { target_type: "episode", target_id: ep.id, verdict: "良い", tags: ["意図"], comment: `[シーン整理 ${sc}] ${t}` } });
           await api(`/api/episodes/${code}/scenes/${sc}`, { method: "PATCH", body: { status: "approved" } });
-          track({ kind: "flow", code, sc, label: `${code} ${sc} を承認 → 字コンテ会議` });
-          msg("承認しました。字コンテ会議に回しました（画面の下で進み具合が見えます）");
+          track({ kind: "flow", code, sc, label: `${code} ${sc} を承認 → 仮字コンテ` });
+          msg("承認しました。演出が仮字コンテを書きます。できたら「字コンテ」タブで見られます");
         } else {
           const r = await api(`/api/episodes/${code}/scenes/${sc}/ask`, { method: "POST", body: { text: t } });
           track({ kind: "request", id: r.request, label: `${code} ${sc} シーン整理の直し：${t.slice(0, 30)}` });

@@ -104,13 +104,14 @@ async function viewEpisode(code) {
       <span><i style="background:var(--green)"></i>採用済み</span><span><i style="background:var(--red)"></i>未対応レビュー</span></div>
     <div class="strip">${cuts.map((c) => `<a class="${state(c)}" style="width:${(100 * (c.seconds || 0.5)) / total}%" href="#/cut/${c.id}?ep=${code}" title="${h(c.cut + c.panel)} ${h(c.dialogue)}"></a>`).join("")}</div>
     ${cuts.length ? "" : `<div class="card"><b>まだ字コンテがありません。</b><div class="small">字コンテは AI が作ります。流れ：
-      「② シーン整理」でシーンを「このシーンでいく」と承認 → 字コンテ会議（演出がカット割り・芝居がキャラの芝居）→ 制作進行がここに字コンテを書き、480p ドラフトまで作る。
+      「② シーン整理」でシーンを承認 → 演出が仮字コンテを書く → 監督が見る → 全シーンそろったら字コンテ会議（芝居・演出）→ 字コンテ → プロンプトと素材の確認 → 監督が「生成する」を押したら 480p。
       どこまで進んだかは「いま」の「シーンの工程」と、画面の下の「送ったもの」に出ます。</div></div>`}
     <table class="cuts"><tr><th>カット</th><th>画面</th><th>台詞</th><th>演出意図</th><th>テイク</th></tr>${rows}</table>`;
   document.getElementById("export").onclick = async () => {
     const r = await api(`/api/episodes/${code}/export`, { method: "POST" });
     alert(`書き出しました\n${r.xml}\n未採用 ${r.missing.length}コマ`);
   };
+  await flowPanel(code);
 }
 
 // ---------- 1コマ：見る・印をつける・レビューする ----------
