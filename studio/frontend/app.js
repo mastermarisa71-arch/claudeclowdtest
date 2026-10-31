@@ -5,7 +5,16 @@ const AXES = ["意図", "構図", "配置・左右", "芝居", "表情", "キャ
 let META = { tags: [], verdicts: [], providers: {} };
 
 const h = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const api = async (path, opts = {}) => {
+const INFLIGHT = new Map();
+const api = (path, opts = {}) => {
+  if (!opts.method || opts.method === "GET") return apiRaw(path, opts);
+  const key = opts.method + path + (opts.body instanceof FormData ? Math.random() : JSON.stringify(opts.body || ""));
+  if (INFLIGHT.has(key)) return INFLIGHT.get(key);
+  const p = apiRaw(path, opts).finally(() => INFLIGHT.delete(key));
+  INFLIGHT.set(key, p);
+  return p;
+};
+const apiRaw = async (path, opts = {}) => {
   const res = await fetch(path, {
     headers: opts.body && !(opts.body instanceof FormData) ? { "Content-Type": "application/json" } : {},
     ...opts,
@@ -43,11 +52,14 @@ async function viewHome() {
         ${e.n_open ? `<span class="badge open">未対応 ${e.n_open}</span>` : ""}<span style="flex:1"></span>
         ${e.has_script || e.n_scenes ? `<button class="small reset" title="この話数を空に戻す（枠は残る。脚本は前の版に移る）">空に戻す</button>` : ""}</div>
     </div>`; };
-  $view.innerHTML = `<h1>話数 <span class="muted small">全12話。各話の枠に脚本を落とすと、シーンに分けて、制作進行がシーン整理の下書きから進めます</span></h1>
+  $view.innerHTML = `<div id="homeAI"></div><h1>話数 <span class="muted small">全12話。各話の枠に脚本を落とすと、シーンに分けて、制作進行がシーン整理の下書きから進めます</span></h1>
     <div class="epgrid">${series.map(card).join("")}</div>
     ${others.length ? `<h2>そのほか</h2><div class="epgrid">${others.map(card).join("")}</div>` : ""}`;
+  homeBoard();
   document.querySelectorAll(".epcard").forEach((el) => {
     const code = el.dataset.code, zone = el.querySelector(".epdrop");
+    // 箱のどこを押しても話数に入る（脚本を落とす所・ボタン・リンクはそれぞれの働き）
+    el.addEventListener("click", (e) => { if (!e.target.closest(".epdrop, button, a, input")) location.hash = `#/ep/${code}`; });
     const input = document.createElement("input"); input.type = "file"; input.hidden = true; zone.appendChild(input);
     const put = async (f) => {
       if (el.classList.contains("has") && !confirm(`${code} の脚本を「${f.name}」で入れ直しますか？（前の脚本は 03_脚本/前の版 に残ります）`)) return;

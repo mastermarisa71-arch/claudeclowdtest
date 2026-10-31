@@ -406,3 +406,20 @@ textarea.sedit { width:100%; min-height:70vh; box-sizing:border-box; font-size:1
 .livebox { margin-top:8px; max-height:340px; overflow-y:auto; background:#0f0d12; border-radius:6px; padding:8px; font-family:ui-monospace,Consolas,monospace; font-size:12px; line-height:1.6; }
 .livebox .ll { white-space:pre-wrap; word-break:break-all; color:#b8b0c0; } .livebox .say { color:var(--text); } .livebox .tool { color:var(--blue); } .livebox .bad { color:var(--red); }
 .qrow { display:flex; gap:12px; align-items:center; margin-bottom:6px; padding:8px 12px; } .qn { min-width:28px; height:28px; border-radius:14px; background:#3a3340; display:flex; align-items:center; justify-content:center; font-weight:bold; }
+
+/* ホームの AI の様子・順番待ち */
+.aiboard-head { margin: 4px 0 8px; }
+.aigrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.aicard { display: flex; flex-direction: column; gap: 4px; border-left: 4px solid var(--line); }
+.aicard .dot, .agentcard .dot { width: 9px; height: 9px; border-radius: 50%; background: #666; display: inline-block; }
+.aicard.on { border-left-color: var(--violet); } .aicard.on .dot { background: var(--violet); }
+.aicard.wait { border-left-color: var(--green); } .aicard.wait .dot { background: var(--green); }
+.aicard.ng { border-left-color: var(--red); } .aicard.ng .dot { background: var(--red); }
+.warn { color: var(--red); }
+.epcard { cursor: pointer; } .epcard:hover { border-color: var(--blue); }
+.qrow { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
+.qrow .qn { min-width: 44px; text-align: center; font-weight: bold; }
+.qrow.working { border-color: var(--violet); } .qrow.working .qn { color: var(--violet); font-size: 12px; }
+.qbtns { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.card.resolved { opacity: .6; }
+table.assign select { min-width: 220px; }

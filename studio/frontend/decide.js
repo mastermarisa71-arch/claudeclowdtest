@@ -34,6 +34,7 @@ async function viewEpHome(code) {
           <a class="btn" href="#/brief?ep=${code}">AI が読んでいる指示（ブリーフ）</a></div>
       </div>
     </div>`;
+  await epQueue(code);
 }
 
 // ===== アニマティック：絵（なければ字コンテの文字）を秒どおりに並べ、カメラの動きもつけて再生 =====

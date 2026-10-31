@@ -706,6 +706,10 @@ def add_audio(conn, *, episode: str, cut_id: int, src: Path, role: str = "voice"
 # ---- 依頼：監督 → どのエージェントでも ----
 
 def add_request(conn, text: str, episode: str = "") -> int:
+    """同じ依頼がまだ順番待ち・作業中なら、積まずにそれを返す（ボタンの連打で使用量をむだにしない）。"""
+    dup = db.one(conn.execute("SELECT id FROM requests WHERE status IN ('open','claimed') AND episode=? AND text=?", (episode, text)))
+    if dup:
+        return dup["id"]
     rid = db.insert(conn, "requests", {"ts": db.now(), "episode": episode, "text": text})
     db.log(conn, "human", "add_request", {"request": rid, "episode": episode})
     return rid
@@ -713,7 +717,7 @@ def add_request(conn, text: str, episode: str = "") -> int:
 
 def list_requests(conn, status: str = "open,claimed") -> list[dict]:
     sts = status.split(",")
-    return db.rows(conn.execute(f"SELECT * FROM requests WHERE status IN ({','.join('?' * len(sts))}) ORDER BY id",
+    return db.rows(conn.execute(f"SELECT * FROM requests WHERE status IN ({','.join('?' * len(sts))}) ORDER BY prio, id",
                                 sts))
 
 
@@ -726,7 +730,7 @@ def claim_request(conn, agent: str, request_id: int | None = None, roles: list[s
     q = "SELECT * FROM requests WHERE status='open'" + (" AND id=?" if request_id else "")
     if not request_id:
         q += f" AND (role='' OR role IS NULL{''.join(' OR role=?' for _ in roles)})"
-    r = db.one(conn.execute(q + " ORDER BY id LIMIT 1", (request_id,) if request_id else tuple(roles)))
+    r = db.one(conn.execute(q + " ORDER BY prio, id LIMIT 1", (request_id,) if request_id else tuple(roles)))
     if not r:
         return None
     cur = conn.execute("UPDATE requests SET status='claimed', claimed_by=?, claimed_at=? WHERE id=? AND status='open'",

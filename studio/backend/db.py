@@ -348,7 +348,10 @@ MIGRATIONS = {
     "assets": {"place": "TEXT DEFAULT ''", "description": "TEXT DEFAULT ''", "notes_json": "TEXT DEFAULT '{}'",
                "hint": "TEXT DEFAULT ''", "described": "INTEGER DEFAULT 0"},
     "rounds": {"kind": "TEXT DEFAULT 'review'", "cycle": "INTEGER DEFAULT 1"},   # review / jikonte（字コンテ会議）/ video（映像会議）
-    "requests": {"role": "TEXT DEFAULT ''"},   # この依頼を取る役（まとめ など）。空ならだれでも
+    "requests": {"role": "TEXT DEFAULT ''",    # この依頼を取る役（まとめ など）。空ならだれでも
+                 "prio": "REAL DEFAULT 0"},   # 順番待ちの並び（小さいほど先。同じなら古い順）
+    # エラーがどこで起きたか（話数・工程）と、直ったか（0 未対応 / 1 直した / 2 あとで成功したので直ったとみなす）
+    "agent_runs": {"episode": "TEXT DEFAULT ''", "stage": "TEXT DEFAULT ''", "resolved": "INTEGER DEFAULT 0"},
     "scenes": {"change_before": "TEXT DEFAULT ''", "change_after": "TEXT DEFAULT ''", "turn": "TEXT DEFAULT ''",
                "characters_json": "TEXT DEFAULT ''", "beats_json": "TEXT DEFAULT ''",
                "script_from": "TEXT DEFAULT ''", "script_to": "TEXT DEFAULT ''",

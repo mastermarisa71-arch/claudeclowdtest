@@ -221,7 +221,105 @@ def agents_list():
     """AI の接続（ログインしているか）と、裏の AI の様子・役。"""
     from . import agents_auth
     st = staff.settings()
-    return {"tools": agents_auth.all_status(), "agents": runner.status(), "run_agents": st.get("rules", {}).get("run_agents", True)}
+    agents = runner.status()
+    for k, v in st.get("agents", {}).items():     # その AI がどのアカウントでログインしているか（claude-b は別の置き場所）
+        au = agents_auth.agent_status(v.get("command", ""))
+        agents[k].update(tool=au.get("tool"), installed=au.get("installed"), logged_in=au.get("logged_in"),
+                         account=au.get("detail", ""), config_dir=au.get("config_dir", ""))
+    return {"tools": agents_auth.all_status(), "agents": agents, "run_agents": st.get("rules", {}).get("run_agents", True),
+            "roles": {k: v.get("name", k) for k, v in st.get("roles", {}).items()}, "assign": st.get("assign", {})}
+
+
+@app.post("/api/agents/check")
+def agents_check():
+    """ログインの状態を調べ直す（覚えていた結果を捨てる）。"""
+    from . import agents_auth
+    agents_auth._CACHE.clear()
+    return {"ok": True}
+
+
+@app.post("/api/agents/{agent}/login-as")
+def agents_login_as(agent: str):
+    """その AI のアカウントでログインを始める（claude-b は CLAUDE_CONFIG_DIR の置き場所に入る）。"""
+    from . import agents_auth
+    a = staff.settings().get("agents", {}).get(agent)
+    if not a:
+        raise HTTPException(404, f"{agent} という AI はいません")
+    tool, d = agents_auth.of_agent(a.get("command", ""))
+    runner.wake(agent)
+    return agents_auth.login(tool, d)
+
+
+class AssignIn(BaseModel):
+    assign: dict = {}
+    labels: dict = {}
+
+
+@app.put("/api/staff/assign")
+def staff_assign(a: AssignIn):
+    """役の割り振り（どの役をどの AI がやるか）と AI の呼び名を、画面から AIスタッフ.json に書く。"""
+    d = staff.settings()
+    agents = d.get("agents", {})
+    for role, who in a.assign.items():
+        if role not in d.get("roles", {}):
+            raise HTTPException(400, f"「{role}」という役はありません")
+        if who and who not in agents:
+            raise HTTPException(400, f"「{who}」という AI はいません")
+        d.setdefault("assign", {})[role] = who
+    for k, label in a.labels.items():
+        if k in agents and label.strip():
+            agents[k]["label"] = label.strip()
+    staff.STAFF_FILE.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
+    runner.wake()
+    return {"ok": True, "assign": d["assign"]}
+
+
+class QueueIn(BaseModel):
+    action: str          # stop（中止）/ delete（消す）/ up / down / top
+
+
+@app.post("/api/queue/{kind}/{qid}")
+def queue_act(kind: str, qid: int, q: QueueIn):
+    """順番待ちの操作。kind は request（仕事）か slot（会議の枠）。"""
+    with db.session() as conn:
+        if kind == "slot":
+            s = db.one(conn.execute("SELECT * FROM round_slots WHERE id=?", (qid,)))
+            if not s:
+                raise HTTPException(404, "見つかりません")
+            if q.action in ("stop", "delete"):
+                if s["status"] == "claimed" and s["agent"]:
+                    runner.stop(s["agent"])
+                db.update(conn, "round_slots", qid, {"status": "cancelled"})
+            return {"ok": True}
+        r = db.one(conn.execute("SELECT * FROM requests WHERE id=?", (qid,)))
+        if not r:
+            raise HTTPException(404, "見つかりません")
+        if q.action in ("stop", "delete"):
+            if r["status"] == "claimed" and r["claimed_by"]:
+                runner.stop(r["claimed_by"])
+            db.update(conn, "requests", qid, {"status": "cancelled" if q.action == "stop" else "deleted"})
+            return {"ok": True}
+        opened = core.list_requests(conn, "open")
+        ids = [x["id"] for x in opened]
+        if qid not in ids:
+            raise HTTPException(400, "作業中のものは並べ替えられません")
+        i = ids.index(qid)
+        ids.pop(i)
+        ids.insert(0 if q.action == "top" else max(0, i - 1) if q.action == "up" else min(len(ids), i + 1), qid)
+        for n, x in enumerate(ids):
+            conn.execute("UPDATE requests SET prio=? WHERE id=?", (n, x))
+    return {"ok": True}
+
+
+class ResolvedIn(BaseModel):
+    resolved: int
+
+
+@app.patch("/api/errors/{eid}")
+def errors_resolve(eid: int, r: ResolvedIn):
+    with db.session() as conn:
+        db.update(conn, "agent_runs", eid, {"resolved": r.resolved})
+    return {"ok": True}
 
 
 @app.exception_handler(Exception)
@@ -232,8 +330,10 @@ async def _record_error(request, exc):
     tb = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))[-3000:]
     try:
         with db.session() as conn:
+            ep, stage = runner.stage_of_path(request.url.path)
             db.insert(conn, "agent_runs", {"agent": "月灯スタジオ（ツール）", "kind": "tool", "started_at": db.now(), "ended_at": db.now(),
-                                           "status": "error", "command": f"{request.method} {request.url.path}", "error": tb})
+                                           "status": "error", "command": f"{request.method} {request.url.path}", "error": tb,
+                                           "episode": ep, "stage": stage})
     except Exception:
         pass
     return JSONResponse({"detail": f"{type(exc).__name__}: {exc}"}, status_code=500)
@@ -254,9 +354,28 @@ def errors():
     import platform
     report = ["月灯スタジオのエラー報告", f"- PC：{platform.platform()} / Python {platform.python_version()}", ""]
     for r in runs[:10]:
-        report += [f"## #{r['id']} {r['agent']}（{r['kind']}） {r['started_at']}〜{r['ended_at']}", f"コマンド：{r['command'][:300]}",
+        report += [f"## #{r['id']} {r.get('episode') or ''} {r.get('stage') or ''}でエラー：{r['agent']}（{r['kind']}） {r['started_at']}〜{r['ended_at']}", f"コマンド：{r['command'][:300]}",
                    "エラー：", r["error"][:1500], ""]
-    return {"runs": runs, "report": "\n".join(report)}
+    return {"runs": runs, "report": "\n".join(report), "health": _health(runs)}
+
+
+def _health(runs: list[dict]) -> list[dict]:
+    """いま何が使えて、何が使えないか。"""
+    from . import agents_auth
+    st = staff.settings()
+    out = [{"name": "月灯スタジオ（この画面）", "ok": True, "detail": "動いています"}]
+    for k, v in st.get("agents", {}).items():
+        au = agents_auth.agent_status(v.get("command", ""))
+        ok = bool(au.get("installed") and au.get("logged_in"))
+        bad = [r for r in runs if r["agent"] == k and not r.get("resolved")]
+        out.append({"name": v.get("label", k), "ok": ok and not bad,
+                    "detail": ("ログイン中：" + (au.get("detail") or "") if ok else "使えません：" + ("入っていません" if not au.get("installed") else "ログインしていません"))
+                              + (f"／未対応のエラー {len(bad)} 件" if bad else "")})
+    on = st.get("rules", {}).get("run_agents", True)
+    out.append({"name": "裏で AI を自動で動かす", "ok": on, "detail": "入っています" if on else "止めています"})
+    tool_bad = sorted({f"{r.get('episode') or ''} {r.get('stage') or ''}".strip() for r in runs if r["kind"] == "tool" and not r.get("resolved")})
+    out.append({"name": "画面の機能", "ok": not tool_bad, "detail": "問題なし" if not tool_bad else "エラーが残っている所：" + "、".join(tool_bad)})
+    return out
 
 
 @app.post("/api/agents/{tool}/login")
