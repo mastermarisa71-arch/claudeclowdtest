@@ -94,11 +94,10 @@ async function viewSheet(code) {
       </details>
       <div class="reply row">
         <button class="primary" data-ok title="承認すると、字コンテ会議（芝居・演出）→ 480p ドラフト → 映像会議 が自動で進みます">このシーンでいく（→ 字コンテ会議へ）</button>
-        <input type="text" class="rtext" placeholder="AI へのひとこと（任意）　例：あかねはもっと隠そうとしてほしい">
-        <button class="qmic">🎤</button><button data-ng>直してほしい</button>
-        <button data-idea title="AI に2択の案を出してもらう">案を出して</button>
-        <button data-staff title="芝居・演出・見る の AI がレビューし合い、案を作る">AI 会議にかける</button><span class="small muted" data-msg></span>
+        <input type="text" class="rtext" placeholder="直してほしいこと・意向を書いて Enter で送る　例：あかねはもっと隠そうとしてほしい">
+        <button class="qmic">🎤</button><button data-ng>送る</button>
       </div>
+      <div class="small muted" data-msg></div>
     </div>`).join("") || `<p class="muted">まだシーン整理がありません。「AI（演出）に下書きを頼む」を押してください。</p>`}`;
 
   drawCurve(code, ep, scenes);
@@ -147,25 +146,29 @@ async function viewSheet(code) {
     const planEl = card.querySelector(".plan");
     planEl.ontoggle = () => { if (planEl.open && !planEl.dataset.loaded) { planEl.dataset.loaded = 1; blockingEditor(code, sc, planEl.querySelector(".planbox"), scene); } };
     const text = () => card.querySelector(".rtext").value.trim();
+    // 送ったものは、カードの下と画面の下の帯に「送信中 → 順番待ち → 実行中 → 済み」で出す
     const send = async (ok) => {
-      if (!ok && !text()) { msg("どう直してほしいか、一言ください（欄を直接直すなら ✎）"); return; }
-      await api(`/api/episodes/${code}/scenes/${sc}`, { method: "PATCH", body: { status: ok ? "approved" : "review" } });
-      if (text() || !ok)
-        await api("/api/reviews", { method: "POST", body: { target_type: "episode", target_id: ep.id, verdict: ok ? "良い" : "修正",
-          tags: ["意図"], comment: `[シーン整理 ${sc}] ${text() || "このままでいい"}` } });
-      route();
+      const t = text(), input = card.querySelector(".rtext");
+      if (!ok && !t) { msg("直してほしいことを書いてください（欄を直接直すなら ✎）"); return; }
+      msg("送信中…"); input.disabled = true;
+      try {
+        if (ok) {
+          if (t) await api("/api/reviews", { method: "POST", body: { target_type: "episode", target_id: ep.id, verdict: "良い", tags: ["意図"], comment: `[シーン整理 ${sc}] ${t}` } });
+          await api(`/api/episodes/${code}/scenes/${sc}`, { method: "PATCH", body: { status: "approved" } });
+          track({ kind: "flow", code, sc, label: `${code} ${sc} を承認 → 字コンテ会議` });
+          msg("承認しました。字コンテ会議に回しました（画面の下で進み具合が見えます）");
+        } else {
+          const r = await api(`/api/episodes/${code}/scenes/${sc}/ask`, { method: "POST", body: { text: t } });
+          track({ kind: "request", id: r.request, label: `${code} ${sc} シーン整理の直し：${t.slice(0, 30)}` });
+          input.value = "";
+          msg("送りました。制作進行が直します。直し方が割れるときは2〜3案を「⑤ 決める」に並べます（画面の下で進み具合が見えます）");
+        }
+      } catch (e) { msg("送れませんでした：" + e.message); }
+      input.disabled = false;
     };
     card.querySelector("[data-ok]").onclick = () => send(true);
     card.querySelector("[data-ng]").onclick = () => send(false);
-    card.querySelector("[data-staff]").onclick = async () => {
-      const r = await api("/api/rounds", { method: "POST", body: { episode: code, target: sc, note: text() } });
-      msg(`AI 会議 #${r.id} を開きました（「AI 会議」で進み具合が見られます）`);
-    };
-    card.querySelector("[data-idea]").onclick = async () => {
-      await api("/api/requests", { method: "POST", body: { episode: code,
-        text: `${code} ${sc} について、案を2つ（3つまで）出して、2択で聞いて（ask / ask_director。できれば version-add で版も）。${text() ? "監督のひとこと：" + text() : ""}` } });
-      msg("頼みました。案がそろうと「⑤ 決める」に出ます");
-    };
+    card.querySelector(".rtext").onkeydown = (e) => { if (e.key === "Enter" && !e.isComposing) { e.preventDefault(); send(false); } };
   });
   addMics();
   const target = new URLSearchParams(location.hash.split("?")[1] || "").get("scene");

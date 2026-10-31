@@ -103,6 +103,9 @@ async function viewEpisode(code) {
     <div class="legend small muted"><span><i style="background:#3b3340"></i>テイクなし</span><span><i style="background:var(--blue)"></i>テイクあり</span>
       <span><i style="background:var(--green)"></i>採用済み</span><span><i style="background:var(--red)"></i>未対応レビュー</span></div>
     <div class="strip">${cuts.map((c) => `<a class="${state(c)}" style="width:${(100 * (c.seconds || 0.5)) / total}%" href="#/cut/${c.id}?ep=${code}" title="${h(c.cut + c.panel)} ${h(c.dialogue)}"></a>`).join("")}</div>
+    ${cuts.length ? "" : `<div class="card"><b>まだ字コンテがありません。</b><div class="small">字コンテは AI が作ります。流れ：
+      「② シーン整理」でシーンを「このシーンでいく」と承認 → 字コンテ会議（演出がカット割り・芝居がキャラの芝居）→ 制作進行がここに字コンテを書き、480p ドラフトまで作る。
+      どこまで進んだかは「いま」の「シーンの工程」と、画面の下の「送ったもの」に出ます。</div></div>`}
     <table class="cuts"><tr><th>カット</th><th>画面</th><th>台詞</th><th>演出意図</th><th>テイク</th></tr>${rows}</table>`;
   document.getElementById("export").onclick = async () => {
     const r = await api(`/api/episodes/${code}/export`, { method: "POST" });
@@ -299,7 +302,7 @@ async function viewBrief(params) {
 // 監督がふだん使うのは左の5つ（シーン整理 → Vコン → …）。設計・コマ・ショットなどの細かい画面は「詳しく」に入れる
 // 工程の順：いま → シーン整理 → Vコン → 決める → AI 会議（裏側）→ 実績。決めることの数は「決める」に出す
 const EP_COUNTS = {};
-const epTabs = (code, now) => `<div class="row tabs">${[["home", "いま"], ["script", "① 脚本"], ["sheet", "② シーン整理"], ["art", "③ 美術・素材"], ["vcon", "④ Vコン（絵と動画）"],
+const epTabs = (code, now) => `<div class="row tabs">${[["home", "いま"], ["script", "① 脚本"], ["sheet", "② シーン整理"], ["cuts", "字コンテ"], ["art", "③ 美術・素材"], ["vcon", "④ Vコン（絵と動画）"],
     ["decide", `⑤ 決める${EP_COUNTS[code] ? `<span class="cnt">${EP_COUNTS[code]}</span>` : ""}`], ["staff", "AI 会議"], ["stats", "実績"]]
   .map(([k, l]) => `<a class="btn ${k === now ? "on" : ""}" href="#/ep/${code}${k === "home" ? "" : "/" + k}">${l}</a>`).join("")}
 </div>`;

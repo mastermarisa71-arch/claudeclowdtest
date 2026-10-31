@@ -423,3 +423,14 @@ textarea.sedit { width:100%; min-height:70vh; box-sizing:border-box; font-size:1
 .qbtns { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
 .card.resolved { opacity: .6; }
 table.assign select { min-width: 220px; }
+
+/* 画面の下の帯：送ったものの様子 */
+#sendbar { position: fixed; left: 12px; bottom: 12px; z-index: 50; width: min(460px, calc(100vw - 24px)); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; box-shadow: 0 4px 16px #0008; }
+#sendbar .sb { display: flex; gap: 8px; align-items: center; font-size: 12px; padding: 3px 0; }
+#sendbar .sbl { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted, #aaa); }
+#sendbar .sbdot { width: 8px; height: 8px; border-radius: 50%; background: #888; flex: none; }
+#sendbar .run .sbdot { background: var(--violet); animation: sbpulse 1s infinite alternate; } #sendbar .wait .sbdot { background: var(--blue); }
+#sendbar .done .sbdot { background: var(--green); } #sendbar .you .sbdot { background: #f0b45a; } #sendbar .ng .sbdot { background: var(--red); }
+#sendbar button { padding: 0 6px; }
+@keyframes sbpulse { to { opacity: .3; } }

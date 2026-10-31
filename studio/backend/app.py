@@ -854,6 +854,41 @@ def patch_scene(code: str, scode: str, s_: SceneIn):
     return {"ok": True}
 
 
+class AskIn(BaseModel):
+    text: str
+
+
+@app.post("/api/episodes/{code}/scenes/{scode}/ask")
+def scene_ask(code: str, scode: str, a: AskIn):
+    """シーン整理への監督のひとこと。レビューに残し、制作進行に「直す（迷うなら2〜3案を版にする）」仕事として積む。"""
+    if not a.text.strip():
+        raise HTTPException(400, "ひとことが空です")
+    with db.session() as conn:
+        ep = db.episode_by_code(conn, code)
+        core.set_scene(conn, code, scode, actor="human", status="review")
+        core.add_review(conn, target_type="episode", target_id=ep["id"], verdict="修正", tags=["意図"],
+                        comment=f"[シーン整理 {scode}] {a.text.strip()}")
+        rid = core.add_request(conn, f"[シーン整理 {code} {scode} の直し] 監督の意向：{a.text.strip()}\n"
+                                     f"このシーンのシーン整理（scene-set：伝えたいこと・変化・あらすじ・キャラ・区切り）を監督の意向どおりに直す。"
+                                     f"直し方がひとつに決まらないときは、version-add で2〜3案の版を作り（監督は「⑤ 決める」で並べて選ぶ）、"
+                                     f"ask で2択にする。監督が直した欄は書き換えない。終わったら request-done に何をどう直したかを書く。", code)
+        db.update(conn, "requests", rid, {"role": pipeline.MAKER})
+        return {"request": rid}
+
+
+@app.get("/api/requests/{rid}")
+def request_one(rid: int):
+    """依頼1つの様子（送った直後の表示に使う）：順番待ちの何番目か・だれが作業中か・結果。"""
+    with db.session() as conn:
+        r = db.one(conn.execute("SELECT * FROM requests WHERE id=?", (rid,)))
+        if not r:
+            raise HTTPException(404, "見つかりません")
+        if r["status"] == "open":
+            r["position"] = [x["id"] for x in core.list_requests(conn, "open")].index(rid) + 1
+        r["stage"] = runner.stage_of(r["text"])
+        return r
+
+
 @app.get("/api/episodes/{code}/awaiting")
 def awaiting(code: str):
     with db.session() as conn:

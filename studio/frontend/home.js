@@ -148,3 +148,42 @@ function errorsHTML(er) {
         ${r.resolved ? `<button class="small" data-res="${r.id}/0">未対応に戻す</button>` : `<button class="small" data-res="${r.id}/1">直した</button>`}</div>
         <details><summary class="small">くわしく</summary><div class="small muted">${h(r.command)}</div><pre class="brief small">${h(r.error)}</pre></details></div>`; }).join("") || `<p class="muted">エラーはありません。</p>`}`;
 }
+
+
+// ===== 画面の下の帯：送ったものの様子（送信中・順番待ち・実行中・済み）。どの画面にいても見える =====
+const TRACK_KEY = "tsuki_sent";
+const loadSent = () => { try { return JSON.parse(localStorage.getItem(TRACK_KEY) || "[]"); } catch { return []; } };
+const saveSent = (l) => { try { localStorage.setItem(TRACK_KEY, JSON.stringify(l.slice(-8))); } catch {} };
+function track(item) { saveSent([...loadSent(), { ...item, at: Date.now() }]); sendBar(); }
+let BAR_TIMER = null;
+async function sendBar() {
+  clearTimeout(BAR_TIMER);
+  let bar = document.getElementById("sendbar");
+  if (!bar) { bar = document.createElement("div"); bar.id = "sendbar"; document.body.appendChild(bar); }
+  const list = loadSent().filter((x) => !x.hidden && Date.now() - x.at < 24 * 3600e3);
+  if (!list.length) { bar.style.display = "none"; return; }
+  let busy = false;
+  const rows = await Promise.all(list.slice(-4).reverse().map(async (x) => {
+    let st = "確かめています…", cls = "wait";
+    try {
+      if (x.kind === "request") {
+        const r = await api(`/api/requests/${x.id}`);
+        if (r.status === "open") [st, cls] = [`順番待ち（${r.position}番目）`, "wait"];
+        else if (r.status === "claimed") [st, cls] = [`実行中（${r.claimed_by}）`, "run"];
+        else if (r.status === "done") [st, cls] = [`済み：${(r.result || "").slice(0, 60)}`, "done"];
+        else [st, cls] = ["取り消しました", "done"];
+      } else {
+        const o = await api(`/api/episodes/${x.code}/overview`);
+        const f = o.flows.find((f) => f.scene === x.sc);
+        [st, cls] = f ? [f.label, f.stage === "done" ? "done" : f.stage === "director" ? "you" : "run"] : ["回しています…", "wait"];
+      }
+    } catch { [st, cls] = ["様子が読めません", "ng"]; }
+    if (cls === "wait" || cls === "run") busy = true;
+    return `<div class="sb ${cls}"><span class="sbdot"></span><span class="sbl">${h(x.label)}</span><b>${h(st)}</b><button class="small" data-hide="${x.at}" title="この行を消す">×</button></div>`;
+  }));
+  bar.style.display = "";
+  bar.innerHTML = `<div class="row small"><b>送ったもの</b><a href="#/progress?t=queue">順番待ちを見る ›</a></div>${rows.join("")}`;
+  bar.querySelectorAll("[data-hide]").forEach((b) => (b.onclick = () => { saveSent(loadSent().map((x) => (String(x.at) === b.dataset.hide ? { ...x, hidden: true } : x))); sendBar(); }));
+  BAR_TIMER = setTimeout(sendBar, busy ? 3000 : 15000);
+}
+sendBar();
