@@ -452,11 +452,27 @@ function parseVoice(text) {
   const comment = verdict ? t.slice(verdict.length).replace(/^[、。,\s]+/, "") : t;
   return { verdict, tags, comment };
 }
+// 音声入力：いつも1つだけ聞く（押し直すと前のは止める）。確定した文だけを、同じ文を重ねずに1回だけ返す
+let LISTENING = null;
 function listen(onText) {
   if (!SR) { alert("このブラウザは音声入力に対応していません（Chrome / Edge で使えます）"); return; }
-  const r = new SR(); r.lang = "ja-JP"; r.interimResults = false;
-  r.onresult = (e) => onText(e.results[0][0].transcript);
+  if (LISTENING) { try { LISTENING.abort(); } catch (e) {} LISTENING = null; }
+  const r = new SR(); r.lang = "ja-JP"; r.interimResults = false; r.continuous = false; r.maxAlternatives = 1;
+  const parts = [];
+  r.onresult = (e) => {
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i].isFinal ? e.results[i][0].transcript.trim() : "";
+      if (t && !parts.includes(t)) parts.push(t);
+    }
+  };
+  let done = false;
+  r.onend = () => { if (done) return; done = true; LISTENING = null;
+    // 「AとA」のように同じ言い回しが繰り返されたら1つにする
+    const text = parts.join(" ").replace(/(.{4,}?)(?:\s*\1)+/g, "$1").trim();
+    onText(text); };
+  r.onerror = () => {};
   r.start();
+  LISTENING = r;
   return r;
 }
 function addMics() {   // 文字を書く欄すべてに 🎤 を付ける
