@@ -224,10 +224,52 @@ def agents_list():
     return {"tools": agents_auth.all_status(), "agents": runner.status(), "run_agents": st.get("rules", {}).get("run_agents", True)}
 
 
+@app.exception_handler(Exception)
+async def _record_error(request, exc):
+    """ツール自身のエラーも「進み具合 → エラー」に残す（どの画面の、何で起きたか）。"""
+    import traceback
+    from fastapi.responses import JSONResponse
+    tb = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))[-3000:]
+    try:
+        with db.session() as conn:
+            db.insert(conn, "agent_runs", {"agent": "月灯スタジオ（ツール）", "kind": "tool", "started_at": db.now(), "ended_at": db.now(),
+                                           "status": "error", "command": f"{request.method} {request.url.path}", "error": tb})
+    except Exception:
+        pass
+    return JSONResponse({"detail": f"{type(exc).__name__}: {exc}"}, status_code=500)
+
+
+@app.get("/api/progress")
+def progress():
+    """進み具合：動いている AI と、その場の流れ・順番待ち・最近の記録・きょうの使用量。"""
+    with db.session() as conn:
+        return runner.progress(conn)
+
+
+@app.get("/api/errors")
+def errors():
+    """エラーの一覧と、そのまま貼れる報告文（開発の Claude に渡す）。"""
+    with db.session() as conn:
+        runs = db.rows(conn.execute("SELECT * FROM agent_runs WHERE status='error' ORDER BY id DESC LIMIT 50"))
+    import platform
+    report = ["月灯スタジオのエラー報告", f"- PC：{platform.platform()} / Python {platform.python_version()}", ""]
+    for r in runs[:10]:
+        report += [f"## #{r['id']} {r['agent']}（{r['kind']}） {r['started_at']}〜{r['ended_at']}", f"コマンド：{r['command'][:300]}",
+                   "エラー：", r["error"][:1500], ""]
+    return {"runs": runs, "report": "\n".join(report)}
+
+
 @app.post("/api/agents/{tool}/login")
 def agents_login(tool: str):
     from . import agents_auth
+    runner.wake()          # ログインし直したら、休ませていた AI をすぐ起こす
     return agents_auth.login(tool)
+
+
+@app.post("/api/agents/wake")
+def agents_wake():
+    runner.wake()
+    return {"ok": True}
 
 
 class RunIn(BaseModel):

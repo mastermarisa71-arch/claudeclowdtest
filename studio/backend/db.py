@@ -126,6 +126,14 @@ CREATE TABLE IF NOT EXISTS chat_messages (
   created_at TEXT
 );
 CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT);
+-- 裏の AI を動かした記録（runner.py / chat.py）：使用量（トークン・時間・目安の金額）とエラー
+CREATE TABLE IF NOT EXISTS agent_runs (
+  id INTEGER PRIMARY KEY, agent TEXT, kind TEXT DEFAULT 'agent',   -- agent（工程の仕事）/ chat（チャットの返事）
+  started_at TEXT, ended_at TEXT, seconds INTEGER DEFAULT 0,
+  status TEXT,                         -- running / ok / error
+  tokens_in INTEGER DEFAULT 0, tokens_out INTEGER DEFAULT 0, cost_usd REAL DEFAULT 0,
+  command TEXT DEFAULT '', result TEXT DEFAULT '', error TEXT DEFAULT ''
+);
 -- 脚本の行につけた監督の注（scriptdoc.py）
 CREATE TABLE IF NOT EXISTS script_notes (
   id INTEGER PRIMARY KEY, episode_id INTEGER REFERENCES episodes(id),

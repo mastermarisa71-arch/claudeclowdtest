@@ -567,6 +567,7 @@ async function route() {
     else if (parts[0] === "library") await viewLibrary(params);
     else if (parts[0] === "docs") await viewDocs(params);
     else if (parts[0] === "agents") await viewAgents();
+    else if (parts[0] === "progress") await viewProgress(params);
     else if (parts[0] === "ep" && parts[2] === "vcon") await viewVcon(parts[1], params);
     else if (parts[0] === "ep" && parts[2] === "awaiting") await viewAwaiting(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "shots") await viewShots(parts[1]);

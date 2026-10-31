@@ -400,3 +400,9 @@ textarea.sedit { width:100%; min-height:70vh; box-sizing:border-box; font-size:1
 .docfile:hover, .docfile.on { background:rgba(240,180,90,.12); } .docfile.bin { color:var(--muted); }
 .docview { min-height:300px; max-height:75vh; overflow:auto; } .doctext { line-height:1.8; font-size:14px; }
 .worklinks { display:flex; flex-wrap:wrap; gap:6px; } .job { margin-bottom:8px; }
+
+/* 進み具合 */
+.runcard { margin-bottom:12px; } .runcard .dot { width:10px; height:10px; border-radius:50%; background:#555; } .runcard.on .dot { background:var(--amber); animation:pulse 1.2s infinite; }
+.livebox { margin-top:8px; max-height:340px; overflow-y:auto; background:#0f0d12; border-radius:6px; padding:8px; font-family:ui-monospace,Consolas,monospace; font-size:12px; line-height:1.6; }
+.livebox .ll { white-space:pre-wrap; word-break:break-all; color:#b8b0c0; } .livebox .say { color:var(--text); } .livebox .tool { color:var(--blue); } .livebox .bad { color:var(--red); }
+.qrow { display:flex; gap:12px; align-items:center; margin-bottom:6px; padding:8px 12px; } .qn { min-width:28px; height:28px; border-radius:14px; background:#3a3340; display:flex; align-items:center; justify-content:center; font-weight:bold; }

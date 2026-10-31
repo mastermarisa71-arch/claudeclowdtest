@@ -11,6 +11,7 @@ import re
 import shutil
 import subprocess
 import threading
+import time
 
 from . import config, core, db, overview
 
@@ -85,7 +86,7 @@ def _run(exe: str, text: str, ctx: str, session: str, episode: str) -> None:
                 "Bash(python studio/cli.py brief:*)", "Bash(python studio/cli.py flows:*)"]
         if session:
             args += ["--resume", session]
-        reply, sid, err = "", session, ""
+        reply, sid, err, usage, t0 = "", session, "", {}, time.time()
         try:
             p = subprocess.Popen(args, cwd=config.REPO_ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                  text=True, encoding="utf-8", errors="replace")
@@ -101,6 +102,9 @@ def _run(exe: str, text: str, ctx: str, session: str, episode: str) -> None:
                 elif ev.get("type") == "result":
                     reply = ev.get("result") or RUNNING["partial"]
                     sid = ev.get("session_id") or sid
+                    u = ev.get("usage", {})
+                    usage = {"tokens_in": u.get("input_tokens", 0) + u.get("cache_read_input_tokens", 0) + u.get("cache_creation_input_tokens", 0),
+                             "tokens_out": u.get("output_tokens", 0), "cost_usd": ev.get("total_cost_usd") or 0}
             p.wait(timeout=600)
             if p.returncode and not reply:
                 err = (p.stderr.read() or "")[-500:]
@@ -120,6 +124,9 @@ def _run(exe: str, text: str, ctx: str, session: str, episode: str) -> None:
         with db.session() as conn:
             if sid and sid != session:
                 _save_session(conn, sid)
+            db.insert(conn, "agent_runs", {"agent": "制作進行（チャット）", "kind": "chat", "started_at": db.now(), "ended_at": db.now(),
+                                           "seconds": round(time.time() - t0), "status": "error" if err and not usage else "ok",
+                                           "error": err[:4000], "command": "chat", **usage})
             db.insert(conn, "chat_messages", {"role": "assistant", "text": reply, "episode": episode,
                                               "actions_json": json.dumps(actions, ensure_ascii=False), "created_at": db.now()})
         RUNNING.update(busy=False, partial="")
