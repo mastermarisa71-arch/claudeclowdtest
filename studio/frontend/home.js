@@ -156,6 +156,28 @@ const loadSent = () => { try { return JSON.parse(localStorage.getItem(TRACK_KEY)
 const saveSent = (l) => { try { localStorage.setItem(TRACK_KEY, JSON.stringify(l.slice(-8))); } catch {} };
 function track(item) { saveSent([...loadSent(), { ...item, at: Date.now() }]); sendBar(); }
 let BAR_TIMER = null;
+// 帯の場所とたたみ具合は、この PC のブラウザに覚えておく
+function barPref(set) {
+  let p = {};
+  try { p = JSON.parse(localStorage.getItem("tsuki_sendbar") || "{}"); } catch {}
+  if (set) { p = { ...p, ...set }; try { localStorage.setItem("tsuki_sendbar", JSON.stringify(p)); } catch {} }
+  return p;
+}
+function placeBar(bar) {
+  const p = barPref();
+  if (p.x == null) return;
+  const x = Math.min(Math.max(0, p.x), innerWidth - 120), y = Math.min(Math.max(0, p.y), innerHeight - 40);
+  Object.assign(bar.style, { left: x + "px", top: y + "px", bottom: "auto" });
+}
+function dragBar(bar, handle) {
+  handle.onpointerdown = (e) => {
+    if (e.target.closest("button, a")) return;
+    const r = bar.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top;
+    handle.setPointerCapture(e.pointerId);
+    handle.onpointermove = (m) => Object.assign(bar.style, { left: m.clientX - dx + "px", top: m.clientY - dy + "px", bottom: "auto" });
+    handle.onpointerup = (u) => { handle.onpointermove = null; barPref({ x: u.clientX - dx, y: u.clientY - dy }); };
+  };
+}
 async function sendBar() {
   clearTimeout(BAR_TIMER);
   let bar = document.getElementById("sendbar");
@@ -182,7 +204,15 @@ async function sendBar() {
     return `<div class="sb ${cls}"><span class="sbdot"></span><span class="sbl">${h(x.label)}</span><b>${h(st)}</b><button class="small" data-hide="${x.at}" title="この行を消す">×</button></div>`;
   }));
   bar.style.display = "";
-  bar.innerHTML = `<div class="row small"><b>送ったもの</b><a href="#/progress?t=queue">順番待ちを見る ›</a></div>${rows.join("")}`;
+  const folded = barPref().folded;
+  const nRun = rows.filter((r) => /class="sb (run|wait)"/.test(r)).length;
+  bar.classList.toggle("folded", !!folded);
+  bar.innerHTML = `<div class="row small sbhead" title="ここをつかんで動かせます"><span class="grip">⠿</span><b>送ったもの</b>
+      ${folded ? `<span class="muted">${nRun ? `進行中 ${nRun}` : "すべて済み"}</span>` : `<a href="#/progress?t=queue">順番待ちを見る ›</a>`}
+      <span style="flex:1"></span><button class="small" data-fold>${folded ? "ひらく" : "たたむ"}</button></div>${folded ? "" : rows.join("")}`;
+  placeBar(bar);
+  bar.querySelector("[data-fold]").onclick = () => { barPref({ folded: !folded }); sendBar(); };
+  dragBar(bar, bar.querySelector(".sbhead"));
   bar.querySelectorAll("[data-hide]").forEach((b) => (b.onclick = () => { saveSent(loadSent().map((x) => (String(x.at) === b.dataset.hide ? { ...x, hidden: true } : x))); sendBar(); }));
   BAR_TIMER = setTimeout(sendBar, busy ? 3000 : 15000);
 }

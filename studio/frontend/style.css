@@ -436,3 +436,6 @@ table.assign select { min-width: 220px; }
 @keyframes sbpulse { to { opacity: .3; } }
 .flowpanel { margin: 10px 0; } .flowrow { border-top: 1px solid var(--line); padding: 8px 0; }
 .flowrow.mine { background: #e07a7a11; } .flowrow .report { background: var(--panel2); padding: 6px 8px; border-radius: 6px; margin: 4px 0; }
+
+#sendbar .sbhead { cursor: move; user-select: none; } #sendbar .grip { color: var(--muted, #888); }
+#sendbar.folded { width: auto; padding: 4px 8px; opacity: .85; }

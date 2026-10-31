@@ -32,6 +32,8 @@ def _poll_loop():
 
 
 threading.Thread(target=_poll_loop, daemon=True).start()
+with db.session() as _c:     # 前の流れの「字コンテ → 480p」が残っていたら、字コンテだけに積み直す
+    pipeline.upgrade_old(_c)
 runner.start()       # 会議の枠・役のついた依頼が空いたら、その役の AI を起こす（見張り番）
 
 

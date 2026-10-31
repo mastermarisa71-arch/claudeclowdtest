@@ -33,6 +33,9 @@ PATH_WORDS = [("/sheet", "シーン整理"), ("/scenes", "シーン整理"), ("/
 
 
 def stage_of(text: str) -> str:
+    m = re.match(r"\[工程 [^・\]]+・([^\]]+)\]", text or "")      # 工程の依頼は「[工程 S1・字コンテ]」の形
+    if m:
+        return m.group(1)
     for w, name in STAGE_WORDS:
         if w in (text or ""):
             return name
@@ -76,6 +79,8 @@ def _parse(agent: str, raw: str, usage: dict) -> None:
     try:
         ev = json.loads(raw)
     except ValueError:
+        ev = None
+    if not isinstance(ev, dict):     # JSON でない行・数字だけの行（Codex の出力など）はそのまま流す
         if raw.strip():
             _say(agent, raw.rstrip()[:500])
         return
@@ -172,6 +177,7 @@ def loop(every: int = 30) -> None:
             st = staff.settings()
             if st.get("rules", {}).get("run_agents", True) and not os.environ.get("TSUKI_NO_AGENTS"):
                 with db.session() as conn:
+                    release_orphans(conn, st)
                     for agent, a in st.get("agents", {}).items():
                         roles = staff.roles_of(agent)
                         s = STATE.get(agent, {})
@@ -183,6 +189,22 @@ def loop(every: int = 30) -> None:
         except Exception:
             pass
         time.sleep(every)
+
+
+def release_orphans(conn, st: dict) -> list[str]:
+    """作業中のまま放っておかれた仕事（取った AI がもう動いていない）を、順番待ちに戻す。
+    AI が途中で落ちたり、ツールを再起動したりすると、取ったままで誰も進めない仕事が残るため。"""
+    out = []
+    for agent in st.get("agents", {}):
+        if STATE.get(agent, {}).get("running"):
+            continue
+        for r in db.rows(conn.execute("SELECT id FROM requests WHERE status='claimed' AND claimed_by=?", (agent,))):
+            db.update(conn, "requests", r["id"], {"status": "open", "claimed_by": ""})
+            out.append(f"依頼 #{r['id']}")
+        for x in db.rows(conn.execute("SELECT id FROM round_slots WHERE status='claimed' AND agent=?", (agent,))):
+            db.update(conn, "round_slots", x["id"], {"status": "open", "agent": ""})
+            out.append(f"会議の枠 #{x['id']}")
+    return out
 
 
 def wake(agent: str | None = None) -> None:

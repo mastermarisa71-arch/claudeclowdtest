@@ -80,6 +80,18 @@ def _open_meeting(conn, f: dict) -> int:
     return rid
 
 
+def upgrade_old(conn) -> list[str]:
+    """前の流れで積んだ「字コンテ → 480p」の依頼（まだ終わっていないもの）を取り消し、字コンテだけの依頼に積み直す。
+    監督が生成を決める前に 480p が回らないように。"""
+    out = []
+    for f in db.rows(conn.execute("""SELECT f.*, r.text, r.status AS rstatus FROM scene_flows f JOIN requests r ON r.id=f.request_id
+            WHERE f.stage='making' AND r.status IN ('open','claimed') AND r.text LIKE '%字コンテ → 480p%'""")):
+        db.update(conn, "requests", f["request_id"], {"status": "cancelled", "result": "工程の組み直しで、字コンテだけの依頼に積み直した"})
+        if f["round_id"]:
+            out.append(on_round_closed(conn, f["round_id"]))
+    return out
+
+
 def check(conn, episode: str, scene: str, action: str, note: str = "") -> dict:
     """監督のチェック。
     rough_check：ok（仮字コンテ OK）／ redo（直して）／ now（ほかのシーンを待たずに字コンテ会議へ）
