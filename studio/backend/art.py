@@ -169,6 +169,11 @@ def notes_text(notes: dict, kind: str = "bg") -> str:
 # 監督は画像を落とすだけ（名前とひとことは任意）。何の素材か（種類・場所・カメラ位置・時間帯）と注意書きは、制作進行の AI が画像を見て書き、
 # 話数の背景の発注（art_orders）に合うものを結ぶ（link）。生成の背景にするか雰囲気だけにするかは、カットごとに生成の係が決める。
 
+# 素材庫の種類（フォルダ）。reference は生成に使わず、「こういうルック・映像表現にしたい」を AI に伝える参考資料
+LIB_KINDS = {"character": "キャラクター（設定資料）", "bg": "背景（美術）", "prop": "小物", "layout": "配置図",
+             "reference": "参考（ルック・映像表現）", "effect": "エフェクト"}
+
+
 def library(conn) -> list[dict]:
     rows = db.rows(conn.execute("SELECT * FROM assets WHERE active=1 ORDER BY id DESC"))
     for r in rows:
@@ -178,7 +183,7 @@ def library(conn) -> list[dict]:
     return rows
 
 
-def add_library(conn, files: list[tuple[Path, str]], hint: str = "", order_id: int | None = None) -> dict:
+def add_library(conn, files: list[tuple[Path, str]], hint: str = "", order_id: int | None = None, kind: str = "") -> dict:
     """素材庫に入れる。order_id があれば、その発注にすぐ結ぶ（監督が「この背景」に落としたとき）。"""
     ids = []
     for src, name in files:
@@ -186,14 +191,16 @@ def add_library(conn, files: list[tuple[Path, str]], hint: str = "", order_id: i
         rel = Path("assets") / "library" / f"{int(time.time() * 1000)}_{safe}"
         (config.MEDIA_DIR / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(src, config.MEDIA_DIR / rel)
-        aid = db.insert(conn, "assets", {"kind": "", "name": Path(name).stem, "file_path": rel.as_posix(), "hint": hint,
+        aid = db.insert(conn, "assets", {"kind": kind or ("bg" if order_id else ""), "name": Path(name).stem, "file_path": rel.as_posix(), "hint": hint,
                                          "meta_json": "{}", "active": 1, "described": 0, "created_at": db.now()})
         ids.append(aid)
         if order_id:
             link(conn, order_id, aid, by="human")
-    rid = core.add_request(conn, f"[素材庫] 新しい素材 #{', #'.join(map(str, ids))} を見る（Read で画像を開く）。"
-                                 "何の素材か（kind：bg/character/prop/layout/effect、場所、カメラ位置、時間帯）と、注意書き"
-                                 "（見るところ・崩れやすいところ・気をつけること）を asset-describe で書く。"
+    what = (f"監督が「{LIB_KINDS.get(kind, kind)}」に入れた。" if kind else "種類（kind：character/bg/prop/layout/reference/effect）から決める。")
+    rid = core.add_request(conn, f"[素材庫] 新しい素材 #{', #'.join(map(str, ids))} を見る（Read で画像を開く）。{what}"
+                                 + ("参考（reference）は生成には使わない。どんなルック・映像表現の参考か（色・光・カメラ・芝居・質感）を description に書き、"
+                                    "この作品のどこに効かせるか（ルック B／C、どのシーン）も書く。" if kind == "reference" else
+                                    "何の素材か（場所、カメラ位置、時間帯、キャラ名）と、注意書き（見るところ・崩れやすいところ・気をつけること）を asset-describe で書く。")
                                  + (f"監督のひとこと：{hint}。" if hint else "")
                                  + "そのあと、各話数の背景の発注（art EPxx）で足りないものに合えば art-link で結ぶ。終わったら request-done")
     db.update(conn, "requests", rid, {"role": "まとめ"})

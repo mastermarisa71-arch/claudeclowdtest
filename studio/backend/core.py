@@ -25,8 +25,17 @@ def episodes(conn) -> list[dict]:
           (SELECT COUNT(*) FROM cuts c WHERE c.episode_id=e.id
              AND EXISTS (SELECT 1 FROM takes t WHERE t.cut_id=c.id AND t.selected=1)) AS n_selected,
           (SELECT COUNT(*) FROM reviews r WHERE r.episode_id=e.id AND r.status IN ('open','working')) AS n_open,
-          (SELECT COUNT(*) FROM reviews r WHERE r.episode_id=e.id AND r.status='proposed') AS n_proposed
+          (SELECT COUNT(*) FROM reviews r WHERE r.episode_id=e.id AND r.status='proposed') AS n_proposed,
+          (SELECT COUNT(*) FROM scenes s WHERE s.episode_id=e.id) AS n_scenes,
+          (SELECT COUNT(*) FROM scenes s WHERE s.episode_id=e.id AND s.status='approved') AS n_scenes_ok
         FROM episodes e ORDER BY e.code"""))
+
+
+def episodes_with_script(conn) -> list[dict]:
+    rows = episodes(conn)
+    for e in rows:
+        e["has_script"] = (config.VAULT_DIR / "03_脚本" / "いまの版" / f"{e['code']}_脚本_いまの版.md").exists()
+    return rows
 
 
 def episode_cuts(conn, code: str) -> dict:

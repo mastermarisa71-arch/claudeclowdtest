@@ -40,6 +40,44 @@ def docx_text(path: Path) -> str:
     return "\n".join(out).strip() + "\n"
 
 
+SERIES = 12      # 『月灯りスピークイージー』は全12話。話数の枠は最初から並べておく
+
+
+def ensure_series(conn) -> None:
+    """EP01〜EP12 の枠を用意する（中身は脚本を落とすと入る）。"""
+    for n in range(1, SERIES + 1):
+        db.get_or_create_episode(conn, f"EP{n:02d}")
+
+
+CONTENT = ("cuts", "takes", "reviews", "scenes", "shots", "boards", "documents", "usage", "comparisons", "choices",
+           "versions", "scene_flows", "art_orders", "asset_uses", "script_notes")
+
+
+def reset(conn, code: str) -> None:
+    """話数を空に戻す（枠は残す）。脚本のファイルは vault に残る（いまの版は 03_脚本/前の版 に移す）。"""
+    ep = db.episode_by_code(conn, code)
+    for t in CONTENT:
+        conn.execute(f"DELETE FROM {t} WHERE episode_id=?", (ep["id"],))
+    conn.execute("DELETE FROM round_slots WHERE round_id IN (SELECT id FROM rounds WHERE episode_id=?)", (ep["id"],))
+    conn.execute("DELETE FROM round_posts WHERE round_id IN (SELECT id FROM rounds WHERE episode_id=?)", (ep["id"],))
+    conn.execute("DELETE FROM rounds WHERE episode_id=?", (ep["id"],))
+    conn.execute("UPDATE requests SET status='cancelled' WHERE episode=? AND status IN ('open','claimed')", (code,))
+    db.update(conn, "episodes", ep["id"], {"theme": "", "story_flow": "", "human_fields": "[]", "stage": "脚本"})
+    p = config.VAULT_DIR / "03_脚本" / "いまの版" / f"{code}_脚本_いまの版.md"
+    if p.exists():
+        keep = config.VAULT_DIR / "03_脚本" / "前の版" / f"{code}_脚本_{db.now()[:10]}_{int(time.time())}.md"
+        keep.parent.mkdir(parents=True, exist_ok=True)
+        shutil.move(str(p), keep)
+    db.log(conn, "human", "reset_episode", {"episode": code})
+
+
+def _scenes_untouched(conn, ep_id: int) -> bool:
+    """シーンがまだ誰の手も入っていない（監督が直していない・承認していない・工程が動いていない）。"""
+    rows = db.rows(conn.execute("SELECT status, human_fields FROM scenes WHERE episode_id=?", (ep_id,)))
+    flows = conn.execute("SELECT COUNT(*) FROM scene_flows WHERE episode_id=?", (ep_id,)).fetchone()[0]
+    return not flows and all(r["status"] != "approved" and (r["human_fields"] or "[]") == "[]" for r in rows)
+
+
 def next_code(conn) -> str:
     nums = [int(re.sub(r"\D", "", e["code"]) or 0) for e in db.rows(conn.execute("SELECT code FROM episodes"))]
     return f"EP{(max(nums) + 1 if nums else 1):02d}"
@@ -84,6 +122,8 @@ def create(conn, code: str, title: str, target: float, src: Path, filename: str)
         did.append(f"原稿を {_rel(dest)} に置きました")
         job = f"原稿（{_rel(dest)}）を「03_脚本/いまの版/{code}_脚本_いまの版.md」に書き起こしてから、"
     from . import scriptdoc
+    if ext != ".xlsx" and _scenes_untouched(conn, ep["id"]):
+        conn.execute("DELETE FROM scenes WHERE episode_id=?", (ep["id"],))   # 入れ直し：まだ手が入っていなければ、シーンも分け直す
     n = scriptdoc.split(conn, code)          # 脚本の「○場所（時間）」の行から、シーンに分ける（AI を待たずに）
     if n:
         did.append(f"脚本を {n} シーンに分けました")

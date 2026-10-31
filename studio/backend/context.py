@@ -88,6 +88,10 @@ def build(conn, episode_code: str | None = None) -> str:
                 f"ルック{o['look'] or '-'}：{' '.join(c['code'] for c in o['cuts'][:8])}{' …' if len(o['cuts']) > 8 else ''}"
                 + (f"\n  素材 {o['asset']['file_path']}（{art.USES.get(o['asset']['use'])}）{art.notes_text(o['asset']['notes'])}" if o["asset"] else "")
                 for o in ords] or ["- （まだ発注がない。art-plan で字コンテから並べる）"]
+        refs = [a for a in art.library(conn) if a["kind"] == "reference"]
+        if refs:
+            out += ["", "### 参考資料（ルック・映像表現。生成には使わず、目指す見た目として見る）"]
+            out += [f"- #{a['id']} {a['name']}：{a['description'] or a['hint'] or '（AI がまだ見ていない）'}　{config.MEDIA_DIR / a['file_path']}" for a in refs]
         for m in art.materials(conn, ep["code"]):
             if not m["order_id"]:
                 out.append(f"- [{m['kind']}] {m['name']}（{'・'.join(m['scenes'])}、{art.USES.get(m['use'])}）{art.notes_text(m['notes'], m['kind'])}")

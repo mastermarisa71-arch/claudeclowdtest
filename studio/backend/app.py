@@ -10,10 +10,12 @@ from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import art, chat, config, context, core, db, direction, overview, pipeline, runner, scriptdoc, staff, versions
 from . import episodes as episodes_mod
+from . import art, chat, config, context, core, db, direction, overview, pipeline, runner, scriptdoc, staff, versions
 
 db.init()
+with db.session() as _c:
+    episodes_mod.ensure_series(_c)      # EP01〜EP12 の枠
 app = FastAPI(title="月灯スタジオ")
 app.mount("/media", StaticFiles(directory=config.MEDIA_DIR), name="media")
 FRONTEND = config.STUDIO_DIR / "frontend"
@@ -51,7 +53,19 @@ def meta():
 @app.get("/api/episodes")
 def episodes():
     with db.session() as conn:
-        return core.episodes(conn)
+        return core.episodes_with_script(conn)
+
+
+@app.post("/api/episodes/{code}/split")
+def episode_split(code: str):
+    """vault にある脚本（いまの版）からシーンに分け、制作進行にシーン整理の下書きを頼む。"""
+    with db.session() as conn:
+        n = scriptdoc.split(conn, code)
+        if n:
+            rid = core.add_request(conn, f"[{code}] 脚本（いまの版）を読み、シーン整理の下書きを作る：この話の芯・物語の流れ（story-set）と、"
+                                         f"シーンごとの ①伝えたいこと ②変化 ③あらすじ ④キャラ（scene-set。シーンは S1〜S{n} に分けてある）。終わったら request-done", code)
+            db.update(conn, "requests", rid, {"role": "まとめ"})
+        return {"scenes": n}
 
 
 @app.get("/api/episodes/{code}/cuts")
@@ -208,8 +222,13 @@ def library_list():
         return art.library(conn)
 
 
+@app.get("/api/library/kinds")
+def library_kinds():
+    return art.LIB_KINDS
+
+
 @app.post("/api/library")
-async def library_add(files: list[UploadFile] = File(...), hint: str = Form(""), order_id: int | None = Form(None)):
+async def library_add(files: list[UploadFile] = File(...), hint: str = Form(""), order_id: int | None = Form(None), kind: str = Form("")):
     """素材庫に入れる（画像を落とすだけ）。何の素材かと注意書きは、制作進行の AI が画像を見て書く。"""
     tmp_files = []
     try:
@@ -219,7 +238,7 @@ async def library_add(files: list[UploadFile] = File(...), hint: str = Form(""),
                 tmp.write(await f.read())
             tmp_files.append((Path(tmp.name), f.filename or tmp.name))
         with db.session() as conn:
-            return art.add_library(conn, tmp_files, hint, order_id)
+            return art.add_library(conn, tmp_files, hint, order_id, kind)
     finally:
         for p_, _ in tmp_files:
             p_.unlink(missing_ok=True)
@@ -227,6 +246,7 @@ async def library_add(files: list[UploadFile] = File(...), hint: str = Form(""),
 
 class AssetIn(BaseModel):
     name: str | None = None
+    kind: str | None = None
     hint: str | None = None
     active: int | None = None
 
@@ -464,6 +484,14 @@ def chat_send(c: ChatIn):
 def chat_act(a: ActIn):
     with db.session() as conn:
         return {"message": chat.act(conn, a.message, a.index)}
+
+
+@app.post("/api/episodes/{code}/reset")
+def episode_reset(code: str):
+    """話数を空に戻す（枠は残る。脚本は 03_脚本/前の版 へ）。"""
+    with db.session() as conn:
+        episodes_mod.reset(conn, code)
+    return {"ok": True}
 
 
 @app.post("/api/episodes/new")

@@ -29,51 +29,45 @@ const tierBadge = (t) => (t.tier ? `<span class="tier ${t.tier}">${TIER[t.tier] 
 // ---------- 話数一覧 ----------
 async function viewHome() {
   const eps = await api("/api/episodes");
-  $view.innerHTML = `<h1>話数</h1>
-    <div class="card newep"><div class="drop" id="newDrop"><div class="dz"><b>＋ 新しい話数</b><br>脚本のファイル（md・txt・pdf・docx）か、字コンテ（xlsx）をここに落とす<br>
-        <span class="small muted">（押して選んでもよい）落としたら、話数・タイトル・目標尺を確かめてから作ります</span></div><input type="file" hidden></div>
-      <div class="row"><label>話数<input type="text" id="newCode" placeholder="空なら次の番号" style="width:110px"></label>
-        <label>タイトル<input type="text" id="newTitle" placeholder="（任意）"></label>
-        <label>目標尺（秒）<input type="text" id="newTarget" value="180" style="width:70px"></label>
-        <button class="primary" id="newGo" hidden>この内容で作る</button><span class="small muted" id="newMsg"></span></div></div>
-    <div class="grid">${eps.map((e) => {
-      const i = STAGES.indexOf(e.stage);
-      return `<a class="card" href="#/ep/${e.code}"><h3>${h(e.code)} <span class="muted small">${h(e.title)}</span></h3>
-        <div class="pipeline">${STAGES.map((s, j) => `<span class="${j < i ? "done" : j === i ? "now" : ""}">${s}</span>`).join("")}</div>
-        <span class="stat">コマ <b>${e.n_cuts}</b></span><span class="stat">尺 <b>${e.seconds}</b>/${e.target_seconds}秒</span><br>
-        <span class="stat">採用 <b>${e.n_selected}</b>/${e.n_cuts}</span><span class="stat">テイク <b>${e.n_takes}</b></span>
-        ${e.n_open ? `<span class="badge open">未対応 ${e.n_open}</span>` : ""}${e.n_proposed ? `<span class="badge proposed">確認待ち ${e.n_proposed}</span>` : ""}
-      </a>`;
-    }).join("") || `<p class="muted">まだ話数がありません。上に脚本を落とすと始まります。</p>`}</div>`;
-  const drop = document.getElementById("newDrop"), input = drop.querySelector("input");
-  // 落としたら、すぐには作らない。話数・タイトル・目標尺を確かめてから「この内容で作る」
-  let picked = null;
-  const ask = (f) => {
-    picked = f;
-    const nums = eps.map((e) => +e.code.replace(/\D/g, "")).filter(Boolean);
-    const m = f.name.match(/(?:EP|ep|#|第)\s*0*(\d{1,2})|(\d{1,2})\s*話/);
-    if (!document.getElementById("newCode").value)
-      document.getElementById("newCode").value = `EP${String(m ? +(m[1] || m[2]) : (nums.length ? Math.max(...nums) + 1 : 1)).padStart(2, "0")}`;
-    drop.querySelector(".dz").innerHTML = `<b>${h(f.name)}</b><br><span class="small muted">下の話数・タイトル・目標尺を確かめて「この内容で作る」</span>`;
-    document.getElementById("newGo").hidden = false;
-    document.getElementById("newTitle").focus();
-  };
-  const make = async (f) => {
-    const fd = new FormData();
-    fd.append("file", f); fd.append("code", document.getElementById("newCode").value); fd.append("title", document.getElementById("newTitle").value);
-    fd.append("target", document.getElementById("newTarget").value || "180");
-    document.getElementById("newMsg").textContent = "読み込んでいます…";
-    const r = await fetch("/api/episodes/new", { method: "POST", body: fd });
-    if (!r.ok) { document.getElementById("newMsg").textContent = "読み込めませんでした：" + (await r.text()).slice(0, 200); return; }
-    const j = await r.json();
-    location.hash = `#/ep/${j.episode}/script`;
-  };
-  drop.onclick = () => input.click();
-  input.onchange = () => input.files[0] && ask(input.files[0]);
-  document.getElementById("newGo").onclick = () => picked && make(picked);
-  drop.ondragover = (e) => { e.preventDefault(); drop.classList.add("over"); };
-  drop.ondragleave = () => drop.classList.remove("over");
-  drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove("over"); e.dataTransfer.files[0] && ask(e.dataTransfer.files[0]); };
+  const series = eps.filter((e) => /^EP(0[1-9]|1[0-2])$/.test(e.code));
+  const others = eps.filter((e) => !series.includes(e));
+  const state = (e) => !e.has_script ? ["脚本を待っています", ""] : !e.n_scenes ? ["脚本あり・シーン未分割", "proposed"]
+    : e.n_scenes_ok < e.n_scenes ? [`シーン整理 ${e.n_scenes_ok}/${e.n_scenes}`, "proposed"] : e.n_cuts ? [`字コンテ ${e.n_cuts}コマ`, "sel"] : ["シーン整理 済み", "sel"];
+  const card = (e) => { const [label, cls] = state(e); return `<div class="card epcard ${e.has_script ? "has" : "empty"}" data-code="${h(e.code)}">
+      <div class="row"><a class="eptitle" href="#/ep/${h(e.code)}"><b>${h(e.code.replace("EP", "#"))}</b> <span class="small">${h(e.title || "")}</span></a>
+        <span style="flex:1"></span><span class="badge ${cls}">${label}</span></div>
+      <div class="epdrop"><span class="small muted">${e.has_script ? "脚本を入れ直す：ここに落とす" : "ここに脚本を落とす（docx・md・txt・pdf、字コンテは xlsx）"}</span></div>
+      <div class="row small">${e.has_script ? `<a href="#/ep/${h(e.code)}/script">脚本を読む</a>` : ""}
+        ${e.has_script && !e.n_scenes ? `<button class="small split">シーンに分ける</button>` : ""}
+        ${e.n_scenes ? `<a href="#/ep/${h(e.code)}/sheet">シーン整理</a>` : ""}
+        ${e.n_open ? `<span class="badge open">未対応 ${e.n_open}</span>` : ""}<span style="flex:1"></span>
+        ${e.has_script || e.n_scenes ? `<button class="small reset" title="この話数を空に戻す（枠は残る。脚本は前の版に移る）">空に戻す</button>` : ""}</div>
+    </div>`; };
+  $view.innerHTML = `<h1>話数 <span class="muted small">全12話。各話の枠に脚本を落とすと、シーンに分けて、制作進行がシーン整理の下書きから進めます</span></h1>
+    <div class="epgrid">${series.map(card).join("")}</div>
+    ${others.length ? `<h2>そのほか</h2><div class="epgrid">${others.map(card).join("")}</div>` : ""}`;
+  document.querySelectorAll(".epcard").forEach((el) => {
+    const code = el.dataset.code, zone = el.querySelector(".epdrop");
+    const input = document.createElement("input"); input.type = "file"; input.hidden = true; zone.appendChild(input);
+    const put = async (f) => {
+      if (el.classList.contains("has") && !confirm(`${code} の脚本を「${f.name}」で入れ直しますか？（前の脚本は 03_脚本/前の版 に残ります）`)) return;
+      zone.innerHTML = `<span class="small">読み込んでいます…</span>`;
+      const fd = new FormData(); fd.append("file", f); fd.append("code", code);
+      const r = await fetch("/api/episodes/new", { method: "POST", body: fd });
+      if (!r.ok) { zone.innerHTML = `<span class="small" style="color:var(--red)">読み込めませんでした：${h((await r.text()).slice(0, 120))}</span>`; return; }
+      location.hash = `#/ep/${code}/script`;
+    };
+    zone.onclick = () => input.click();
+    input.onchange = () => input.files[0] && put(input.files[0]);
+    zone.ondragover = (e) => { e.preventDefault(); zone.classList.add("over"); };
+    zone.ondragleave = () => zone.classList.remove("over");
+    zone.ondrop = (e) => { e.preventDefault(); zone.classList.remove("over"); e.dataTransfer.files[0] && put(e.dataTransfer.files[0]); };
+    el.querySelector(".split")?.addEventListener("click", async () => { await api(`/api/episodes/${code}/split`, { method: "POST" }); location.hash = `#/ep/${code}/sheet`; });
+    el.querySelector(".reset")?.addEventListener("click", async () => {
+      if (!confirm(`${code} を空に戻しますか？（シーン整理・字コンテ・テイク・会議などが消えます。脚本は 03_脚本/前の版 に残ります）`)) return;
+      await api(`/api/episodes/${code}/reset`, { method: "POST" }); route();
+    });
+  });
 }
 
 // ---------- 1話のコマ一覧 ----------
@@ -576,7 +570,7 @@ async function route() {
     else if (parts[0] === "ep" && parts[2] === "decide") await viewDecide(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "art") await viewArt(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "script") await viewScript(parts[1]);
-    else if (parts[0] === "library") await viewLibrary();
+    else if (parts[0] === "library") await viewLibrary(params);
     else if (parts[0] === "ep" && parts[2] === "vcon") await viewVcon(parts[1], params);
     else if (parts[0] === "ep" && parts[2] === "awaiting") await viewAwaiting(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "shots") await viewShots(parts[1]);

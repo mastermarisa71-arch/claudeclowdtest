@@ -4,7 +4,7 @@
 // 生成の背景にするか雰囲気だけにするかは、カットごとに生成の係が決める（監督は決めない）。
 function dropZone(el, onFiles, multiple = true) {
   const input = document.createElement("input");
-  input.type = "file"; input.accept = "image/*"; input.multiple = multiple; input.hidden = true;
+  input.type = "file"; input.accept = "image/*,video/*"; input.multiple = multiple; input.hidden = true;
   el.appendChild(input);
   el.onclick = (e) => { if (e.target.tagName !== "INPUT" && e.target.tagName !== "SELECT" && e.target.tagName !== "OPTION") input.click(); };
   input.onchange = () => input.files.length && onFiles([...input.files]);
@@ -22,27 +22,38 @@ async function sendLibrary(files, extra = {}) {
 const KINDS = { bg: "背景", character: "キャラの設定資料", prop: "小物", layout: "配置図", effect: "エフェクト", "": "（AI が見ています）" };
 
 // ===== 素材庫 =====
-async function viewLibrary() {
-  const lib = await api("/api/library");
-  $view.innerHTML = `<h1>素材庫 <span class="muted small">話数をまたいで使う素材（背景・キャラの設定資料・小物 …）。画像を落とすだけで、何の素材かと注意書きは AI が書きます</span></h1>
-    <div class="card"><div class="drop big" id="libDrop"><div class="dz"><b>ここに画像を落とす</b>（何枚でも）<br><span class="small muted">レンダー・撮処理したもの、キャラの設定資料など。名前やひとことは、あとからでも</span></div></div>
-      <div class="row"><input type="text" id="libHint" placeholder="ひとこと（任意）　例：店内の夕方、カメラA。窓の光はあとで撮処理で足す" style="flex:1"><span class="small muted" id="libMsg"></span></div></div>
-    <div class="libgrid">${lib.map((a) => `<div class="card libitem" data-a="${a.id}">
-      <img src="/media/${encodeURI(a.file_path)}">
-      <div class="row"><input type="text" class="lname" value="${h(a.name)}"><span class="badge ${a.described ? "sel" : "proposed"}">${h(KINDS[a.kind] ?? a.kind)}</span></div>
+async function viewLibrary(params) {
+  const [lib, kinds] = await Promise.all([api("/api/library"), api("/api/library/kinds")]);
+  const tab = (params && params.get("k")) ?? (localStorageGet("lib.tab") || "all");
+  const tabs = [["all", "すべて"], ...Object.entries(kinds), ["", "仕分け待ち"]];
+  const count = (k) => (k === "all" ? lib.length : lib.filter((a) => (a.kind || "") === k).length);
+  const shown = tab === "all" ? lib : lib.filter((a) => (a.kind || "") === tab);
+  const isRef = tab === "reference";
+  $view.innerHTML = `<h1>素材庫 <span class="muted small">話数をまたいで使う素材。種類ごとに置き場所があります。何の素材か・注意書きは AI が画像を見て書きます</span></h1>
+    <div class="libtabs">${tabs.map(([k, l]) => `<a class="btn ${k === tab ? "on" : ""}" data-k="${k}">${h(l)} <span class="small muted">${count(k)}</span></a>`).join("")}</div>
+    <div class="card"><div class="drop big" id="libDrop"><div class="dz"><b>${tab === "all" || tab === "" ? "ここに落とす（種類は AI が分けます）" : `「${h(kinds[tab])}」に落とす`}</b>（何枚でも）<br>
+        <span class="small muted">${isRef ? "目指すルックや映像表現の参考（他作品の画、写真、色見本、動画）。生成には使わず、AI が目指す見た目として読みます" : "レンダー・撮処理したもの、キャラの設定資料など"}</span></div></div>
+      <div class="row"><input type="text" id="libHint" placeholder="${isRef ? "どこを参考にしたいか（任意）　例：夜の店内の色。窓の光の入り方。手持ち風のカメラ" : "ひとこと（任意）　例：店内の夕方、カメラA"}" style="flex:1"><span class="small muted" id="libMsg"></span></div></div>
+    <div class="libgrid">${shown.map((a) => `<div class="card libitem" data-a="${a.id}">
+      ${/\.(mp4|mov|webm)$/i.test(a.file_path) ? `<video src="/media/${encodeURI(a.file_path)}" muted controls></video>` : `<img src="/media/${encodeURI(a.file_path)}">`}
+      <div class="row"><input type="text" class="lname" value="${h(a.name)}">
+        <select class="lkind">${[["", "仕分け待ち"], ...Object.entries(kinds)].map(([k, l]) => `<option value="${k}" ${k === (a.kind || "") ? "selected" : ""}>${h(l)}</option>`).join("")}</select></div>
       ${a.place ? `<div class="small">${h(a.place)}</div>` : ""}
-      ${a.description ? `<div class="small muted">${h(a.description)}</div>` : a.described ? "" : `<div class="small muted">AI が画像を見て、何の素材かと注意書きを書きます</div>`}
+      ${a.hint ? `<div class="small">監督：${h(a.hint)}</div>` : ""}
+      ${a.description ? `<div class="small muted">AI：${h(a.description)}</div>` : a.described ? "" : `<div class="small muted">AI が画像を見て書きます…</div>`}
       <div>${Object.entries(a.notes || {}).filter(([, v]) => v).map(([k, v]) => `<span class="nchip">${h({ look: "見るところ", break: "崩れやすい", avoid: "気をつける", light: "光", comp: "撮処理" }[k] || k)}：${h(v)}</span>`).join("")}</div>
       ${a.used_in.length ? `<div class="small">使う所：${a.used_in.map(h).join("、")}</div>` : ""}
-      <div class="row"><button class="small ldel">使わない</button></div></div>`).join("") || `<p class="muted">まだ素材がありません。</p>`}</div>`;
+      <div class="row"><span style="flex:1"></span><button class="small ldel">使わない</button></div></div>`).join("") || `<p class="muted">まだありません。</p>`}</div>`;
+  document.querySelectorAll(".libtabs [data-k]").forEach((b) => (b.onclick = () => { localStorageSet("lib.tab", b.dataset.k); viewLibrary(new URLSearchParams(`k=${b.dataset.k}`)); }));
   dropZone(document.getElementById("libDrop"), async (files) => {
-    document.getElementById("libMsg").textContent = `${files.length} 枚を入れています…`;
-    await sendLibrary(files, { hint: document.getElementById("libHint").value });
-    route();
+    document.getElementById("libMsg").textContent = `${files.length} 件を入れています…`;
+    await sendLibrary(files, { hint: document.getElementById("libHint").value, kind: tab === "all" ? "" : tab });
+    viewLibrary(new URLSearchParams(`k=${tab}`));
   });
   document.querySelectorAll(".libitem").forEach((el) => {
     el.querySelector(".lname").onchange = (e) => api(`/api/library/${el.dataset.a}`, { method: "PATCH", body: { name: e.target.value } });
-    el.querySelector(".ldel").onclick = async () => { await api(`/api/library/${el.dataset.a}`, { method: "PATCH", body: { active: 0 } }); route(); };
+    el.querySelector(".lkind").onchange = async (e) => { await api(`/api/library/${el.dataset.a}`, { method: "PATCH", body: { kind: e.target.value } }); viewLibrary(new URLSearchParams(`k=${tab}`)); };
+    el.querySelector(".ldel").onclick = async () => { await api(`/api/library/${el.dataset.a}`, { method: "PATCH", body: { active: 0 } }); viewLibrary(new URLSearchParams(`k=${tab}`)); };
   });
 }
 

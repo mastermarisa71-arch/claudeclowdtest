@@ -380,3 +380,12 @@ textarea.sedit { width:100%; min-height:70vh; box-sizing:border-box; font-size:1
 .libitem img { width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:6px; background:#141117; }
 .libitem .lname { flex:1; min-width:0; }
 .order .pick { width:100%; margin-top:6px; }
+
+/* 話数（全12話の枠） */
+.epgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:10px; }
+.epcard.empty { opacity:.8; } .epcard .eptitle { color:var(--text); text-decoration:none; font-size:16px; }
+.epdrop { margin:8px 0; padding:12px; border:2px dashed #4a4250; border-radius:8px; text-align:center; cursor:pointer; }
+.epdrop.over { border-color:var(--amber); background:rgba(240,180,90,.08); }
+.epcard.has .epdrop { padding:6px; border-style:dotted; }
+.libtabs { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; } .libtabs .btn { cursor:pointer; }
+.libitem video { width:100%; aspect-ratio:16/9; border-radius:6px; background:#141117; } .libitem .lkind { max-width:140px; }
