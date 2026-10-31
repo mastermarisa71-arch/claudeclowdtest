@@ -106,6 +106,8 @@ def _run(exe: str, text: str, ctx: str, session: str, episode: str) -> None:
                 err = (p.stderr.read() or "")[-500:]
         except Exception as e:      # 起動できない・時間切れなど。黙らずに画面に出す
             err = str(e)
+        if not reply and re.search(r"login|log in|auth|ログイン|API key", err or "", re.I):
+            reply = "制作進行の AI がログインしていません。上のメニューの「AI の接続」で、Claude の「ログインする」を押してください。"
         reply = reply or RUNNING["partial"] or f"（制作進行の AI が返事できませんでした：{err or '原因不明'}）"
         m = re.search(r"```actions\s*(\[.*?\])\s*```", reply, re.S)
         actions = []

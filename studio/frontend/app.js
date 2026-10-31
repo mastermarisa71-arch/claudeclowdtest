@@ -290,13 +290,7 @@ const EP_COUNTS = {};
 const epTabs = (code, now) => `<div class="row tabs">${[["home", "いま"], ["script", "① 脚本"], ["sheet", "② シーン整理"], ["art", "③ 美術・素材"], ["vcon", "④ Vコン（絵と動画）"],
     ["decide", `⑤ 決める${EP_COUNTS[code] ? `<span class="cnt">${EP_COUNTS[code]}</span>` : ""}`], ["staff", "AI 会議"], ["stats", "実績"]]
   .map(([k, l]) => `<a class="btn ${k === now ? "on" : ""}" href="#/ep/${code}${k === "home" ? "" : "/" + k}">${l}</a>`).join("")}
-  <span style="flex:1"></span>
-  <select class="more" onchange="if(this.value) location.hash=this.value">
-    <option value="">そのほか</option>
-    ${[["awaiting", "AI が通した絵・動画"], ["questions", "AI からの質問（文章）"], ["design", "設計（尺の配分）"], ["cuts", "コマの一覧"], ["shots", "ショット分け"], ["edit", "編集（ライブ）"]].map(([k, l]) =>
-      `<option value="#/ep/${code}/${k}" ${k === now ? "selected" : ""}>${l}</option>`).join("")}
-    <option value="#/brief?ep=${code}">ブリーフ</option>
-  </select></div>`;
+</div>`;
 
 // ---------- 設計：シーンごとの狙い・尺・動線 ----------
 async function viewDesign(code) {
@@ -571,6 +565,8 @@ async function route() {
     else if (parts[0] === "ep" && parts[2] === "art") await viewArt(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "script") await viewScript(parts[1]);
     else if (parts[0] === "library") await viewLibrary(params);
+    else if (parts[0] === "docs") await viewDocs(params);
+    else if (parts[0] === "agents") await viewAgents();
     else if (parts[0] === "ep" && parts[2] === "vcon") await viewVcon(parts[1], params);
     else if (parts[0] === "ep" && parts[2] === "awaiting") await viewAwaiting(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "shots") await viewShots(parts[1]);

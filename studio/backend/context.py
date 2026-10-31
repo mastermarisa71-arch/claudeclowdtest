@@ -50,6 +50,9 @@ def build(conn, episode_code: str | None = None) -> str:
         mark = "" if (config.VAULT_DIR / f).exists() else "（見つからない）"
         out.append(f"- {config.VAULT_DIR.name}/{f}{mark}")
     out.append("- studio/docs/Seedance2.5_プロンプトの書き方.md（ショットのプロンプトを書く前に）")
+    extra = config.VAULT_DIR / "07_資料"
+    if extra.exists():
+        out += [f"- {config.VAULT_DIR.name}/07_資料/{p.name}（監督が入れた資料）" for p in sorted(extra.iterdir()) if p.is_file()]
     if ep:
         out.append(f"- {config.VAULT_DIR.name}/02_各話/{ep['code']}/ と 03_脚本/いまの版/{ep['code']}_脚本_いまの版.md")
     out.append("")

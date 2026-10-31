@@ -28,6 +28,10 @@ async function viewEpHome(code) {
         <table class="loaded">${o.loaded.map((l) => `<tr class="${l.ok ? "" : "ng"}"><td>${l.ok ? "✓" : "！"}</td><th>${h(l.name)}</th>
           <td>${h(l.value)}${l.path ? `<div class="small muted">${h(l.path)}</div>` : ""}</td></tr>`).join("")}</table>
         <p class="small muted">「！」はまだ入っていないもの。絵がないコマは、Vコンと「決める」で字コンテの文字が出ます。</p>
+        <h2 style="margin-top:22px">作業の細かい画面</h2>
+        <div class="worklinks">${[["cuts", "コマの一覧（字コンテ）"], ["shots", "ショット分け"], ["edit", "編集（ライブ）"], ["design", "設計（尺の配分）"],
+          ["awaiting", "AI が通した絵・動画"], ["questions", "AI からの質問（文章）"]].map(([k, l]) => `<a class="btn" href="#/ep/${code}/${k}">${l}</a>`).join("")}
+          <a class="btn" href="#/brief?ep=${code}">AI が読んでいる指示（ブリーフ）</a></div>
       </div>
     </div>`;
 }

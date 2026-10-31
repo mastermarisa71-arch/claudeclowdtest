@@ -50,7 +50,7 @@ function render(r) {
   const log = document.getElementById("chatLog");
   const working = Object.values(r.agents || {}).filter((a) => a.running).map((a) => a.label);
   document.getElementById("chatAgents").textContent = working.length ? `　裏で作業中：${working.join("・")}` : "";
-  log.innerHTML = (r.ready ? "" : `<div class="cmsg sys">この PC で Claude（Claude Code）が見つかりません。Claude のデスクトップアプリの「コード」を一度開くか、claude コマンドを入れてから、start.bat を開き直してください。</div>`)
+  log.innerHTML = (r.ready ? "" : `<div class="cmsg sys">この PC で Claude（Claude Code）が見つかりません。<a href="#/agents">AI の接続</a>を開いてください。</div>`)
     + (CHAT.msgs.length ? "" : `<div class="cmsg sys">制作進行です。直したいこと・頼みたいこと・分からないことを、そのまま話しかけてください。直しは「積む」で、その話数の修正項目に入ります。</div>`)
     + CHAT.msgs.map((m) => `<div class="cmsg ${m.role}">${m.episode && m.role === "user" ? `<span class="cep">${h(m.episode)}</span>` : ""}${md(m.text)}
       ${(m.actions || []).map((a, i) => `<div class="cact"><span>${h({ fix: "修正項目に", request: "制作進行の仕事に", flow: "工程を始める" }[a.type] || a.type)}：${h(a.episode || "")} ${h(a.scene || "")} ${h(a.text || "")}</span>

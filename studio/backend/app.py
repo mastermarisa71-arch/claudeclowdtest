@@ -216,6 +216,86 @@ def art_view(code: str):
                 "note_fields": art.NOTE_FIELDS, "uses": art.USES}
 
 
+@app.get("/api/agents")
+def agents_list():
+    """AI の接続（ログインしているか）と、裏の AI の様子・役。"""
+    from . import agents_auth
+    st = staff.settings()
+    return {"tools": agents_auth.all_status(), "agents": runner.status(), "run_agents": st.get("rules", {}).get("run_agents", True)}
+
+
+@app.post("/api/agents/{tool}/login")
+def agents_login(tool: str):
+    from . import agents_auth
+    return agents_auth.login(tool)
+
+
+class RunIn(BaseModel):
+    run: bool
+
+
+@app.post("/api/agents/run")
+def agents_run(r: RunIn):
+    """裏の AI を動かす／止める（AIスタッフ.json の rules.run_agents）。"""
+    d = staff.settings()
+    d.setdefault("rules", {})["run_agents"] = r.run
+    staff.STAFF_FILE.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
+    return {"ok": True}
+
+
+@app.get("/api/agents/{agent}/log")
+def agents_log(agent: str):
+    p = config.DATA_DIR / "logs" / f"{agent}.log"
+    return PlainTextResponse(p.read_text(encoding="utf-8", errors="replace")[-6000:] if p.exists() else "（まだ記録がありません）")
+
+
+DOC_DIRS = {"00_正本": "正本・決定ログ", "01_シリーズ": "シリーズの方針", "04_制作ルール": "制作ルール", "06_設定": "キャラ・舞台の設定",
+            "07_資料": "監督が入れた資料"}
+
+
+@app.get("/api/docs")
+def docs_list():
+    """AI が読む資料（vault）。フォルダごと。"""
+    out = []
+    for d, label in DOC_DIRS.items():
+        base = config.VAULT_DIR / d
+        files = sorted(p for p in base.rglob("*") if p.is_file() and not p.name.startswith(".")) if base.exists() else []
+        out.append({"dir": d, "label": label, "files": [{"name": str(p.relative_to(base)), "path": f"{d}/{p.relative_to(base).as_posix()}",
+                                                         "size": p.stat().st_size, "text": p.suffix.lower() in (".md", ".txt", ".json")}
+                                                        for p in files]})
+    return out
+
+
+@app.get("/api/docs/read")
+def docs_read(path: str):
+    p = (config.VAULT_DIR / path).resolve()
+    if config.VAULT_DIR.resolve() not in p.parents:
+        raise HTTPException(400, "vault の外は読めません")
+    return PlainTextResponse(p.read_text(encoding="utf-8", errors="replace"))
+
+
+@app.post("/api/docs/upload")
+async def docs_upload(files: list[UploadFile] = File(...), note: str = Form("")):
+    """AI に読んでほしい資料を入れる（vault の 07_資料）。Word は文字にしておく。制作進行が読んで、関係する所に反映する。"""
+    base = config.VAULT_DIR / "07_資料"
+    base.mkdir(parents=True, exist_ok=True)
+    saved = []
+    for f in files:
+        data = await f.read()
+        name = Path(f.filename or "資料").name
+        dest = base / name
+        dest.write_bytes(data)
+        if dest.suffix.lower() == ".docx":
+            (base / (dest.stem + ".md")).write_text(episodes_mod.docx_text(dest), encoding="utf-8")
+            saved.append(f"07_資料/{dest.stem}.md")
+        saved.append(f"07_資料/{name}")
+    with db.session() as conn:
+        rid = core.add_request(conn, f"[資料] 監督が資料を入れた：{'、'.join(saved)}。読んで、作品の知識（正本・設定・制作ルール）や各話の作業に関係する所を挙げ、"
+                                     f"反映が要るものは監督にチャットか2択で確かめる。" + (f"監督のひとこと：{note}" if note else "") + " 終わったら request-done")
+        db.update(conn, "requests", rid, {"role": "まとめ"})
+    return {"saved": saved, "request": rid}
+
+
 @app.get("/api/library")
 def library_list():
     with db.session() as conn:

@@ -389,3 +389,14 @@ textarea.sedit { width:100%; min-height:70vh; box-sizing:border-box; font-size:1
 .epcard.has .epdrop { padding:6px; border-style:dotted; }
 .libtabs { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; } .libtabs .btn { cursor:pointer; }
 .libitem video { width:100%; aspect-ratio:16/9; border-radius:6px; background:#141117; } .libitem .lkind { max-width:140px; }
+
+/* AI の接続・資料 */
+.agentgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:12px; margin-bottom:16px; }
+.agentcard .dot { width:10px; height:10px; border-radius:50%; background:var(--red); } .agentcard.ok .dot { background:var(--green); }
+.docs { display:grid; grid-template-columns:300px 1fr; gap:14px; margin-top:12px; }
+@media (max-width: 800px) { .docs { grid-template-columns:1fr; } }
+.doclist details { margin-bottom:8px; } .doclist summary { cursor:pointer; padding:4px 0; }
+.docfile { display:block; padding:3px 8px; font-size:13px; color:var(--text); cursor:pointer; border-radius:4px; text-decoration:none; }
+.docfile:hover, .docfile.on { background:rgba(240,180,90,.12); } .docfile.bin { color:var(--muted); }
+.docview { min-height:300px; max-height:75vh; overflow:auto; } .doctext { line-height:1.8; font-size:14px; }
+.worklinks { display:flex; flex-wrap:wrap; gap:6px; } .job { margin-bottom:8px; }
