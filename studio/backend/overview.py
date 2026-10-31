@@ -71,6 +71,12 @@ def overview(conn, code: str) -> dict:
     agent_q = _n(conn, "SELECT COUNT(*) FROM reviews WHERE episode_id=? AND created_by='agent' AND status='proposed'", (eid,))
     awaiting = len(core.awaiting_human(conn, code))
     todo = []
+    from . import pipeline
+    fl = pipeline.flows(conn, code)
+    waiting_dir = [f for f in fl if f["stage"] == "director"]
+    if waiting_dir:
+        todo.append({"what": f"映像と AI 会議の結論を見て、OK か「こうしたい」を出す（{'・'.join(f['scene'] for f in waiting_dir)}）",
+                     "link": f"#/ep/{code}/decide", "n": len(waiting_dir), "kind": "decide"})
     if vs:
         scenes_v = sorted({v["scene"] for v in vs}, key=lambda s: int(re.sub(r"\D", "", s) or 0))
         todo.append({"what": f"AI の直し案を、今の版と並べて見て決める（{len(vs)}件：{'・'.join(scenes_v)}）", "link": f"#/ep/{code}/decide",
@@ -87,8 +93,9 @@ def overview(conn, code: str) -> dict:
         todo.append({"what": f"AI からの質問（文章）に答える（{agent_q}件）", "link": f"#/ep/{code}/questions", "n": agent_q, "kind": "q"})
     if awaiting:
         todo.append({"what": f"AI が通した絵・動画を流し見する（{awaiting}件）", "link": f"#/ep/{code}/awaiting", "n": awaiting, "kind": "vcon"})
-    working = []
-    for r in staff.list_rounds(conn, code, "open"):
+    working = [{"what": f"{f['scene']}（{f['cycle']}周目）：{f['stage_label']}", "link": f"#/ep/{code}/staff"}
+               for f in fl if f["stage"] not in ("director", "done")]
+    for r in [x for x in staff.list_rounds(conn, code, "open") if not any(f["round_id"] == x["id"] for f in fl)]:
         done = sum(s["status"] == "done" for s in r["slots"])
         working.append({"what": f"AI スタッフ会議 #{r['id']} {r['target'] or '全体'}：{r['stage']}（{done}/{len(r['slots'])}）",
                         "link": f"#/ep/{code}/staff"})
@@ -98,4 +105,5 @@ def overview(conn, code: str) -> dict:
                                     + (f"（{q['claimed_by']} が作業中）" if q["status"] == "claimed" else "（まだ誰も取っていない）"),
                             "link": "#/requests"})
     return {"episode": ep, "steps": steps, "loaded": loaded, "todo": todo, "working": working,
-            "decide_count": len(vs) + len(plain_choices)}
+            "flows": [{"scene": f["scene"], "stage": f["stage"], "label": f["stage_label"], "cycle": f["cycle"]} for f in fl],
+            "decide_count": len(vs) + len(plain_choices) + len(waiting_dir)}

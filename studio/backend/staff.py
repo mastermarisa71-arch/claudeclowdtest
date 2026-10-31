@@ -39,21 +39,25 @@ def _last_human(conn, episode_id: int) -> str:
 
 
 def open_round(conn, episode: str, target: str, title: str = "", roles: list[str] | None = None,
-               created_by: str = "agent", made_by: str = "", note: str = "") -> int:
-    """会議を開く。target は S1 / SH03 / #31（テイク）/ 空（話数全体）。made_by は対象を作った AI（「見る」役から外す）。"""
+               created_by: str = "agent", made_by: str = "", note: str = "", kind: str = "review", cycle: int = 1) -> int:
+    """会議を開く。target は S1 / SH03 / #31（テイク）/ 空（話数全体）。made_by は対象を作った AI（「見る」役から外す）。
+    kind：review（検討）／ jikonte（字コンテ会議：芝居・演出）／ video（映像会議：見る・演出・芝居）。工程の自動進行（pipeline）が開く。"""
     ep = db.get_or_create_episode(conn, episode)
-    rules = settings().get("rules", {})
+    st = settings()
+    rules = st.get("rules", {})
     limit = int(rules.get("max_rounds_per_target", 2))
-    if created_by != "human":
+    roles = roles or st.get("kinds", {}).get(kind, {}).get("roles")
+    if created_by not in ("human", "pipeline"):
         since = _last_human(conn, ep["id"])
         n = conn.execute("SELECT COUNT(*) FROM rounds WHERE episode_id=? AND target=? AND status!='cancelled' AND created_at>?",
                          (ep["id"], target, since)).fetchone()[0]
         if n >= limit:
             raise core.Blocked(f"{episode} {target or '全体'} の会議は、監督が返すまでに {limit} 回まで。いまの所見を監督に見せて判断をもらう")
+    kname = st.get("kinds", {}).get(kind, {}).get("name", "検討")
     rid = db.insert(conn, "rounds", {
-        "episode_id": ep["id"], "target": target, "title": title or f"{target or episode} の検討",
+        "episode_id": ep["id"], "target": target, "title": title or f"{target or episode} の{kname}" + (f"（{cycle}周目）" if cycle > 1 else ""),
         "note": note, "passes": int(rules.get("passes", 2)), "made_by": made_by, "created_by": created_by,
-        "status": "open", "created_at": db.now()})
+        "status": "open", "created_at": db.now(), "kind": kind, "cycle": cycle})
     for r in roles or REVIEW_ROLES:
         db.insert(conn, "round_slots", {"round_id": rid, "role": r, "pass": 1, "status": "open"})
     db.log(conn, created_by, "open_round", {"round": rid, "episode": episode, "target": target})
@@ -216,14 +220,28 @@ LEAD_FORMAT = """### まとめの書き方
 - 必須が残っているのに do にできない（予算・作り直しの上限）ときは ask で監督に回す"""
 
 
+LEAD_JIKONTE = """### まとめの書き方（字コンテ会議）
+芝居と演出の案をまとめ、字コンテにする中身を do に書く（カットごとに：コマ・秒・カメラ位置とカメラワーク・画面・芝居・台詞）。
+割れた所は ask（2択）にするが、**止めずに**よい方で先に作る（監督はあとで映像で見て決める）。
+`python studio/cli.py staff-summarize <枠> --agent <自分の名前> --file summary.json`。閉じると、まとめ役に「字コンテ → 480p ドラフト」の依頼が自動で積まれる。
+{"summary": "…", "items": [{"decision": "do", "text": "S1-01 2.5秒 A 引き FIX：…"}, …, {"decision": "ask", "text": "…", "options": ["…", "…"], "about": "…", "why": "…"}]}"""
+
+LEAD_VIDEO = """### まとめの書き方（映像会議）
+**作り直しはしない。監督に結論を出す**（監督が見て「OK」か「こうしたい」を決める）。結論は短く、3役の見立てが一致した所・割れた所を分ける。
+直したほうがよい所は、できれば version（直した並び）をつけて do に書く（監督は「④ 決める」で今の版と並べて見る）。割れた所は ask。
+`python studio/cli.py staff-summarize <枠> --agent <自分の名前> --file summary.json`。閉じると、シーンは「監督の判断待ち」になる。"""
+
+
 def brief(conn, slot_id: int) -> str:
     s = db.one(conn.execute("SELECT * FROM round_slots WHERE id=?", (slot_id,)))
     r = _round(conn, s["round_id"])
     st = settings()
     role = st.get("roles", {}).get(s["role"], {})
+    kd = st.get("kinds", {}).get(r.get("kind") or "review", {})
     out = [f"# AI スタッフ会議 #{r['id']}　{r['title']}　（{r['episode']} {r['target'] or '全体'}）",
+           f"会議の種類：**{kd.get('name', '検討')}**。{kd.get('about', '')}",
            f"あなたの役：**{role.get('name', s['role'])}**（{s['pass']}周目）" if s["role"] != LEAD else "あなたの役：**まとめ**",
-           f"見るところ：{role.get('focus', '')}", ""]
+           f"この会議で見るところ：{kd.get('focus', {}).get(s['role']) or role.get('focus', '')}", ""]
     out += ["### この役の見方"] + [f"- {c}" for c in role.get("checklist", [])] + [""]
     out += _director_intent(conn, r) + [""]
     out += _target_material(conn, r) + [""]
@@ -238,7 +256,7 @@ def brief(conn, slot_id: int) -> str:
                     + (f"［{i['agree']}］" if i.get("agree") else "") for i in p["items"]]
         out.append("")
     if s["role"] == LEAD:
-        out.append(LEAD_FORMAT)
+        out.append({"jikonte": LEAD_JIKONTE, "video": LEAD_VIDEO}.get(r.get("kind"), LEAD_FORMAT))
     else:
         out.append(POST_FORMAT.replace("<枠>", str(slot_id)))
         if s["pass"] >= 2:
@@ -304,6 +322,8 @@ def summarize(conn, slot_id: int, agent: str, summary: str, items: list[dict]) -
             made["versions"].append(versions.add(conn, r["episode"], vv.get("scene", vscene), vv.get("title") or i["text"][:30],
                                                  vv["entries"], i["text"], r["id"], vv.get("by_role", ""), agent, reasons))
     todo = [i["text"] for i in items if i.get("decision") == "do" and not i.get("version")]
+    if r.get("kind") in ("jikonte", "video"):
+        todo = []          # 工程の会議は、次の依頼を工程の自動進行（pipeline）が積む
     if todo:
         made["requests"].append(core.add_request(
             conn, f"[AI スタッフ会議 #{r['id']} {r['target'] or '全体'}] 次を直して、テイクの --note に会議の番号を書く：\n"
@@ -324,6 +344,8 @@ def summarize(conn, slot_id: int, agent: str, summary: str, items: list[dict]) -
     db.update(conn, "round_slots", slot_id, {"status": "done", "agent": agent, "done_at": db.now()})
     db.update(conn, "rounds", r["id"], {"status": "closed", "stage": "済み", "result_json": json.dumps(made), "closed_at": db.now()})
     db.log(conn, agent, "staff_summarize", {"round": r["id"], **made})
+    from . import pipeline
+    made["next"] = pipeline.on_round_closed(conn, r["id"])
     return made
 
 

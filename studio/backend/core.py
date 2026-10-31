@@ -708,10 +708,16 @@ def list_requests(conn, status: str = "open,claimed") -> list[dict]:
                                 sts))
 
 
-def claim_request(conn, agent: str, request_id: int | None = None) -> dict | None:
-    """依頼を1つ取る。id を指定しなければ、いちばん古い open を取る。取られていたら None。"""
-    q = "SELECT * FROM requests WHERE status='open'" + (" AND id=?" if request_id else "") + " ORDER BY id LIMIT 1"
-    r = db.one(conn.execute(q, (request_id,) if request_id else ()))
+def claim_request(conn, agent: str, request_id: int | None = None, roles: list[str] | None = None) -> dict | None:
+    """依頼を1つ取る。id を指定しなければ、いちばん古い open を取る。取られていたら None。
+    役のついた依頼（工程の自動進行の「まとめ」など）は、その役の AI だけが取る（役は AIスタッフ.json の assign）。"""
+    if roles is None:
+        from . import staff
+        roles = staff.roles_of(agent)
+    q = "SELECT * FROM requests WHERE status='open'" + (" AND id=?" if request_id else "")
+    if not request_id:
+        q += f" AND (role='' OR role IS NULL{''.join(' OR role=?' for _ in roles)})"
+    r = db.one(conn.execute(q + " ORDER BY id LIMIT 1", (request_id,) if request_id else tuple(roles)))
     if not r:
         return None
     cur = conn.execute("UPDATE requests SET status='claimed', claimed_by=?, claimed_at=? WHERE id=? AND status='open'",
@@ -722,9 +728,13 @@ def claim_request(conn, agent: str, request_id: int | None = None) -> dict | Non
     return {**r, "status": "claimed", "claimed_by": agent}
 
 
-def finish_request(conn, request_id: int, result: str, status: str = "done") -> None:
+def finish_request(conn, request_id: int, result: str, status: str = "done") -> str:
     db.update(conn, "requests", request_id, {"status": status, "result": result, "done_at": db.now()})
     db.log(conn, "agent", "finish_request", {"request": request_id, "status": status})
+    if status == "done":
+        from . import pipeline
+        return pipeline.on_request_done(conn, request_id)     # 工程の依頼なら、次の会議を開く
+    return ""
 
 
 # ---- 画面の印を言葉に（エージェントが読む） ----

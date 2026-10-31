@@ -50,9 +50,11 @@ python studio\seeds\EP09_仮制作.py --staff-sample
 
 | AI | 役（AI 会議） | 名前（--agent） |
 | --- | --- | --- |
-| Claude A | 制作・まとめ | `claude-a` |
-| Claude B | 芝居・見る | `claude-b` |
-| Codex（GPT） | 演出・カット割り | `codex` |
+| Claude A | 演出・まとめ（制作） | `claude-a` |
+| Claude B | 芝居（設定） | `claude-b` |
+| Codex（GPT） | 見る（映像会議で、演出の仕方そのものが良いかを見る） | `codex` |
+
+工程は自動で進む（シーン整理の承認 → 字コンテ会議 → 480p ドラフト → 映像会議 → 監督の判断）。流れは [AIスタッフ会議.md](AIスタッフ会議.md)。
 
 担当は `月灯_vault\04_制作ルール\AIスタッフ.json` で入れ替えられる。
 
@@ -76,22 +78,19 @@ python studio\seeds\EP09_仮制作.py --staff-sample
 
 Codex のインストール方法や設定の書き方は版で変わることがある。動かないときは、出たエラーをそのままエージェントに貼る。
 
-### AI 会議を回す（最初は手で）
-1. 月灯スタジオで、シーン整理の「AI 会議にかける」（または「AI 会議」タブ）で会議を開く。
-2. それぞれの AI に頼む：
-   - Claude B に「`staff-claim --agent claude-b` して、ブリーフに沿って書いて」
-   - Codex に「`staff-claim --agent codex` して、ブリーフに沿って書いて」
-   - 1周目が済むと2周目の枠ができる。同じように頼む。
-   - 全員が書いたら、Claude A に「`staff-claim --agent claude-a` して、まとめて。直しは案（version）にして」
-3. 「AI 会議」タブで流れを、「④ 決める」で案を見る。
-
-慣れたら、見張り番で自動にできる（AI ごとに黒いウィンドウを1つ）：
+### 自動で回す（おすすめ）
+月灯スタジオ（start.bat）を起動したまま、AI ごとに黒いウィンドウを1つずつ開く。自分の役の会議の枠や依頼が来たら、その AI を起こす。
 ```
-studio\staff_watch.bat codex
-studio\staff_watch.bat claude-b
 studio\staff_watch.bat claude-a
+studio\staff_watch.bat claude-b
+studio\staff_watch.bat codex
 ```
-起こすときのコマンドは `AIスタッフ.json` の `agents`。CLI の版で書き方が変わるので、動かなければ黒いウィンドウの表示をエージェントに見せる。
+あとは、シーン整理で「このシーンでいく」を押すだけで、字コンテ会議 → 480p ドラフト → 映像会議 まで進み、「④ 決める」に映像と結論が届く。
+
+### 手で回す（見張り番がうまく動かないとき）
+それぞれの AI に「月灯スタジオの工程を進めて。あなたは claude-a（または claude-b / codex）」と頼む。
+AI は `staff-claim --agent <名前>`（会議の枠）と `request-claim --agent <名前>`（自分の役の依頼）を、なくなるまで繰り返す。
+見張り番が起こすときのコマンドは `AIスタッフ.json` の `agents`。CLI の版で書き方が変わるので、動かなければ黒いウィンドウの表示をエージェントに見せる。
 
 ### ふだんの頼み方
 - 画面の「AI に頼む」に依頼を積んでおき、どの AI にも「依頼を1つ取って進めて」（`request-claim --agent <名前>`）と頼む。二重に進まない。

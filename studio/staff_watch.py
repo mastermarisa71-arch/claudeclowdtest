@@ -16,18 +16,23 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from studio.backend import db, staff  # noqa: E402
+from studio.backend import core, db, staff  # noqa: E402
 
-PROMPT = ("月灯スタジオの AI スタッフ会議に参加する。あなたの名前は {agent}、役は {roles}。"
-          "手順は studio/docs/AIスタッフ会議.md。python studio/cli.py staff-claim --agent {agent} で枠を取り、"
-          "出てきたブリーフの書き方に沿って JSON を書き、staff-post（まとめ役なら staff-summarize）で出す。"
-          "取れる枠がなくなるまで繰り返す。作品のルールは CLAUDE.md（Codex は AGENTS.md）。")
+PROMPT = ("月灯スタジオの工程を進める。あなたの名前は {agent}、役は {roles}。手順は studio/docs/AIスタッフ会議.md。"
+          "1) python studio/cli.py staff-claim --agent {agent} で会議の枠を取り、ブリーフの書き方に沿って JSON を書き、"
+          "staff-post（まとめ役なら staff-summarize）で出す。取れる枠がなくなるまで繰り返す。"
+          "2) 次に python studio/cli.py request-claim --agent {agent} で自分の役の依頼（字コンテ・ドラフト作りなど）を取り、"
+          "依頼の手順どおりに作って request-done で終える。"
+          "作品のルールは CLAUDE.md（Codex は AGENTS.md）。")
 
 
 def waiting(agent: str, roles: list[str]) -> list[dict]:
+    """自分の役の空いた会議の枠と、自分の役の依頼（工程の自動進行が積んだもの）。"""
     with db.session() as conn:
-        return [s for s in staff.open_slots(conn)
-                if s["role"] in roles and not (s["role"] == "見る" and s["made_by"] == agent)]
+        slots = [s for s in staff.open_slots(conn)
+                 if s["role"] in roles and not (s["role"] == "見る" and s["made_by"] == agent)]
+        reqs = [r for r in core.list_requests(conn, "open") if r.get("role") and r["role"] in roles]
+        return slots + reqs
 
 
 def main() -> None:
@@ -48,7 +53,7 @@ def main() -> None:
         slots = waiting(a.agent, roles)
         if slots:
             line = cmd.replace("{prompt}", PROMPT.format(agent=a.agent, roles="・".join(roles)))
-            print(f"{time.strftime('%H:%M')} 枠 {len(slots)} 件 → {a.agent} を起こします")
+            print(f"{time.strftime('%H:%M')} 枠・依頼 {len(slots)} 件 → {a.agent} を起こします")
             if a.dry:
                 print(line)
             else:

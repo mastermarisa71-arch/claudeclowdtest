@@ -63,6 +63,7 @@
   ae-comp EP09 --take 52 [--text "チョコパン@0.5,0.4"] [--zoom 1.0:1.08] [--render]
                                                 After Effects にコンポを作らせる（文字合成・寄り引き・書き出し）
   ae-read EP09                                   After Effects の今のコンポを読み取らせる
+  flows EP09 / flow-start EP09 S1 / flow-direct EP09 S1 ok|redo --note "…"   シーンの工程の自動進行（字コンテ会議→ドラフト→映像会議→監督）
   requests [--all] / request-add "…" [--episode EP09] / request-claim [--id 3] --agent 名前 / request-done 3 "結果"
                                                 監督の依頼（どの Claude が取っても同じ形で進める）
 """
@@ -213,6 +214,10 @@ def main(argv=None):
     p = sub.add_parser("requests"); p.add_argument("--all", action="store_true")
     p = sub.add_parser("request-add"); p.add_argument("text"); p.add_argument("--episode", default="")
     p = sub.add_parser("request-claim"); p.add_argument("--id", type=int); p.add_argument("--agent", required=True)
+    p = sub.add_parser("flows"); p.add_argument("episode")
+    p = sub.add_parser("flow-start"); p.add_argument("episode"); p.add_argument("scene")
+    p = sub.add_parser("flow-direct"); p.add_argument("episode"); p.add_argument("scene"); p.add_argument("verdict", choices=["ok", "redo"])
+    p.add_argument("--note", default="")
     p = sub.add_parser("request-done"); p.add_argument("id", type=int); p.add_argument("result")
     p.add_argument("--status", default="done", choices=["done", "cancelled", "open"])
     p = sub.add_parser("pr-marker"); p.add_argument("episode"); p.add_argument("--at", type=float, required=True)
@@ -556,8 +561,17 @@ def main(argv=None):
             r = core.claim_request(conn, a.agent, a.id)
             print(json.dumps(r, ensure_ascii=False) if r else "取れる依頼はありません（ほかのエージェントが取った可能性）")
         elif a.cmd == "request-done":
-            core.finish_request(conn, a.id, a.result, a.status)
-            print("ok")
+            print(core.finish_request(conn, a.id, a.result, a.status) or "ok")
+        elif a.cmd in ("flows", "flow-start", "flow-direct"):
+            from studio.backend import pipeline
+            if a.cmd == "flow-start":
+                pipeline.start(conn, a.episode, a.scene)
+            elif a.cmd == "flow-direct":
+                print(pipeline.direct(conn, a.episode, a.scene, a.verdict, a.note))
+            for f in pipeline.flows(conn, a.episode):
+                print(f"{f['scene']} [{f['cycle']}周目] {f['stage_label']}"
+                      + (f"　会議 #{f['round']['id']}（{f['round']['status']}）" if f["round"] else "")
+                      + (f"　依頼 #{f['request']['id']}（{f['request']['status']} {f['request']['claimed_by']}）" if f["request"] else ""))
         elif a.cmd == "pr-marker":
             print(premiere.enqueue(conn, a.episode, "marker", {"at": a.at, "name": a.name, "comment": a.comment}))
         elif a.cmd == "budget-plan":

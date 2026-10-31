@@ -6,10 +6,13 @@
 
 ## AI スタッフ会議に入るとき
 
+Codex のふだんの役は **見る**（映像会議）：企画と脚本を読んだうえで、できた映像を初めて見る目で見て、何がしたいシーンか伝わるか、**そもそもこの演出の仕方で良いか**を書く。
+工程は自動で進む（シーン整理の承認 → 字コンテ会議 → 480p ドラフト → 映像会議 → 監督）。会議の枠は工程が開くので、`staff-claim` で取るだけ。
+
 役（芝居・演出・見る・まとめ）と担当は `月灯_vault/04_制作ルール/AIスタッフ.json`。手順は `studio/docs/AIスタッフ会議.md`。
 
 ```
-python studio/cli.py staff-claim --agent codex      # 自分の役の枠を取る → ブリーフ（見方・監督の意図・材料・書き方）が出る
+python studio/cli.py staff-claim --agent codex      # 自分の役（見る）の枠を取る → ブリーフ（見方・監督の意図・材料・書き方）が出る
 python studio/cli.py staff-post <枠> --agent codex --file post.json
 ```
 

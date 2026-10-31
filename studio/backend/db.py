@@ -116,6 +116,19 @@ CREATE TABLE IF NOT EXISTS learnings (
   created_at TEXT, decided_at TEXT
 );
 
+-- シーンの工程の流れ（pipeline.py）：シーン整理の承認 → 字コンテ会議 → 字コンテ・480p 作り → 映像会議 → 監督 → （作り直し → 映像会議 → 監督）→ OK
+CREATE TABLE IF NOT EXISTS scene_flows (
+  id INTEGER PRIMARY KEY,
+  episode_id INTEGER REFERENCES episodes(id),
+  scene TEXT,
+  stage TEXT DEFAULT 'jikonte_meeting',
+  cycle INTEGER DEFAULT 1,             -- 何周目（監督の指示で作り直すたびに増える）
+  round_id INTEGER, request_id INTEGER,
+  director_note TEXT DEFAULT '',
+  updated_at TEXT,
+  UNIQUE(episode_id, scene)
+);
+
 -- 美術・素材（art.py）：AI が字コンテから「どの場所・カメラ位置・ルックの背景が、どのコマに要るか」を並べ（発注）、
 -- 監督がレンダー・撮処理した素材を渡す。注意書きは asset_uses.notes_json（生成の係が読む）
 CREATE TABLE IF NOT EXISTS art_orders (
@@ -306,6 +319,8 @@ MIGRATIONS = {
               "submitted_at": "TEXT", "finished_at": "TEXT",
               "role": "TEXT DEFAULT ''"},   # 音声：voice（仮の声）/ actor（声優）/ sfx / music
     # シーン整理（脚本と字コンテの間）：このシーンで何が変わるか、キャラが何をしたくて何をするか、小さな区切り
+    "rounds": {"kind": "TEXT DEFAULT 'review'", "cycle": "INTEGER DEFAULT 1"},   # review / jikonte（字コンテ会議）/ video（映像会議）
+    "requests": {"role": "TEXT DEFAULT ''"},   # この依頼を取る役（まとめ など）。空ならだれでも
     "scenes": {"change_before": "TEXT DEFAULT ''", "change_after": "TEXT DEFAULT ''", "turn": "TEXT DEFAULT ''",
                "characters_json": "TEXT DEFAULT ''", "beats_json": "TEXT DEFAULT ''",
                "script_from": "TEXT DEFAULT ''", "script_to": "TEXT DEFAULT ''",

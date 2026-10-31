@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import art, config, context, core, db, direction, overview, staff, versions
+from . import art, config, context, core, db, direction, overview, pipeline, staff, versions
 
 db.init()
 app = FastAPI(title="月灯スタジオ")
@@ -354,6 +354,31 @@ def versions_decide(vid: int, d: DecideIn):
         return versions.decide(conn, vid, d.verdict, d.note)
 
 
+class DirectIn(BaseModel):
+    verdict: str            # ok / redo
+    note: str = ""
+
+
+@app.get("/api/episodes/{code}/scenes/{scode}/segments")
+def scene_segments(code: str, scode: str):
+    """シーンを上映順に（いまの絵・動画で）。監督が映像会議の結論と一緒に見る。"""
+    with db.session() as conn:
+        return versions.segments(conn, code, scode, None)
+
+
+@app.get("/api/episodes/{code}/flows")
+def flows_list(code: str):
+    with db.session() as conn:
+        return {"flows": pipeline.flows(conn, code), "stages": pipeline.STAGES}
+
+
+@app.post("/api/episodes/{code}/flows/{scene}/direct")
+def flows_direct(code: str, scene: str, d: DirectIn):
+    """監督の判断：映像会議の結論と映像を見て、OK か、こうしたい（一言）か。"""
+    with db.session() as conn:
+        return pipeline.direct(conn, code, scene, d.verdict, d.note)
+
+
 class RoundIn(BaseModel):
     episode: str
     target: str = ""
@@ -430,6 +455,8 @@ def scene_script(code: str, scode: str):
 def patch_scene(code: str, scode: str, s_: SceneIn):
     with db.session() as conn:
         core.set_scene(conn, code, scode, actor="human", **s_.model_dump(exclude_none=True))
+        if s_.status == "approved":
+            pipeline.start(conn, code, scode)      # 承認されたら、字コンテ会議へ（工程の自動進行）
     return {"ok": True}
 
 

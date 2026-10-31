@@ -12,6 +12,9 @@ async function viewEpHome(code) {
     <div class="steps">${o.steps.map((s, i) => `<a class="step ${s.state}" ${s.link ? `href="${s.link}"` : ""}>
       <div class="sn">${stIcon[s.state] || i + 1}</div><div><b>${h(s.name)}</b>${s.gate ? `<span class="gate">${s.gate}</span>` : ""}
       <div class="small muted">${h(s.detail)}</div></div></a>`).join('<span class="sarrow">›</span>')}</div>
+    ${o.flows.length ? `<div class="flows"><span class="small muted">シーンの工程</span>${o.flows.map((f) =>
+      `<a class="fl ${f.stage}" href="#/ep/${code}/${f.stage === "director" ? "decide" : f.stage === "done" ? "vcon?scene=" + f.scene : "staff"}" title="${h(f.label)}">
+        <b>${h(f.scene)}</b>${f.cycle > 1 ? `<sup>${f.cycle}</sup>` : ""}<span>${h(f.label.replace(/（.*）/, ""))}</span></a>`).join("")}</div>` : ""}
     <div class="homegrid">
       <div>
         <h2>あなたの番 <span class="small muted">上から順にやれば、工程どおりに進みます</span></h2>
@@ -95,12 +98,13 @@ function animatic(el, segs, opts = {}) {
 
 // ===== 決める：AI の案を、今の版と並べて見て選ぶ =====
 async function viewDecide(code) {
-  const [vs, choices, rounds] = await Promise.all([api(`/api/episodes/${code}/versions`), api(`/api/choices?episode=${code}&status=open`),
-    api(`/api/rounds?episode=${code}`)]);
+  const [vs, choices, rounds, fl] = await Promise.all([api(`/api/episodes/${code}/versions`), api(`/api/choices?episode=${code}&status=open`),
+    api(`/api/rounds?episode=${code}`), api(`/api/episodes/${code}/flows`)]);
+  const atDirector = fl.flows.filter((f) => f.stage === "director");
   const byChoice = {}, single = [];
   vs.forEach((v) => (v.choice_id ? (byChoice[v.choice_id] ||= []).push(v) : single.push(v)));
   const plain = choices.filter((c) => !byChoice[c.id]);
-  EP_COUNTS[code] = vs.length + plain.length;
+  EP_COUNTS[code] = vs.length + plain.length + atDirector.length;
   const fromRound = (v) => v.round_id ? `<a class="small" href="#/ep/${code}/staff">AI 会議 #${v.round_id} から</a>` : `<span class="small muted">${h(v.made_by)}</span>`;
   const reasons = (v) => v.reasons.length ? `<details class="why"><summary class="small">なぜこの案？（AI たちの見立て）</summary>${v.reasons.map((r) =>
       `<div class="small"><span class="rolechip" style="${roleStyle(r.role)}">${h(r.role)}</span> ${h(r.text)}</div>`).join("")}</details>` : "";
@@ -108,7 +112,17 @@ async function viewDecide(code) {
       <button class="primary" data-d="adopt">案にする</button><button data-d="keep">今のまま</button>
       <input type="text" placeholder="ちがうときは一言（🎤）　例：寄るのはもっと遅く" class="dnote"><button class="qmic">🎤</button><button data-d="other">ちがう</button>
       <span class="small muted dmsg"></span></div>`;
-  $view.innerHTML = `${epTabs(code, "decide")}<h1>決める <span class="muted small">AI の案を、今の版と並べて再生して選びます。「両方再生」で同時に流れます</span></h1>
+  $view.innerHTML = `${epTabs(code, "decide")}<h1>決める <span class="muted small">映像を見て OK か指示を出す／AI の案を今の版と並べて選ぶ</span></h1>
+    ${atDirector.map((f) => `<div class="card flowcard" data-scene="${h(f.scene)}">
+      <div class="row"><span class="badge proposed">${h(f.scene)}</span><b>映像を見て決める</b><span class="small muted">${f.cycle}周目・映像会議 #${f.round?.id} の結論</span>
+        <span style="flex:1"></span><a class="small" href="#/ep/${code}/staff">話し合いを見る</a></div>
+      <div class="pair"><div class="fplayer"></div>
+        <div><div class="concl"><div class="ctitle">AI 会議の結論</div><div class="csum">${h(f.summary?.summary || "")}</div>
+          ${(f.summary?.items || []).filter((i) => i.decision !== "drop").map((i) => `<div class="small">・${h(i.text)}</div>`).join("")}</div>
+          ${f.views.map((p) => `<div class="small view"><span class="rolechip" style="${roleStyle(p.role)}">${h(p.role)}</span> ${h(p.summary)}</div>`).join("")}</div></div>
+      <div class="row"><button class="primary" data-ok>OK（このシーンは完成）</button>
+        <input type="text" class="dnote" placeholder="こうしたい（一言・🎤）　例：打ち明けはもっと溜めて。カメラは寄らない"><button class="qmic">🎤</button>
+        <button data-redo>この指示で作り直す</button><span class="small muted dmsg"></span></div></div>`).join("")}
     ${single.map((v) => `<div class="card vcard" data-vid="${v.id}">
       <div class="row"><span class="badge proposed">${h(v.scene)}</span><b>${h(v.title)}</b>${fromRound(v)}<span style="flex:1"></span>
         <span class="secs"></span><button class="both">▶ 両方再生</button></div>
@@ -122,8 +136,23 @@ async function viewDecide(code) {
         <button class="primary pick" data-pick="${v.id}">${h(v.option)} にする</button></div>`).join("")}</div>
       <div class="row"><input type="text" class="dnote" placeholder="一言（任意）"><button class="qmic">🎤</button><span class="small muted dmsg"></span></div></div>`; }).join("")}
     ${plain.length ? `<h2>2択（文章だけ）</h2><div class="card">${plain.map(choiceHTML).join("")}</div>` : ""}
-    ${!vs.length && !plain.length ? `<p class="muted">いま決めることはありません。${rounds.some((r) => r.status === "open") ? "AI 会議が進行中です。" : ""}</p>` : ""}`;
+    ${!vs.length && !plain.length && !atDirector.length ? `<p class="muted">いま決めることはありません。${rounds.some((r) => r.status === "open") ? "AI 会議が進行中です。" : ""}</p>` : ""}`;
   bindChoices(document);
+  // 映像を見て決める：シーンを今の絵・動画で流す → OK か、一言で作り直し
+  for (const card of document.querySelectorAll(".flowcard")) {
+    const sc = card.dataset.scene;
+    const segs = await api(`/api/episodes/${code}/scenes/${sc}/segments`);
+    animatic(card.querySelector(".fplayer"), segs, { label: sc });
+    const go = async (verdict) => {
+      const note = card.querySelector(".dnote").value.trim();
+      if (verdict === "redo" && !note) { card.querySelector(".dmsg").textContent = "どうしたいか、一言ください"; return; }
+      await api(`/api/episodes/${code}/flows/${sc}/direct`, { method: "POST", body: { verdict, note } });
+      card.classList.add("decided"); card.querySelectorAll("button").forEach((x) => (x.disabled = true));
+      card.querySelector(".dmsg").textContent = verdict === "ok" ? "OK にしました" : "伝えました。まとめ役が作り直し、また映像会議にかけます";
+    };
+    card.querySelector("[data-ok]").onclick = () => go("ok");
+    card.querySelector("[data-redo]").onclick = () => go("redo");
+  }
   document.querySelectorAll(".qmic").forEach((b) => (b.onclick = () => { b.classList.add("on");
     listen((t) => { b.classList.remove("on"); const inp = b.previousElementSibling; inp.value = (inp.value ? inp.value + " " : "") + t; }); }));
 

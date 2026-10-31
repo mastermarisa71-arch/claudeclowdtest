@@ -44,7 +44,7 @@ async function viewStaff(code) {
       const posts = r.posts.filter((p) => p.kind !== "まとめ"), sum = r.posts.find((p) => p.kind === "まとめ");
       const myVs = vs.filter((v) => v.round_id === r.id);
       return `<div class="card round ${r.status}">
-        <div class="row"><b>#${r.id} ${h(r.target || "全体")}</b><span class="badge ${r.status === "closed" ? "sel" : "proposed"}">${r.status === "closed" ? "済み" : "進行中"}</span>
+        <div class="row"><b>#${r.id} ${h(r.target || "全体")}</b><span class="badge kind-${r.kind}">${h({ jikonte: "字コンテ会議", video: "映像会議" }[r.kind] || "検討")}${r.cycle > 1 ? `・${r.cycle}周目` : ""}</span><span class="badge ${r.status === "closed" ? "sel" : "proposed"}">${r.status === "closed" ? "済み" : "進行中"}</span>
           <span class="small muted">${h(r.note)}</span><span style="flex:1"></span>${stage(r)}</div>
         ${sum ? `<div class="concl"><div class="ctitle">結論</div><div class="csum">${h(sum.summary)}</div>
           <div class="outs">

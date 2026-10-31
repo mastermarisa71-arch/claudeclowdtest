@@ -93,7 +93,7 @@ async function viewSheet(code) {
         <details data-script="${h(x.code)}"><summary class="small">脚本を見る</summary><div class="script small muted">読み込み中…</div></details>
       </details>
       <div class="reply row">
-        <button class="primary" data-ok>このシーンでいく</button>
+        <button class="primary" data-ok title="承認すると、字コンテ会議（芝居・演出）→ 480p ドラフト → 映像会議 が自動で進みます">このシーンでいく（→ 字コンテ会議へ）</button>
         <input type="text" class="rtext" placeholder="AI へのひとこと（任意）　例：あかねはもっと隠そうとしてほしい">
         <button class="qmic">🎤</button><button data-ng>直してほしい</button>
         <button data-idea title="AI に2択の案を出してもらう">案を出して</button>

@@ -86,15 +86,15 @@ def stats(episode: str) -> dict:
 def next_request(agent: str, request_id: int = 0) -> dict:
     """監督の依頼を1つ取る（agent は自分の名前、例「claude-cloud-1」）。取れなければ空。同じ依頼を二重に進めない。"""
     with _s() as conn:
-        return core.claim_request(conn, agent, request_id or None) or {}
+        return core.claim_request(conn, agent, request_id or None) or {}   # 役のついた依頼は、その役の AI だけが取れる
 
 
 @mcp.tool()
 def finish_request(request_id: int, result: str, status: str = "done") -> str:
     """依頼を終える。result に何をしたか（テイク番号・残っていること）を書く。"""
     with _s() as conn:
-        core.finish_request(conn, request_id, result, status)
-    return "ok"
+        nxt = core.finish_request(conn, request_id, result, status)
+    return nxt or "ok"     # 工程の依頼なら、次の会議が自動で開く
 
 
 # ---- 設計・ショット ----

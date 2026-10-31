@@ -335,3 +335,13 @@ table.loaded tr.ng td:first-child { color:var(--amber); } table.loaded tr.ng td 
 .nchip { display:inline-block; font-size:11px; background:#2a2430; border-radius:8px; padding:1px 7px; margin:2px; }
 .given { margin:4px 0; }
 .mat { display:flex; gap:10px; align-items:flex-start; } .mat img { width:120px; border-radius:4px; }
+
+/* 工程の自動進行 */
+.flows { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:-6px 0 16px; }
+.flows .fl { display:flex; flex-direction:column; min-width:64px; padding:4px 8px; border-radius:6px; background:#211c26; border-left:3px solid #4a4250; color:var(--text); text-decoration:none; font-size:11px; }
+.flows .fl span { color:var(--muted); } .flows .fl sup { color:var(--amber); }
+.fl.jikonte_meeting, .fl.video_meeting { border-color:var(--violet); } .fl.making, .fl.remaking { border-color:var(--blue); }
+.fl.director { border-color:var(--amber); background:rgba(240,180,90,.12); } .fl.done { border-color:var(--green); }
+.flowcard { border-color:rgba(240,180,90,.5); } .flowcard.decided { opacity:.55; }
+.flowcard .view { margin:4px 0; } .flowcard .dnote { flex:1; min-width:220px; }
+.badge.kind-jikonte { background:rgba(127,166,217,.2); color:var(--blue); } .badge.kind-video { background:rgba(180,154,224,.2); color:var(--violet); }

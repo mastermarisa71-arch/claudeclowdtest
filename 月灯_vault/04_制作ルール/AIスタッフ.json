@@ -2,7 +2,7 @@
   "_説明": "AI スタッフ会議の役割と、どの AI がどの役をやるか。流れと手順は studio/docs/AIスタッフ会議.md。assign は自由に入れ替えてよい（同じ AI が2役でもよい。ただし「見る」は作った本人にしない）。command は watch で自動に起こすときのコマンド（{prompt} に指示が入る）。",
   "roles": {
     "芝居": {
-      "name": "キャラ・芝居",
+      "name": "キャラ・芝居（設定）",
       "color": "#e07a7a",
       "focus": "キャラの整合性と芝居。性格・テンション・芝居の辞書・2択で決まったキャラの決まりに合っているか。台詞と表情・しぐさが噛み合っているか",
       "checklist": [
@@ -51,17 +51,65 @@
   },
   "assign": {
     "芝居": "claude-b",
-    "演出": "codex",
-    "見る": "claude-b",
+    "演出": "claude-a",
+    "見る": "codex",
     "まとめ": "claude-a"
   },
   "agents": {
-    "claude-a": {"label": "Claude（制作・まとめ）", "command": "claude -p \"{prompt}\" --permission-mode acceptEdits --allowedTools \"Bash(python studio/cli.py:*)\" Read Glob Grep"},
-    "claude-b": {"label": "Claude（芝居・見る）", "command": "claude -p \"{prompt}\" --permission-mode acceptEdits --allowedTools \"Bash(python studio/cli.py:*)\" Read Glob Grep"},
-    "codex": {"label": "Codex（演出）", "command": "codex exec --full-auto \"{prompt}\""}
+    "claude-a": {
+      "label": "Claude A（演出・まとめ）",
+      "command": "claude -p \"{prompt}\" --permission-mode acceptEdits --allowedTools \"Bash(python studio/cli.py:*)\" Read Glob Grep"
+    },
+    "claude-b": {
+      "label": "Claude B（芝居・設定）",
+      "command": "claude -p \"{prompt}\" --permission-mode acceptEdits --allowedTools \"Bash(python studio/cli.py:*)\" Read Glob Grep"
+    },
+    "codex": {
+      "label": "Codex（見る）",
+      "command": "codex exec --full-auto \"{prompt}\""
+    }
   },
   "rules": {
     "passes": 2,
-    "max_rounds_per_target": 2
+    "max_rounds_per_target": 2,
+    "auto": true
+  },
+  "kinds": {
+    "jikonte": {
+      "name": "字コンテ会議",
+      "roles": [
+        "芝居",
+        "演出"
+      ],
+      "about": "承認されたシーン整理から、カットに割る。演出がカット割りとカメラの案を出し、芝居（設定）がキャラの芝居と整合を担保する。まとめ役がそれをまとめて字コンテにし、そのまま 480p ドラフト（30秒程度）まで作る。",
+      "focus": {
+        "演出": "シーン整理の「伝えたいこと・変化・区切り・山場」から、カット割り（何カットで、どこで切るか）・カメラ位置とカメラワーク・秒を案にする。items の at に区切り、what にカットの中身、fix にカメラと秒",
+        "芝居": "各カットで、キャラが何をどう演じるか（視線・手・間）。芝居の辞書・キャラの決まり・2択で決まったことに合わせる。演出の案と食い違う所は、2周目で賛成・反対を書く"
+      }
+    },
+    "video": {
+      "name": "映像会議",
+      "roles": [
+        "見る",
+        "演出",
+        "芝居"
+      ],
+      "about": "できた映像（30秒程度のドラフト）を3つの AI で見る。まとめは作り直さず、監督に結論を出す（監督が OK か、こうしたいかを決める）。",
+      "focus": {
+        "見る": "企画と脚本を読んだうえで、初めて見る人の目で：何がしたいシーンか伝わるか。そもそもこの演出の仕方で良いか（もっと良い見せ方はないか）。尺の体感、ぎこちない動き",
+        "演出": "自分が意図したこと（シーン整理・字コンテのカット割りとカメラ）が映像に出ているか。出ていなければどこか。意図そのものを直すべきか",
+        "芝居": "キャラが設定どおりか（性格・芝居の辞書・見た目の崩れ）。表情・しぐさが台詞と噛み合っているか"
+      }
+    },
+    "review": {
+      "name": "検討",
+      "roles": [
+        "芝居",
+        "演出",
+        "見る"
+      ],
+      "about": "監督が開いた検討。",
+      "focus": {}
+    }
   }
 }
