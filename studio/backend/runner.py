@@ -116,7 +116,8 @@ def run_logged(agent: str, line: str, kind: str = "agent") -> dict:
     err, code, t0 = "", None, time.time()
     try:
         p = subprocess.Popen(line, shell=True, cwd=config.REPO_ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                             text=True, encoding="utf-8", errors="replace")
+                             text=True, encoding="utf-8", errors="replace",
+                             env={**os.environ, "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"})   # AI が使う cli.py の出力を化けさせない
         STATE[agent]["proc"] = p
         with open(log, "a", encoding="utf-8") as f:
             f.write(f"\n===== {db.now()} {line[:200]}\n")
@@ -155,7 +156,7 @@ def run_logged(agent: str, line: str, kind: str = "agent") -> dict:
 
 def _cmd(a: dict) -> str:
     cmd = a["command"]
-    if cmd.strip().startswith("claude") and "--output-format" not in cmd:
+    if ("claude -p" in cmd or cmd.strip().startswith("claude")) and "--output-format" not in cmd:   # set CLAUDE_CONFIG_DIR=…&& claude も
         cmd += " --output-format stream-json --verbose"       # 書いている流れをその場で見るため
     return cmd
 
