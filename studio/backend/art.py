@@ -182,7 +182,8 @@ def add_library(conn, files: list[tuple[Path, str]], hint: str = "", order_id: i
     """素材庫に入れる。order_id があれば、その発注にすぐ結ぶ（監督が「この背景」に落としたとき）。"""
     ids = []
     for src, name in files:
-        rel = Path("assets") / "library" / f"{int(time.time() * 1000)}_{re.sub(r'[^\w.]+', '_', name)}"
+        safe = re.sub(r"[^\w.]+", "_", name)
+        rel = Path("assets") / "library" / f"{int(time.time() * 1000)}_{safe}"
         (config.MEDIA_DIR / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(src, config.MEDIA_DIR / rel)
         aid = db.insert(conn, "assets", {"kind": "", "name": Path(name).stem, "file_path": rel.as_posix(), "hint": hint,
