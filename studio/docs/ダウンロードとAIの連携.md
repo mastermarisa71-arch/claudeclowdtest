@@ -1,6 +1,6 @@
 # ダウンロードと AI の連携（Claude・Codex）
 
-月灯スタジオは GitHub のリポジトリ `mastermarisa71-arch/claudeclowdtest` にある。いまの作業はブランチ `claude/fervent-dirac-r7lv3x`。
+月灯スタジオは GitHub のリポジトリ `mastermarisa71-arch/claudeclowdtest` にある。最新はメインのブランチ（`main`）。
 
 ## 1. ダウンロード（最初の1回）
 
@@ -14,7 +14,7 @@
 1. GitHub Desktop を入れて、GitHub のアカウントでサインインする。
 2. 「File → Clone repository」→ `mastermarisa71-arch/claudeclowdtest` を選び、置き場所を決める（例：`C:\Users\<名前>\Documents\claudeclowdtest`）。
    **パスに日本語やスペースがない場所**が無難。
-3. 上の「Current branch」から `claude/fervent-dirac-r7lv3x` を選ぶ。
+3. 上の「Current branch」が `main` になっていることを確かめる。
 4. 置いたフォルダの `studio\setup.bat` をダブルクリック（必要なものが `studio\.venv` に入る。数分かかる）。
 5. `studio\start.bat` をダブルクリック → ブラウザで月灯スタジオが開く。
 
@@ -23,7 +23,6 @@
 cd C:\Users\<名前>\Documents
 git clone https://github.com/mastermarisa71-arch/claudeclowdtest.git
 cd claudeclowdtest
-git checkout claude/fervent-dirac-r7lv3x
 studio\setup.bat
 studio\start.bat
 ```
