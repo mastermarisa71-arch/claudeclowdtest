@@ -164,7 +164,7 @@ python studio/cli.py staff-post 12 --agent claude-b --file post.json
 python studio/cli.py staff-summarize 15 --agent claude-a --file summary.json            # まとめ役：do / ask / drop
 ```
 
-- **監督は文章より“やった版”を見たい**。直しを提案するときは、文章だけでなく**案（直した並び）**を作る。監督は「④ 決める」で今の版と並べて再生して選ぶ。
+- **監督は文章より“やった版”を見たい**。直しを提案するときは、文章だけでなく**案（直した並び）**を作る。監督は「⑤ 決める」で今の版と並べて再生して選ぶ。
   まとめの do に `version`、ask に `versions`（A の版・B の版）をつけると案になる。会議の外でも `version-add` で出せる。
   ```
   python studio/cli.py version-base EP09 S1 > v.json     # 今の並び → 直す（変えるところだけ書く・書かなかったコマは削る・新しいコマは {"new": …}）

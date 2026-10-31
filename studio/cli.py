@@ -25,7 +25,9 @@
   staff-rounds [EP09]                            会議の一覧
   story-set EP09 --theme "この話で伝えたいこと" --flow "物語の流れ"   シーン整理のいちばん上
   art-plan EP09                                  字コンテから要る背景（場所×カメラ位置×ルック）を並べる（美術・素材）
-  art EP09                                       素材の発注と、監督が渡した素材・注意書き
+  art EP09                                       素材の発注（どの背景がどのコマに要るか）と、結んだ素材
+  library / asset-describe 12 --kind bg --place 月灯り店内 --notes '{…}' / art-link <発注> <素材>   素材庫（話数をまたぐ）
+  script-split EP09                              脚本の「○場所（時間）」からシーンに分ける
   version-base EP09 S1                           今の並び（案を作るときの元）
   version-add EP09 S1 --file v.json --title "30秒に詰めた版"   案（直した並び）を出す → 監督が「決める」で今の版と並べて見る
   versions EP09 / version-show 3                 案の一覧・中身
@@ -142,6 +144,12 @@ def main(argv=None):
     p = sub.add_parser("story-set"); p.add_argument("episode"); p.add_argument("--theme"); p.add_argument("--flow")
     p = sub.add_parser("art-plan"); p.add_argument("episode")
     p = sub.add_parser("art"); p.add_argument("episode")
+    p = sub.add_parser("library")
+    p = sub.add_parser("asset-describe"); p.add_argument("id", type=int); p.add_argument("--name", default="")
+    p.add_argument("--kind", default="", help="bg / character / prop / layout / effect"); p.add_argument("--place", default="")
+    p.add_argument("--description", default=""); p.add_argument("--notes", default=None, help='{"look": "見るところ", "break": "崩れやすいところ", "avoid": "気をつけること"}')
+    p = sub.add_parser("art-link"); p.add_argument("order", type=int); p.add_argument("asset", type=int)
+    p = sub.add_parser("script-split"); p.add_argument("episode")
     p = sub.add_parser("art-deliver"); p.add_argument("episode"); p.add_argument("file")
     p.add_argument("--order", type=int); p.add_argument("--kind", default="bg"); p.add_argument("--name", default="")
     p.add_argument("--scenes", default=""); p.add_argument("--use", default="ref", help="ref / mood / comp")
@@ -332,6 +340,20 @@ def main(argv=None):
             core.set_story(conn, a.episode, theme=a.theme, story_flow=a.flow)
             ep = db.episode_by_code(conn, a.episode)
             print(f"芯：{ep['theme']}\n流れ：{ep['story_flow']}\n（監督が直した欄：{ep['human_fields']}。そこはエージェントは書き換えない）")
+        elif a.cmd in ("library", "asset-describe", "art-link", "script-split"):
+            from studio.backend import art, scriptdoc
+            if a.cmd == "library":
+                for x in art.library(conn):
+                    print(f"#{x['id']} [{x['kind'] or '？'}] {x['name']} {x['place']} {config.MEDIA_DIR / x['file_path']}"
+                          f"{'' if x['described'] else '（まだ AI が見ていない）'}　{x['description']}　使う所：{', '.join(x['used_in']) or '―'}")
+            elif a.cmd == "asset-describe":
+                art.describe(conn, a.id, a.name, a.kind, a.place, a.description, json.loads(a.notes) if a.notes else None)
+                print("ok")
+            elif a.cmd == "art-link":
+                art.link(conn, a.order, a.asset)
+                print("ok")
+            else:
+                print(scriptdoc.split(conn, a.episode), "シーン")
         elif a.cmd in ("art-plan", "art", "art-deliver"):
             from studio.backend import art
             if a.cmd == "art-deliver":

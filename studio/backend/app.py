@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import art, chat, config, context, core, db, direction, overview, pipeline, runner, staff, versions
+from . import art, chat, config, context, core, db, direction, overview, pipeline, runner, scriptdoc, staff, versions
 from . import episodes as episodes_mod
 
 db.init()
@@ -200,6 +200,87 @@ def art_view(code: str):
     with db.session() as conn:
         return {"orders": art.orders(conn, code), "materials": art.materials(conn, code),
                 "note_fields": art.NOTE_FIELDS, "uses": art.USES}
+
+
+@app.get("/api/library")
+def library_list():
+    with db.session() as conn:
+        return art.library(conn)
+
+
+@app.post("/api/library")
+async def library_add(files: list[UploadFile] = File(...), hint: str = Form(""), order_id: int | None = Form(None)):
+    """素材庫に入れる（画像を落とすだけ）。何の素材かと注意書きは、制作進行の AI が画像を見て書く。"""
+    tmp_files = []
+    try:
+        for f in files:
+            suffix = Path(f.filename or "x.png").suffix
+            with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+                tmp.write(await f.read())
+            tmp_files.append((Path(tmp.name), f.filename or tmp.name))
+        with db.session() as conn:
+            return art.add_library(conn, tmp_files, hint, order_id)
+    finally:
+        for p_, _ in tmp_files:
+            p_.unlink(missing_ok=True)
+
+
+class AssetIn(BaseModel):
+    name: str | None = None
+    hint: str | None = None
+    active: int | None = None
+
+
+@app.patch("/api/library/{aid}")
+def library_edit(aid: int, a: AssetIn):
+    with db.session() as conn:
+        db.update(conn, "assets", aid, a.model_dump(exclude_none=True))
+    return {"ok": True}
+
+
+class LinkIn(BaseModel):
+    asset_id: int
+
+
+@app.post("/api/art/orders/{oid}/link")
+def art_link(oid: int, l: LinkIn):
+    with db.session() as conn:
+        art.link(conn, oid, l.asset_id, by="human")
+    return {"ok": True}
+
+
+class ScriptIn(BaseModel):
+    text: str
+
+
+class NoteIn(BaseModel):
+    anchor: str
+    note: str
+
+
+@app.get("/api/episodes/{code}/script")
+def script_get(code: str):
+    with db.session() as conn:
+        return scriptdoc.read(conn, code)
+
+
+@app.put("/api/episodes/{code}/script")
+def script_put(code: str, s_: ScriptIn):
+    with db.session() as conn:
+        return scriptdoc.save(conn, code, s_.text)
+
+
+@app.post("/api/episodes/{code}/script/notes")
+def script_note(code: str, n: NoteIn):
+    with db.session() as conn:
+        return {"id": scriptdoc.add_note(conn, code, n.anchor, n.note)}
+
+
+@app.delete("/api/script/notes/{nid}")
+def script_note_del(nid: int):
+    with db.session() as conn:
+        conn.execute("DELETE FROM script_notes WHERE id=?", (nid,))
+    return {"ok": True}
 
 
 @app.post("/api/episodes/{code}/art/plan")

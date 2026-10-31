@@ -126,6 +126,12 @@ CREATE TABLE IF NOT EXISTS chat_messages (
   created_at TEXT
 );
 CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT);
+-- 脚本の行につけた監督の注（scriptdoc.py）
+CREATE TABLE IF NOT EXISTS script_notes (
+  id INTEGER PRIMARY KEY, episode_id INTEGER REFERENCES episodes(id),
+  anchor TEXT,                         -- 注をつけた行（行番号は変わるので文で持つ）
+  note TEXT, created_at TEXT
+);
 
 -- シーンの工程の流れ（pipeline.py）：シーン整理の承認 → 字コンテ会議 → 字コンテ・480p 作り → 映像会議 → 監督 → （作り直し → 映像会議 → 監督）→ OK
 CREATE TABLE IF NOT EXISTS scene_flows (
@@ -330,6 +336,9 @@ MIGRATIONS = {
               "submitted_at": "TEXT", "finished_at": "TEXT",
               "role": "TEXT DEFAULT ''"},   # 音声：voice（仮の声）/ actor（声優）/ sfx / music
     # シーン整理（脚本と字コンテの間）：このシーンで何が変わるか、キャラが何をしたくて何をするか、小さな区切り
+    # 素材庫（話数をまたいで使う）：監督は画像を落とすだけ。何の素材か・注意書きは AI が画像を見て書く
+    "assets": {"place": "TEXT DEFAULT ''", "description": "TEXT DEFAULT ''", "notes_json": "TEXT DEFAULT '{}'",
+               "hint": "TEXT DEFAULT ''", "described": "INTEGER DEFAULT 0"},
     "rounds": {"kind": "TEXT DEFAULT 'review'", "cycle": "INTEGER DEFAULT 1"},   # review / jikonte（字コンテ会議）/ video（映像会議）
     "requests": {"role": "TEXT DEFAULT ''"},   # この依頼を取る役（まとめ など）。空ならだれでも
     "scenes": {"change_before": "TEXT DEFAULT ''", "change_after": "TEXT DEFAULT ''", "turn": "TEXT DEFAULT ''",

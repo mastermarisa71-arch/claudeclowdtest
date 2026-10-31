@@ -363,3 +363,20 @@ table.loaded tr.ng td:first-child { color:var(--amber); } table.loaded tr.ng td 
 .cact { display:flex; gap:8px; align-items:center; margin-top:6px; padding:6px; border-radius:6px; background:rgba(127,166,217,.12); font-size:12px; }
 .cact span:first-child { flex:1; } .cact .ok { color:var(--green); }
 .cinput { border-top:1px solid #3a3340; padding:8px; } .cinput textarea { width:100%; box-sizing:border-box; }
+
+/* 脚本 */
+.scriptview { line-height:1.9; font-size:15px; max-width:900px; }
+.sl { padding:1px 8px; border-radius:4px; cursor:pointer; } .sl:hover { background:rgba(240,180,90,.07); } .sl.blank { height:10px; cursor:default; }
+.sl.head { margin-top:14px; font-weight:bold; color:var(--amber); border-top:1px solid #3a3340; padding-top:8px; }
+.sl.head .scn { display:inline-block; background:var(--amber); color:#1c1820; border-radius:4px; padding:0 6px; margin-right:8px; font-size:12px; }
+.sl.act { color:#cfc6d6; padding-left:2em; } .sl.dia { color:var(--text); }
+.snote { margin:2px 0 4px 2em; padding:2px 8px; background:rgba(240,200,90,.16); border-left:3px solid var(--amber); font-size:13px; border-radius:3px; }
+.snote .ndel { padding:0 5px; font-size:11px; } .nform2 { margin:4px 0 4px 2em; } .nform2 input { flex:1; }
+textarea.sedit { width:100%; min-height:70vh; box-sizing:border-box; font-size:15px; line-height:1.8; }
+
+/* 素材庫 */
+.drop.big { min-height:150px; }
+.libgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; margin-top:12px; }
+.libitem img { width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:6px; background:#141117; }
+.libitem .lname { flex:1; min-width:0; }
+.order .pick { width:100%; margin-top:6px; }

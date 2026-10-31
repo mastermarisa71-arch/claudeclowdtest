@@ -83,8 +83,12 @@ def create(conn, code: str, title: str, target: float, src: Path, filename: str)
         shutil.copyfile(src, dest)
         did.append(f"原稿を {_rel(dest)} に置きました")
         job = f"原稿（{_rel(dest)}）を「03_脚本/いまの版/{code}_脚本_いまの版.md」に書き起こしてから、"
+    from . import scriptdoc
+    n = scriptdoc.split(conn, code)          # 脚本の「○場所（時間）」の行から、シーンに分ける（AI を待たずに）
+    if n:
+        did.append(f"脚本を {n} シーンに分けました")
     rid = core.add_request(conn, f"[新しい話数 {code}] {job}シーン整理の下書きを作る：この話の芯・物語の流れ（story-set）と、"
-                                 "シーンごとの ①伝えたいこと ②変化 ③あらすじ ④キャラ（scene-sheet / scene-set、脚本の範囲 --from/--to も）。"
+                                 f"シーンごとの ①伝えたいこと ②変化 ③あらすじ ④キャラ（scene-set。シーンは脚本から S1〜S{n or 'n'} に分けてある）。"
                                  "字コンテがあれば art-plan で美術の発注も。終わったら request-done", code)
     db.update(conn, "requests", rid, {"role": "まとめ"})
     db.log(conn, "human", "create_episode", {"episode": code, "file": filename})

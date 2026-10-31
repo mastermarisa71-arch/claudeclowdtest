@@ -84,7 +84,7 @@ studio\staff_watch.bat claude-a
 studio\staff_watch.bat claude-b
 studio\staff_watch.bat codex
 ```
-あとは、シーン整理で「このシーンでいく」を押すだけで、字コンテ会議 → 480p ドラフト → 映像会議 まで進み、「④ 決める」に映像と結論が届く。
+あとは、シーン整理で「このシーンでいく」を押すだけで、字コンテ会議 → 480p ドラフト → 映像会議 まで進み、「⑤ 決める」に映像と結論が届く。
 
 ### 手で回す（見張り番がうまく動かないとき）
 それぞれの AI に「月灯スタジオの工程を進めて。あなたは claude-a（または claude-b / codex）」と頼む。

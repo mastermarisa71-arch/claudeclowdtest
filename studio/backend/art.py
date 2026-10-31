@@ -102,7 +102,7 @@ def _asset(conn, asset_id: int) -> dict | None:
         return None
     u = db.one(conn.execute("SELECT * FROM asset_uses WHERE asset_id=? ORDER BY id DESC LIMIT 1", (asset_id,)))
     a["use"] = (u or {}).get("use", "ref")
-    a["notes"] = json.loads((u or {}).get("notes_json") or "{}")
+    a["notes"] = json.loads(a.get("notes_json") or "{}") or json.loads((u or {}).get("notes_json") or "{}")
     return a
 
 
@@ -152,9 +152,10 @@ def materials(conn, episode: str) -> list[dict]:
 def for_cut(conn, cut_id: int, kind: str = "bg") -> dict | None:
     """このコマに監督が結んだ素材（生成の係が最初に使う）。編集で合成するもの（comp）は生成には使わない。"""
     for r in db.rows(conn.execute("""SELECT a.*, u.use, u.notes_json, u.cut_ids_json FROM asset_uses u JOIN assets a ON a.id=u.asset_id
-            WHERE a.kind=? AND a.active=1 ORDER BY u.id DESC""", (kind,))):
+            WHERE (a.kind=? OR a.kind='') AND a.active=1 ORDER BY u.id DESC""", (kind,))):
         if cut_id in json.loads(r["cut_ids_json"] or "[]"):
-            r["notes"] = json.loads(r.pop("notes_json") or "{}")
+            lib = db.one(conn.execute("SELECT notes_json FROM assets WHERE id=?", (r["id"],)))
+            r["notes"] = json.loads((lib or {}).get("notes_json") or "{}") or json.loads(r.pop("notes_json") or "{}")
             return r
     return None
 
@@ -162,3 +163,60 @@ def for_cut(conn, cut_id: int, kind: str = "bg") -> dict | None:
 def notes_text(notes: dict, kind: str = "bg") -> str:
     labels = {k: l for k, l, _ in NOTE_FIELDS.get(kind, [])}
     return " ／ ".join(f"{labels.get(k, k)}：{v}" for k, v in notes.items() if v)
+
+
+# ---- 素材庫（話数をまたいで使う） ----
+# 監督は画像を落とすだけ（名前とひとことは任意）。何の素材か（種類・場所・カメラ位置・時間帯）と注意書きは、制作進行の AI が画像を見て書き、
+# 話数の背景の発注（art_orders）に合うものを結ぶ（link）。生成の背景にするか雰囲気だけにするかは、カットごとに生成の係が決める。
+
+def library(conn) -> list[dict]:
+    rows = db.rows(conn.execute("SELECT * FROM assets WHERE active=1 ORDER BY id DESC"))
+    for r in rows:
+        r["notes"] = json.loads(r.pop("notes_json", "") or "{}")
+        r["used_in"] = [f"{o['episode']} {o['code']}" for o in db.rows(conn.execute(
+            "SELECT o.code, e.code AS episode FROM art_orders o JOIN episodes e ON e.id=o.episode_id WHERE o.asset_id=?", (r["id"],)))]
+    return rows
+
+
+def add_library(conn, files: list[tuple[Path, str]], hint: str = "", order_id: int | None = None) -> dict:
+    """素材庫に入れる。order_id があれば、その発注にすぐ結ぶ（監督が「この背景」に落としたとき）。"""
+    ids = []
+    for src, name in files:
+        rel = Path("assets") / "library" / f"{int(time.time() * 1000)}_{re.sub(r'[^\w.]+', '_', name)}"
+        (config.MEDIA_DIR / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(src, config.MEDIA_DIR / rel)
+        aid = db.insert(conn, "assets", {"kind": "", "name": Path(name).stem, "file_path": rel.as_posix(), "hint": hint,
+                                         "meta_json": "{}", "active": 1, "described": 0, "created_at": db.now()})
+        ids.append(aid)
+        if order_id:
+            link(conn, order_id, aid, by="human")
+    rid = core.add_request(conn, f"[素材庫] 新しい素材 #{', #'.join(map(str, ids))} を見る（Read で画像を開く）。"
+                                 "何の素材か（kind：bg/character/prop/layout/effect、場所、カメラ位置、時間帯）と、注意書き"
+                                 "（見るところ・崩れやすいところ・気をつけること）を asset-describe で書く。"
+                                 + (f"監督のひとこと：{hint}。" if hint else "")
+                                 + "そのあと、各話数の背景の発注（art EPxx）で足りないものに合えば art-link で結ぶ。終わったら request-done")
+    db.update(conn, "requests", rid, {"role": "まとめ"})
+    db.log(conn, "human", "add_library", {"assets": ids})
+    return {"assets": ids, "request": rid}
+
+
+def describe(conn, asset_id: int, name: str = "", kind: str = "", place: str = "", description: str = "",
+             notes: dict | None = None) -> None:
+    data = {k: v for k, v in {"name": name, "kind": kind, "place": place, "description": description}.items() if v}
+    if notes is not None:
+        data["notes_json"] = json.dumps(notes, ensure_ascii=False)
+        data["note"] = " ／ ".join(v for v in notes.values() if v)
+    data["described"] = 1
+    db.update(conn, "assets", asset_id, data)
+    db.log(conn, "agent", "describe_asset", {"asset": asset_id})
+
+
+def link(conn, order_id: int, asset_id: int, by: str = "agent") -> None:
+    """話数の背景の発注に、素材庫の素材を結ぶ（その発注のコマで使う）。"""
+    o = db.one(conn.execute("SELECT * FROM art_orders WHERE id=?", (order_id,)))
+    db.update(conn, "art_orders", order_id, {"status": "delivered", "asset_id": asset_id, "delivered_at": db.now()})
+    conn.execute("DELETE FROM asset_uses WHERE order_id=?", (order_id,))
+    db.insert(conn, "asset_uses", {"asset_id": asset_id, "episode_id": o["episode_id"], "order_id": order_id,
+                                   "cut_ids_json": o["cut_ids_json"], "use": "ref", "notes_json": "{}", "created_by": by,
+                                   "created_at": db.now()})
+    db.log(conn, by, "link_asset", {"order": order_id, "asset": asset_id})

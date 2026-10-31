@@ -46,7 +46,7 @@ async function viewSheet(code) {
   const dots = (n) => `<span class="dots">${[1, 2, 3, 4, 5].map((i) => `<i class="${i <= (+n || 0) ? "on" : ""}"></i>`).join("")}</span>`;
   const done = scenes.filter((x) => x.status === "approved").length;
   const epHuman = JSON.parse(ep.human_fields || "[]");
-  const live = scenes.filter((x) => x.target_seconds > 0 || x.synopsis || x.change_after);
+  const live = scenes;
   $view.innerHTML = `${epTabs(code, "sheet")}<h1>シーン整理 <span class="muted small">脚本 → <b>シーン整理（あらすじを立てる）</b> → 字コンテ・Vコン。AI（演出）が下書きし、監督がその場で直します</span></h1>
     <div class="card story">
       ${edBlock("theme", "この話の芯", ep.theme, epHuman.includes("theme"), { hint: "映像で伝えたいこと（1〜2文）", cls: "theme" })}
@@ -164,7 +164,7 @@ async function viewSheet(code) {
     card.querySelector("[data-idea]").onclick = async () => {
       await api("/api/requests", { method: "POST", body: { episode: code,
         text: `${code} ${sc} について、案を2つ（3つまで）出して、2択で聞いて（ask / ask_director。できれば version-add で版も）。${text() ? "監督のひとこと：" + text() : ""}` } });
-      msg("頼みました。案がそろうと「④ 決める」に出ます");
+      msg("頼みました。案がそろうと「⑤ 決める」に出ます");
     };
   });
   addMics();

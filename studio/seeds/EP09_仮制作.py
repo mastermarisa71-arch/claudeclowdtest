@@ -345,7 +345,7 @@ def main(reset: bool, refs: str | None, sheet_only: bool = False, staff_sample: 
         ep = db.episode_by_code(conn, EP)
         if ep and staff_sample:
             add_staff_sample(conn)
-            print(f"{EP} に AI 会議の見本（S1）を足しました。画面の「AI 会議」と「④ 決める」で見られます")
+            print(f"{EP} に AI 会議の見本（S1）を足しました。画面の「AI 会議」と「⑤ 決める」で見られます")
             return
         if ep and sheet_only:
             for code, f in SHEET.items():

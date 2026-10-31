@@ -31,10 +31,11 @@ async function viewHome() {
   const eps = await api("/api/episodes");
   $view.innerHTML = `<h1>話数</h1>
     <div class="card newep"><div class="drop" id="newDrop"><div class="dz"><b>＋ 新しい話数</b><br>脚本のファイル（md・txt・pdf・docx）か、字コンテ（xlsx）をここに落とす<br>
-        <span class="small muted">（押して選んでもよい）あとは制作進行がシーン整理の下書きから進めます</span></div><input type="file" hidden></div>
+        <span class="small muted">（押して選んでもよい）落としたら、話数・タイトル・目標尺を確かめてから作ります</span></div><input type="file" hidden></div>
       <div class="row"><label>話数<input type="text" id="newCode" placeholder="空なら次の番号" style="width:110px"></label>
         <label>タイトル<input type="text" id="newTitle" placeholder="（任意）"></label>
-        <label>目標尺（秒）<input type="text" id="newTarget" value="180" style="width:70px"></label><span class="small muted" id="newMsg"></span></div></div>
+        <label>目標尺（秒）<input type="text" id="newTarget" value="180" style="width:70px"></label>
+        <button class="primary" id="newGo" hidden>この内容で作る</button><span class="small muted" id="newMsg"></span></div></div>
     <div class="grid">${eps.map((e) => {
       const i = STAGES.indexOf(e.stage);
       return `<a class="card" href="#/ep/${e.code}"><h3>${h(e.code)} <span class="muted small">${h(e.title)}</span></h3>
@@ -45,6 +46,18 @@ async function viewHome() {
       </a>`;
     }).join("") || `<p class="muted">まだ話数がありません。上に脚本を落とすと始まります。</p>`}</div>`;
   const drop = document.getElementById("newDrop"), input = drop.querySelector("input");
+  // 落としたら、すぐには作らない。話数・タイトル・目標尺を確かめてから「この内容で作る」
+  let picked = null;
+  const ask = (f) => {
+    picked = f;
+    const nums = eps.map((e) => +e.code.replace(/\D/g, "")).filter(Boolean);
+    const m = f.name.match(/(?:EP|ep|#|第)\s*0*(\d{1,2})|(\d{1,2})\s*話/);
+    if (!document.getElementById("newCode").value)
+      document.getElementById("newCode").value = `EP${String(m ? +(m[1] || m[2]) : (nums.length ? Math.max(...nums) + 1 : 1)).padStart(2, "0")}`;
+    drop.querySelector(".dz").innerHTML = `<b>${h(f.name)}</b><br><span class="small muted">下の話数・タイトル・目標尺を確かめて「この内容で作る」</span>`;
+    document.getElementById("newGo").hidden = false;
+    document.getElementById("newTitle").focus();
+  };
   const make = async (f) => {
     const fd = new FormData();
     fd.append("file", f); fd.append("code", document.getElementById("newCode").value); fd.append("title", document.getElementById("newTitle").value);
@@ -53,13 +66,14 @@ async function viewHome() {
     const r = await fetch("/api/episodes/new", { method: "POST", body: fd });
     if (!r.ok) { document.getElementById("newMsg").textContent = "読み込めませんでした：" + (await r.text()).slice(0, 200); return; }
     const j = await r.json();
-    location.hash = `#/ep/${j.episode}`;
+    location.hash = `#/ep/${j.episode}/script`;
   };
   drop.onclick = () => input.click();
-  input.onchange = () => input.files[0] && make(input.files[0]);
+  input.onchange = () => input.files[0] && ask(input.files[0]);
+  document.getElementById("newGo").onclick = () => picked && make(picked);
   drop.ondragover = (e) => { e.preventDefault(); drop.classList.add("over"); };
   drop.ondragleave = () => drop.classList.remove("over");
-  drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove("over"); e.dataTransfer.files[0] && make(e.dataTransfer.files[0]); };
+  drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove("over"); e.dataTransfer.files[0] && ask(e.dataTransfer.files[0]); };
 }
 
 // ---------- 1話のコマ一覧 ----------
@@ -279,8 +293,8 @@ async function viewBrief(params) {
 // 監督がふだん使うのは左の5つ（シーン整理 → Vコン → …）。設計・コマ・ショットなどの細かい画面は「詳しく」に入れる
 // 工程の順：いま → シーン整理 → Vコン → 決める → AI 会議（裏側）→ 実績。決めることの数は「決める」に出す
 const EP_COUNTS = {};
-const epTabs = (code, now) => `<div class="row tabs">${[["home", "いま"], ["sheet", "① シーン整理"], ["art", "② 美術・素材"], ["vcon", "③ Vコン（絵と動画）"],
-    ["decide", `④ 決める${EP_COUNTS[code] ? `<span class="cnt">${EP_COUNTS[code]}</span>` : ""}`], ["staff", "AI 会議"], ["stats", "実績"]]
+const epTabs = (code, now) => `<div class="row tabs">${[["home", "いま"], ["script", "① 脚本"], ["sheet", "② シーン整理"], ["art", "③ 美術・素材"], ["vcon", "④ Vコン（絵と動画）"],
+    ["decide", `⑤ 決める${EP_COUNTS[code] ? `<span class="cnt">${EP_COUNTS[code]}</span>` : ""}`], ["staff", "AI 会議"], ["stats", "実績"]]
   .map(([k, l]) => `<a class="btn ${k === now ? "on" : ""}" href="#/ep/${code}${k === "home" ? "" : "/" + k}">${l}</a>`).join("")}
   <span style="flex:1"></span>
   <select class="more" onchange="if(this.value) location.hash=this.value">
@@ -553,7 +567,7 @@ async function route() {
   const params = new URLSearchParams(qs || "");
   const parts = (path || "/").split("/").filter(Boolean);
   try {
-    // 「④ 決める」の数をタブに出す（話数を開いたときに1回）
+    // 「⑤ 決める」の数をタブに出す（話数を開いたときに1回）
     if (parts[0] === "ep" && parts[2] && !(parts[1] in EP_COUNTS))
       EP_COUNTS[parts[1]] = (await api(`/api/episodes/${parts[1]}/overview`).catch(() => ({}))).decide_count || 0;
     if (parts[0] === "ep" && parts[2] === "design") await viewDesign(parts[1]);
@@ -561,6 +575,8 @@ async function route() {
     else if (parts[0] === "ep" && parts[2] === "staff") await viewStaff(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "decide") await viewDecide(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "art") await viewArt(parts[1]);
+    else if (parts[0] === "ep" && parts[2] === "script") await viewScript(parts[1]);
+    else if (parts[0] === "library") await viewLibrary();
     else if (parts[0] === "ep" && parts[2] === "vcon") await viewVcon(parts[1], params);
     else if (parts[0] === "ep" && parts[2] === "awaiting") await viewAwaiting(parts[1]);
     else if (parts[0] === "ep" && parts[2] === "shots") await viewShots(parts[1]);
