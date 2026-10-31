@@ -2,6 +2,7 @@
 
 作品のルールと手順は Claude と同じ。**まず `CLAUDE.md` を読む**（役割分担・正本の優先順位・予算・プロンプトの決まり）。
 手順の詳細は `.claude/skills/tsukiakari-studio/SKILL.md`。道具は `python studio/cli.py …`（MCP `tsukiakari-studio` でも同じことができる）。
+**Windows では月灯スタジオ用の Python を使う**：`studio\.venv\Scripts\python.exe studio\cli.py …`（手順書の `python studio/cli.py` はこれに読み替える）。つなぎ方は `studio/docs/ダウンロードとAIの連携.md`。
 
 ## AI スタッフ会議に入るとき
 
