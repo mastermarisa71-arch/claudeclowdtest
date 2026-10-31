@@ -7,6 +7,7 @@
 """
 import re
 import shutil
+import time
 from pathlib import Path
 
 from . import config, core, db
@@ -14,6 +15,29 @@ from . import config, core, db
 
 def _rel(p: Path) -> str:
     return f"{config.VAULT_DIR.name}/{p.relative_to(config.VAULT_DIR).as_posix()}"
+
+
+def docx_text(path: Path) -> str:
+    """Word（docx）の本文を文字にする（追加のソフトなしで）。「○場所」の行は見出しにする。"""
+    import html
+    import zipfile
+    xml = zipfile.ZipFile(path).read("word/document.xml").decode("utf-8")
+    lines = []
+    for p in re.findall(r"<w:p[ >].*?</w:p>|<w:p/>", xml, re.S):
+        t = html.unescape("".join(re.findall(r"<w:t[^>]*>([^<]*)</w:t>", p)))
+        if "<w:br" in p and not t:
+            t = ""
+        lines.append(t.rstrip())
+    out, blank = [], 0
+    for t in lines:
+        if not t.strip():
+            blank += 1
+            if blank == 1:
+                out.append("")
+            continue
+        blank = 0
+        out.append(f"### {t.strip()}" if t.strip().startswith(("○", "〇")) else t)
+    return "\n".join(out).strip() + "\n"
 
 
 def next_code(conn) -> str:
@@ -27,10 +51,19 @@ def create(conn, code: str, title: str, target: float, src: Path, filename: str)
     db.update(conn, "episodes", ep["id"], {k: v for k, v in {"title": title, "target_seconds": target or None}.items() if v})
     ext = Path(filename).suffix.lower()
     did = []
-    if ext in (".md", ".txt"):
-        text = src.read_text(encoding="utf-8", errors="replace")
+    if ext in (".md", ".txt", ".docx"):
+        text = docx_text(src) if ext == ".docx" else src.read_text(encoding="utf-8", errors="replace")
+        if ext == ".docx":     # 元の Word も残す
+            raw = config.VAULT_DIR / "03_脚本" / "原稿" / f"{code}_{Path(filename).name}"
+            raw.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, raw)
         out = config.VAULT_DIR / "03_脚本" / "いまの版" / f"{code}_脚本_いまの版.md"
         out.parent.mkdir(parents=True, exist_ok=True)
+        if out.exists():       # 前の版は 03_脚本/前の版/ に取っておく（上書きで消さない）
+            keep = config.VAULT_DIR / "03_脚本" / "前の版" / f"{code}_脚本_{db.now()[:10]}_{int(time.time())}.md"
+            keep.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(out, keep)
+            did.append(f"前の脚本は {_rel(keep)} に取っておきました")
         if not text.startswith("---"):
             text = f'---\ntitle: "{code} 脚本（いまの版）"\ndate: {db.now()[:10]}\ntags: [脚本, {code}]\n---\n# {title or code}\n\n' + text
         out.write_text(text, encoding="utf-8")
