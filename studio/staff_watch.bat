@@ -1,10 +1,9 @@
 @echo off
 chcp 65001 >nul
-rem AI スタッフ会議の見張り番。例： staff_watch.bat codex / staff_watch.bat claude-b
-rem 役と起こすコマンドは 月灯_vault\04_制作ルール\AIスタッフ.json
+rem AI staff watcher. Example: staff_watch.bat claude-a / claude-b / codex
 cd /d %~dp0
 if "%1"=="" (
-  echo 使い方： staff_watch.bat codex （または claude-a / claude-b）
+  python say.py watch_usage
   pause
   exit /b 1
 )

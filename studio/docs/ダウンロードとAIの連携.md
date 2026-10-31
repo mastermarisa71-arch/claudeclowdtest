@@ -6,7 +6,7 @@
 
 ### いるもの（Windows）
 - **Git**（または GitHub Desktop）
-- **Python 3.11 以上**：インストールのとき「Add python.exe to PATH」に印をつける
+- **Python 3.10 以上**：インストールのとき「Add python.exe to PATH」に印をつける
 - **ffmpeg**：PATH に入れる（動画のコマ送り画像を作るのに使う）
 - （Codex を使うなら）**Node.js**（LTS 版）
 

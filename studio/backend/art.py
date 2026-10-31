@@ -112,7 +112,8 @@ def deliver(conn, episode: str, src: Path, kind: str = "bg", name: str = "", ord
     ep = db.episode_by_code(conn, episode)
     o = db.one(conn.execute("SELECT * FROM art_orders WHERE id=?", (order_id,))) if order_id else None
     name = name or (f"{o['place']}:{o['camera'] or o['code']}" if o else src.stem)
-    rel = Path("assets") / kind / f"{episode}_{(o or {}).get('code') or re.sub(r'[^\w]+', '_', name)}_{int(time.time())}{src.suffix.lower()}"
+    tag = (o or {}).get("code") or re.sub(r"[^\w]+", "_", name)
+    rel = Path("assets") / kind / f"{episode}_{tag}_{int(time.time())}{src.suffix.lower()}"
     (config.MEDIA_DIR / rel).parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(src, config.MEDIA_DIR / rel)
     if o and o["asset_id"]:

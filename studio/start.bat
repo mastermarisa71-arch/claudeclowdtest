@@ -1,10 +1,9 @@
 @echo off
 chcp 65001 >nul
-rem 月灯スタジオを起動して、ブラウザで開く（自分の PC で使うとき）
-rem 8765 番がほかのツールに使われていたら、空いている番号を探して開く
+rem Tsukiakari Studio: start and open in the browser (finds a free port if 8765 is used)
 cd /d %~dp0
 if not exist .venv\Scripts\activate.bat (
-  echo 先に setup.bat をダブルクリックしてください。
+  python say.py need_setup
   pause
   exit /b 1
 )
