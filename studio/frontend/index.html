@@ -11,9 +11,9 @@
     <a class="logo" href="#/">月灯スタジオ</a>
     <nav>
       <a href="#/">話数</a>
-      <a href="#/requests" title="AI に頼む・頼んだことの進み具合">AI に頼む</a>
       <select class="more" onchange="if(this.value) location.hash=this.value; this.value=''">
         <option value="">そのほか</option>
+        <option value="#/requests">AI の仕事の一覧</option>
         <option value="#/reviews">レビューの一覧</option>
         <option value="#/rules">ルール（AI が守ること）</option>
         <option value="#/brief">AI が読んでいるもの（ブリーフ）</option>
@@ -28,5 +28,6 @@
   <script src="/static/staff.js"></script>
   <script src="/static/decide.js"></script>
   <script src="/static/art.js"></script>
+  <script src="/static/chat.js"></script>
 </body>
 </html>

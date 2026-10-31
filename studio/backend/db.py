@@ -116,6 +116,17 @@ CREATE TABLE IF NOT EXISTS learnings (
   created_at TEXT, decided_at TEXT
 );
 
+-- 月灯スタジオの中のチャット（chat.py）：監督 ⇄ 制作進行の AI
+CREATE TABLE IF NOT EXISTS chat_messages (
+  id INTEGER PRIMARY KEY,
+  role TEXT,                           -- user / assistant
+  text TEXT DEFAULT '',
+  episode TEXT DEFAULT '',             -- 監督がそのとき開いていた話数
+  actions_json TEXT DEFAULT '[]',      -- 制作進行の提案（fix / request / flow）。積んだら done
+  created_at TEXT
+);
+CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT);
+
 -- シーンの工程の流れ（pipeline.py）：シーン整理の承認 → 字コンテ会議 → 字コンテ・480p 作り → 映像会議 → 監督 → （作り直し → 映像会議 → 監督）→ OK
 CREATE TABLE IF NOT EXISTS scene_flows (
   id INTEGER PRIMARY KEY,

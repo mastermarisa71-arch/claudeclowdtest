@@ -38,9 +38,9 @@
       ]
     },
     "まとめ": {
-      "name": "まとめ（制作）",
+      "name": "制作進行（まとめ・制作・チャット）",
       "color": "#f0b45a",
-      "focus": "各役の所見を読み、合意したものは作り直しの依頼に、割れたものは監督への2択に、根拠の弱いものは見送りにする。作る係でもある",
+      "focus": "制作全体の構成管理と進行。監督のチャットに答え、会議をまとめ、字コンテと 480p ドラフトを作る",
       "checklist": [
         "必須（直さないと伝わらない）・提案・好み を分ける",
         "役どうしで割れたら、どちらにも理由を書いて監督に2択で聞く（勝手に決めない）",
@@ -57,7 +57,7 @@
   },
   "agents": {
     "claude-a": {
-      "label": "Claude A（演出・まとめ）",
+      "label": "Claude A（制作進行・演出）",
       "command": "claude -p \"{prompt}\" --permission-mode acceptEdits --allowedTools \"Bash(python studio/cli.py:*)\" Read Glob Grep"
     },
     "claude-b": {
@@ -72,7 +72,8 @@
   "rules": {
     "passes": 2,
     "max_rounds_per_target": 2,
-    "auto": true
+    "auto": true,
+    "run_agents": true
   },
   "kinds": {
     "jikonte": {

@@ -30,7 +30,11 @@ const tierBadge = (t) => (t.tier ? `<span class="tier ${t.tier}">${TIER[t.tier] 
 async function viewHome() {
   const eps = await api("/api/episodes");
   $view.innerHTML = `<h1>話数</h1>
-    <p class="muted">エージェントが作ったものに、ここでレビューをつけます。未対応のレビューはエージェントが次の作業で読みます。</p>
+    <div class="card newep"><div class="drop" id="newDrop"><div class="dz"><b>＋ 新しい話数</b><br>脚本のファイル（md・txt・pdf・docx）か、字コンテ（xlsx）をここに落とす<br>
+        <span class="small muted">（押して選んでもよい）あとは制作進行がシーン整理の下書きから進めます</span></div><input type="file" hidden></div>
+      <div class="row"><label>話数<input type="text" id="newCode" placeholder="空なら次の番号" style="width:110px"></label>
+        <label>タイトル<input type="text" id="newTitle" placeholder="（任意）"></label>
+        <label>目標尺（秒）<input type="text" id="newTarget" value="180" style="width:70px"></label><span class="small muted" id="newMsg"></span></div></div>
     <div class="grid">${eps.map((e) => {
       const i = STAGES.indexOf(e.stage);
       return `<a class="card" href="#/ep/${e.code}"><h3>${h(e.code)} <span class="muted small">${h(e.title)}</span></h3>
@@ -39,7 +43,23 @@ async function viewHome() {
         <span class="stat">採用 <b>${e.n_selected}</b>/${e.n_cuts}</span><span class="stat">テイク <b>${e.n_takes}</b></span>
         ${e.n_open ? `<span class="badge open">未対応 ${e.n_open}</span>` : ""}${e.n_proposed ? `<span class="badge proposed">確認待ち ${e.n_proposed}</span>` : ""}
       </a>`;
-    }).join("") || `<p class="muted">まだ話数がありません。<code>python studio/cli.py import-jikonte EP09 e009/EP09_字コンテ_4分版.xlsx</code></p>`}</div>`;
+    }).join("") || `<p class="muted">まだ話数がありません。上に脚本を落とすと始まります。</p>`}</div>`;
+  const drop = document.getElementById("newDrop"), input = drop.querySelector("input");
+  const make = async (f) => {
+    const fd = new FormData();
+    fd.append("file", f); fd.append("code", document.getElementById("newCode").value); fd.append("title", document.getElementById("newTitle").value);
+    fd.append("target", document.getElementById("newTarget").value || "180");
+    document.getElementById("newMsg").textContent = "読み込んでいます…";
+    const r = await fetch("/api/episodes/new", { method: "POST", body: fd });
+    if (!r.ok) { document.getElementById("newMsg").textContent = "読み込めませんでした：" + (await r.text()).slice(0, 200); return; }
+    const j = await r.json();
+    location.hash = `#/ep/${j.episode}`;
+  };
+  drop.onclick = () => input.click();
+  input.onchange = () => input.files[0] && make(input.files[0]);
+  drop.ondragover = (e) => { e.preventDefault(); drop.classList.add("over"); };
+  drop.ondragleave = () => drop.classList.remove("over");
+  drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove("over"); e.dataTransfer.files[0] && make(e.dataTransfer.files[0]); };
 }
 
 // ---------- 1話のコマ一覧 ----------

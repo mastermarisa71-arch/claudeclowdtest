@@ -10,7 +10,8 @@ from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import art, config, context, core, db, direction, overview, pipeline, staff, versions
+from . import art, chat, config, context, core, db, direction, overview, pipeline, runner, staff, versions
+from . import episodes as episodes_mod
 
 db.init()
 app = FastAPI(title="月灯スタジオ")
@@ -29,6 +30,7 @@ def _poll_loop():
 
 
 threading.Thread(target=_poll_loop, daemon=True).start()
+runner.start()       # 会議の枠・役のついた依頼が空いたら、その役の AI を起こす（見張り番）
 
 
 @app.get("/")
@@ -352,6 +354,48 @@ def versions_compare(vid: int):
 def versions_decide(vid: int, d: DecideIn):
     with db.session() as conn:
         return versions.decide(conn, vid, d.verdict, d.note)
+
+
+class ChatIn(BaseModel):
+    text: str
+    episode: str = ""
+
+
+class ActIn(BaseModel):
+    message: int
+    index: int
+
+
+@app.get("/api/chat")
+def chat_list(after: int = 0):
+    with db.session() as conn:
+        return {**chat.history(conn, after), "agents": runner.status()}
+
+
+@app.post("/api/chat")
+def chat_send(c: ChatIn):
+    """監督 → 制作進行。返事は裏で Claude（この PC の Claude Code）が書く。画面は /api/chat を見て待つ。"""
+    with db.session() as conn:
+        return {"id": chat.send(conn, c.text.strip(), c.episode)}
+
+
+@app.post("/api/chat/act")
+def chat_act(a: ActIn):
+    with db.session() as conn:
+        return {"message": chat.act(conn, a.message, a.index)}
+
+
+@app.post("/api/episodes/new")
+async def episode_new(file: UploadFile = File(...), code: str = Form(""), title: str = Form(""), target: float = Form(180)):
+    """新しい話数：脚本（md/txt/pdf/docx）か字コンテ（xlsx）を落とすだけ。あとは制作進行が下書きから進める。"""
+    suffix = Path(file.filename or "x.md").suffix
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(await file.read())
+    try:
+        with db.session() as conn:
+            return episodes_mod.create(conn, code, title, target, Path(tmp.name), file.filename or "script.md")
+    finally:
+        Path(tmp.name).unlink(missing_ok=True)
 
 
 class DirectIn(BaseModel):

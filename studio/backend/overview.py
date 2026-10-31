@@ -37,7 +37,7 @@ def overview(conn, code: str) -> dict:
     blocked = sum(bool(s["blocking_text"]) for s in sc)
     loaded = [
         {"name": "脚本（いまの版）", "value": f"{script.name}" + (f"（{sdate}）" if sdate else "") if script.exists() else "見つからない",
-         "ok": script.exists(), "path": str(script.relative_to(config.REPO_ROOT)) if script.exists() else ""},
+         "ok": script.exists(), "path": f"{config.VAULT_DIR.name}/{script.relative_to(config.VAULT_DIR).as_posix()}" if script.exists() else ""},
         {"name": "字コンテ", "value": f"{doc['version'] if doc else '―'}　{ncuts}コマ・{secs}秒（目標 {ep['target_seconds']}秒）",
          "ok": ncuts > 0, "path": doc["path"] if doc else ""},
         {"name": "シーン整理", "value": f"{len(sc)}シーン（整理済み {organized}・承認 {approved}）", "ok": organized > 0},
