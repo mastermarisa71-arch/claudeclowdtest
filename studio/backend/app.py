@@ -226,7 +226,7 @@ def agents_list():
     agents = runner.status()
     for k, v in st.get("agents", {}).items():     # その AI がどのアカウントでログインしているか（claude-b は別の置き場所）
         au = agents_auth.agent_status(v.get("command", ""))
-        agents[k].update(tool=au.get("tool"), installed=au.get("installed"), logged_in=au.get("logged_in"),
+        agents[k].update(model=v.get("model", ""), effort=v.get("effort", ""), tool=au.get("tool"), installed=au.get("installed"), logged_in=au.get("logged_in"),
                          account=au.get("detail", ""), config_dir=au.get("config_dir", ""))
     return {"tools": agents_auth.all_status(), "agents": agents, "run_agents": st.get("rules", {}).get("run_agents", True),
             "roles": {k: v.get("name", k) for k, v in st.get("roles", {}).items()}, "assign": st.get("assign", {})}
@@ -250,6 +250,55 @@ def agents_login_as(agent: str):
     tool, d = agents_auth.of_agent(a.get("command", ""))
     runner.wake(agent)
     return agents_auth.login(tool, d)
+
+
+# 画面で選べるモデル。Claude は名前で、Codex はこの PC の Codex が覚えている一覧から読む
+CLAUDE_MODELS = [("", "いつもの（設定どおり）"), ("claude-opus-5-5", "Opus 5.5（いちばん賢い・重い）"),
+                 ("claude-sonnet-5-5", "Sonnet 5.5（中くらい）"), ("claude-haiku-5-5", "Haiku 5.5（軽い・速い）"),
+                 ("claude-fable-5-1", "Fable 5.1")]
+CLAUDE_EFFORTS = [("", "いつもの"), ("low", "浅く（速い）"), ("medium", "ふつう"), ("high", "深く"), ("xhigh", "もっと深く"), ("max", "いちばん深く")]
+
+
+# 2026-11-01 に試して、ChatGPT のアカウントでは「使えない」と返ってきたもの
+CODEX_NG = {"gpt-6.1-sol", "gpt-6.1-terra", "gpt-6-sol", "gpt-6-luna"}
+ORDER = ["none", "minimal", "low", "medium", "high", "xhigh", "max"]
+
+
+def _codex_models() -> tuple[list, list]:
+    try:
+        d = json.loads((Path.home() / ".codex" / "models_cache.json").read_text(encoding="utf-8"))
+        ms = [m for m in d.get("models", []) if m.get("visibility") == "list"]
+    except (OSError, ValueError):
+        ms = []
+    models = [("", "いつもの（設定どおり）")] + [(m["slug"], (m.get("display_name") or m["slug"])
+                                              + ("（ChatGPT のアカウントでは使えない）" if m["slug"] in CODEX_NG else "")) for m in ms]
+    levels = sorted({(l.get("effort") if isinstance(l, dict) else l) for m in ms for l in m.get("supported_reasoning_levels", [])} - {None},
+                    key=lambda l: ORDER.index(l) if l in ORDER else 99) if ms else []
+    ja = {"minimal": "いちばん浅く", "low": "浅く（速い）", "medium": "ふつう", "high": "深く", "xhigh": "もっと深く", "max": "いちばん深く", "ultra": "最大（ultra）"}
+    return models, [("", "いつもの")] + [(l, ja.get(l, l)) for l in levels]
+
+
+@app.get("/api/agents/models")
+def agents_models():
+    cm, ce = _codex_models()
+    return {"claude": {"models": CLAUDE_MODELS, "efforts": CLAUDE_EFFORTS}, "codex": {"models": cm, "efforts": ce}}
+
+
+class ModelIn(BaseModel):
+    model: str = ""
+    effort: str = ""
+
+
+@app.put("/api/agents/{agent}/model")
+def agents_set_model(agent: str, m: ModelIn):
+    """その AI が使うモデルと考える深さ（AIスタッフ.json の agents.<名前>.model / effort）。次に起きたときから効く。"""
+    d = staff.settings()
+    a = d.get("agents", {}).get(agent)
+    if not a:
+        raise HTTPException(404, f"{agent} という AI はいません")
+    a["model"], a["effort"] = m.model.strip(), m.effort.strip()
+    staff.STAFF_FILE.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
+    return {"ok": True, "command": runner.with_model(a.get("command", ""), a["model"], a["effort"])}
 
 
 class AssignIn(BaseModel):

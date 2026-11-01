@@ -77,7 +77,8 @@ async function epQueue(code) {
 // ===== AI の接続と割り振り =====
 async function viewAgents() {
   $view.innerHTML = `<h1>AI の接続</h1><p class="muted">ログインの状態を確かめています…（数秒かかります）</p>`;
-  const [a, pr] = await Promise.all([api("/api/agents"), api("/api/progress")]);
+  const [a, pr, MS] = await Promise.all([api("/api/agents"), api("/api/progress"), api("/api/agents/models")]);
+  const opts = (list, cur) => list.map(([v, l]) => `<option value="${h(v)}" ${v === (cur || "") ? "selected" : ""}>${h(l)}</option>`).join("");
   const names = Object.keys(a.agents);
   $view.innerHTML = `<h1>AI の接続 <span class="muted small">AI ごとに別のアカウントでログインできます。ログインしておくと、月灯スタジオが裏で AI を動かします</span></h1>
     <h2>裏で動く AI <label class="small" style="margin-left:12px"><input type="checkbox" id="run" ${a.run_agents ? "checked" : ""}> 仕事が来たら自動で動かす</label></h2>
@@ -89,6 +90,9 @@ async function viewAgents() {
       <div class="small">アカウント：<b>${ok ? h(v.account || "（メールが読めませんでした）") : "―"}</b></div>
       <div class="small muted">${v.tool === "codex" ? "Codex（ChatGPT）" : "Claude"}${v.config_dir ? `・ログインの置き場所：${h(v.config_dir)}` : v.tool === "codex" ? "" : "・ふつうの置き場所（この PC の Claude と同じ）"}</div>
       <div class="small">役：${v.roles.map(roleJa).join("・") || "なし"}</div>
+      <div class="row small modelrow">モデル <select data-model="${h(k)}">${opts(MS[v.tool === "codex" ? "codex" : "claude"].models, v.model)}</select>
+        考える深さ <select data-effort="${h(k)}">${opts(MS[v.tool === "codex" ? "codex" : "claude"].efforts, v.effort)}</select>
+        <span class="muted" data-mmsg="${h(k)}"></span></div>
       ${!v.running && r.idle ? `<div class="small ${r.idle_ok ? "muted" : "warn"}">${h(r.idle)}</div>` : ""}
       ${v.last ? `<div class="small muted">前回：${h(v.last)}</div>` : ""}
       <div class="row"><button class="${ok ? "" : "primary"}" data-loginas="${h(k)}">${ok ? "別のアカウントでログインし直す" : "ログインする"}</button>
@@ -117,6 +121,14 @@ async function viewAgents() {
     const r = await api(`/api/agents/${k}/login-as`, { method: "POST" });
     document.querySelector(`[data-msg="${k}"]`).textContent = r.message;
     b.disabled = false;
+  }));
+  document.querySelectorAll("[data-model], [data-effort]").forEach((sel) => (sel.onchange = async () => {
+    const k = sel.dataset.model || sel.dataset.effort, m = document.querySelector(`[data-mmsg="${k}"]`);
+    m.textContent = "保存中…";
+    try {
+      await api(`/api/agents/${k}/model`, { method: "PUT", body: { model: document.querySelector(`[data-model="${k}"]`).value, effort: document.querySelector(`[data-effort="${k}"]`).value } });
+      m.textContent = "保存しました（次に起きたときから）";
+    } catch (e) { m.textContent = "保存できませんでした：" + e.message; }
   }));
   document.getElementById("recheck").onclick = async () => { await api("/api/agents/check", { method: "POST" }); viewAgents(); };
   document.getElementById("run").onchange = (e) => api("/api/agents/run", { method: "POST", body: { run: e.target.checked } });

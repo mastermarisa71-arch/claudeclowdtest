@@ -439,3 +439,9 @@ table.assign select { min-width: 220px; }
 
 #sendbar .sbhead { cursor: move; user-select: none; } #sendbar .grip { color: var(--muted, #888); }
 #sendbar.folded { width: auto; padding: 4px 8px; opacity: .85; }
+
+/* 音声入力：話している途中の文 */
+#voicebox { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 60; width: min(640px, calc(100vw - 24px));
+  background: var(--panel); border: 1px solid var(--violet); border-radius: 10px; padding: 10px 12px; box-shadow: 0 6px 24px #000a; }
+#voicebox .vtext { font-size: 16px; margin-top: 6px; line-height: 1.6; } #voicebox .vint { color: var(--violet); }
+#voicebox .vdot { width: 10px; height: 10px; border-radius: 50%; background: var(--red); animation: sbpulse .8s infinite alternate; }

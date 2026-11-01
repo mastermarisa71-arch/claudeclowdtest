@@ -160,9 +160,26 @@ def run_logged(agent: str, line: str, kind: str = "agent") -> dict:
 
 
 def _cmd(a: dict) -> str:
-    cmd = a["command"]
+    cmd = with_model(a["command"], a.get("model", ""), a.get("effort", ""))
     if ("claude -p" in cmd or cmd.strip().startswith("claude")) and "--output-format" not in cmd:   # set CLAUDE_CONFIG_DIR=…&& claude も
         cmd += " --output-format stream-json --verbose"       # 書いている流れをその場で見るため
+    return cmd
+
+
+def with_model(cmd: str, model: str = "", effort: str = "") -> str:
+    """画面で選んだモデルと考える深さを、起こし方のコマンドに入れる（前に書いてあった指定は外す）。"""
+    if not model and not effort:
+        return cmd
+    if re.search(r"(^|&&\s*)codex(\s|$)", cmd.strip()):
+        if model:
+            cmd = re.sub(r"\s(-m|--model)\s+\S+", "", cmd).replace("codex exec", f"codex exec -m {model}", 1)
+        if effort:
+            cmd = re.sub(r"\s-c\s+model_reasoning_effort=\S+", "", cmd).replace("codex exec", f"codex exec -c model_reasoning_effort={effort}", 1)
+        return cmd
+    if model:
+        cmd = re.sub(r"\s--model\s+\S+", "", cmd).replace("claude -p", f"claude --model {model} -p", 1)
+    if effort:
+        cmd = re.sub(r"\s--effort\s+\S+", "", cmd).replace("claude ", f"claude --effort {effort} ", 1)
     return cmd
 
 

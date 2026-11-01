@@ -383,6 +383,7 @@ async function viewAwaiting(code) {
   document.querySelectorAll("[data-good]").forEach((b) => (b.onclick = () => quick(b.dataset.good, "良い")));
   document.querySelectorAll("[data-sel]").forEach((b) => (b.onclick = () => quick(b.dataset.sel, "採用")));
   document.querySelectorAll("[data-voice]").forEach((b) => (b.onclick = () => { b.classList.add("on"); listen((text) => {
+    if (!text) { b.classList.remove("on"); return; }     // 「やめる」・何も話さなかったときは送らない
     const v = parseVoice(text);
     api("/api/reviews", { method: "POST", body: { target_type: "take", target_id: +b.dataset.voice, verdict: v.verdict || "修正", tags: v.tags, comment: v.comment } }).then(route);
   }); }));
@@ -490,28 +491,51 @@ function parseVoice(text) {
   const comment = verdict ? t.slice(verdict.length).replace(/^[、。,\s]+/, "") : t;
   return { verdict, tags, comment };
 }
-// 音声入力：いつも1つだけ聞く（押し直すと前のは止める）。確定した文だけを、同じ文を重ねずに1回だけ返す
+// 音声入力：押すと聞きはじめ、間があいても切らずに聞き続ける（ブラウザが止めても自動でつなぎ直す）。
+// 話している途中の文は画面の下に出す。もう一度 🎤（または「止める」）を押すか、30秒だまると、確定した文を返す。
 let LISTENING = null;
 function listen(onText) {
   if (!SR) { alert("このブラウザは音声入力に対応していません（Chrome / Edge で使えます）"); return; }
-  if (LISTENING) { try { LISTENING.abort(); } catch (e) {} LISTENING = null; }
-  const r = new SR(); r.lang = "ja-JP"; r.interimResults = false; r.continuous = false; r.maxAlternatives = 1;
+  if (LISTENING) { LISTENING.finish(); return null; }      // 聞いている途中に押し直したら、そこで止めて返す
   const parts = [];
-  r.onresult = (e) => {
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      const t = e.results[i].isFinal ? e.results[i][0].transcript.trim() : "";
-      if (t && !parts.includes(t)) parts.push(t);
-    }
+  let interim = "", active = true, quietTimer = null, rec = null;
+  let box = document.getElementById("voicebox");
+  if (!box) { box = document.createElement("div"); box.id = "voicebox"; document.body.appendChild(box); }
+  const show = () => {
+    box.style.display = "";
+    box.innerHTML = `<div class="row small"><span class="vdot"></span><b>聞いています</b><span class="muted">間があいても大丈夫。終わったら 🎤 か「止める」</span>
+      <span style="flex:1"></span><button class="small primary" id="vstop">止める</button><button class="small" id="vcancel">やめる</button></div>
+      <div class="vtext">${h(parts.join(" "))}<span class="vint">${h(interim)}</span>${!parts.length && !interim ? `<span class="muted">（話してください）</span>` : ""}</div>`;
+    box.querySelector("#vstop").onclick = () => finish();
+    box.querySelector("#vcancel").onclick = () => finish(true);
   };
-  let done = false;
-  r.onend = () => { if (done) return; done = true; LISTENING = null;
-    // 「AとA」のように同じ言い回しが繰り返されたら1つにする
-    const text = parts.join(" ").replace(/(.{4,}?)(?:\s*\1)+/g, "$1").trim();
-    onText(text); };
-  r.onerror = () => {};
-  r.start();
-  LISTENING = r;
-  return r;
+  const quiet = () => { clearTimeout(quietTimer); quietTimer = setTimeout(() => finish(), 30000); };
+  const finish = (cancel = false) => {
+    if (!active) return;
+    active = false; LISTENING = null; clearTimeout(quietTimer);
+    try { rec && rec.stop(); } catch (e) {}
+    box.style.display = "none";
+    if (interim.trim()) parts.push(interim.trim());      // 途中の文も、止めたときはそのまま使う
+    const text = parts.join(" ").replace(/(.{4,}?)(?:\s*\1)+/g, "$1").trim();   // 同じ言い回しの繰り返しは1つに
+    onText(cancel ? "" : text);
+  };
+  const start = () => {
+    rec = new SR(); rec.lang = "ja-JP"; rec.interimResults = true; rec.continuous = true; rec.maxAlternatives = 1;
+    rec.onresult = (e) => {
+      interim = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const t = e.results[i][0].transcript.trim();
+        if (e.results[i].isFinal) { if (t && parts[parts.length - 1] !== t) parts.push(t); } else interim += t;
+      }
+      quiet(); show();
+    };
+    rec.onerror = (e) => { if (e.error === "not-allowed" || e.error === "service-not-allowed") { alert("マイクが使えません。ブラウザでマイクを許可してください"); finish(true); } };
+    rec.onend = () => { if (active) { if (interim.trim()) { parts.push(interim.trim()); interim = ""; } try { start(); } catch (e) { finish(); } } };
+    rec.start();
+  };
+  start(); quiet(); show();
+  LISTENING = { finish };
+  return LISTENING;
 }
 function addMics() {   // 文字を書く欄すべてに 🎤 を付ける
   document.querySelectorAll("textarea:not([data-mic])").forEach((ta) => {
